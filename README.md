@@ -1,2 +1,2 @@
 # 4yrp-desktop
-4th Year Project Desktop Team
+Computer Science MEng 4th Year Project Desktop Team
