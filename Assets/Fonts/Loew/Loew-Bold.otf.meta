@@ -1,0 +1,36 @@
+fileFormatVersion: 2
+guid: fc6980b376cb64744b83fbe7ae4feb14
+timeCreated: 1507560472
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Loew
+  fontNames:
+  - Loew
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 9afbad115c5cf264091db42b1b14a3e2, type: 3}
+  - {fileID: 12800000, guid: ecd01c312b375494781025022fb6da85, type: 3}
+  - {fileID: 12800000, guid: 2caa8542cec0bee4aaa95a6c7faa93d8, type: 3}
+  - {fileID: 12800000, guid: c0757ec23648f1f498ba5ef4b032ed41, type: 3}
+  - {fileID: 12800000, guid: 5cd147e51b7122d47a2b8303984c10fe, type: 3}
+  - {fileID: 12800000, guid: 137eeb479566b2d4c83f012dff0e3bea, type: 3}
+  - {fileID: 12800000, guid: 2bb133d7b878cb24aac82cad26d5dfc0, type: 3}
+  - {fileID: 12800000, guid: 0691a8d7382a9d84a80f09dbcd5bdbc3, type: 3}
+  - {fileID: 12800000, guid: 2b765ad8faea7364f9730b8228b57e3a, type: 3}
+  - {fileID: 12800000, guid: 3d287bf8e0e05b1449e3952e93c268b2, type: 3}
+  - {fileID: 12800000, guid: 55fa3239950225048ae9249859cd8741, type: 3}
+  - {fileID: 12800000, guid: 2dad0d5a3e257c946adb2493a9c65e68, type: 3}
+  - {fileID: 12800000, guid: 1a0f1c7a54d3d00419ed65cf1cbd7f8d, type: 3}
+  - {fileID: 12800000, guid: 0cdaca5f2b7da4447ae26978a4aa99da, type: 3}
+  - {fileID: 12800000, guid: 8448efcf608d6b34295e82e21ca87257, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
