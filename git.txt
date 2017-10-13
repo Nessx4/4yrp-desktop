@@ -1,0 +1,7 @@
+//At the start
+git pull --rebase
+
+//Do the work
+git add -A
+git commit -m "a message"
+git push
