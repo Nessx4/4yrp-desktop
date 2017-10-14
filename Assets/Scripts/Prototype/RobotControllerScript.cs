@@ -69,4 +69,14 @@ public class RobotControllerScript : MonoBehaviour
         theScale.x *= -1;
         transform.localScale = theScale;
     }
+
+	public IEnumerator Jump()
+	{
+		Debug.Log("Jumping...");
+
+		if (grounded)
+			jump = true;
+
+		yield return null;
+	}
 }

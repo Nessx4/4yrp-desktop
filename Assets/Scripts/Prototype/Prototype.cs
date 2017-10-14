@@ -1,73 +1,109 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.UI;
-using System;
+
 using System.Threading;
+
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Configuration;
 
 public class Prototype : MonoBehaviour
 {
-    public Text prototext;
-    private Thread t;
-    static TcpListener listener;
+	[SerializeField]
+    private Text prototext;
+
+	[SerializeField]
+	private RobotControllerScript player;
+
+	// Network communication.
+    private Thread listenThread;
+    private TcpListener listener;
     private Socket soc;
 
+	private int port = 9000;
+
+	// Begin a new thread to start listening on a socket.
     public void Start()
     {
-        Run();
-    }
-
-    public void Run()
-    {
         IPAddress[] localIPs = Dns.GetHostAddresses(Dns.GetHostName());
+
         for (int i = 0; i < localIPs.Length; i++)
-        {
             Debug.Log(localIPs[i]);
-        }
-        listener = new TcpListener(IPAddress.Parse("0.0.0.0"), 80);
-        listener.Start();
-        t = new Thread(new ThreadStart(Service));
-        t.Start();
+
+		listener = new TcpListener(IPAddress.Parse("0.0.0.0"), port);
+		listener.Start();
+
+		listenThread = new Thread(new ThreadStart(Setup));
+        listenThread.Start();
     }
-    public void Service()
+
+	// Accept a connection and begin to listen for messages.
+    public void Setup()
     {
-    Debug.Log("Hello I'm listening for a connection");
+		Debug.Log("Awaiting connection on port " + port);
         soc = listener.AcceptSocket();
-        Debug.Log("Got a connection");
-        //soc.SetSocketOption(SocketOptionLevel.Socket,
-        //        SocketOptionName.ReceiveTimeout,10000);
-        try
-        {
-            Stream s = new NetworkStream(soc);
-            StreamReader sr = new StreamReader(s);
-            StreamWriter sw = new StreamWriter(s);
-            sw.AutoFlush = true; // enable automatic flushing
 
-            while(true)
-            {
-                string message = sr.ReadLine();
-                if (!string.IsNullOrEmpty(message))
-                    Debug.Log(message);
-            }
-
-        }
-        catch (Exception e)
-        {
-            Debug.Log(e);
-            Debug.Log("AHHHHHHHHHHHHH");
-        }
-        soc.Close();
+		Debug.Log("Received connection. Will begin to listen for messages");
+		Listen();
     }
+
+	// Set up stream reader and writer, then listen for messages.
+	private void Listen()
+	{
+		try
+		{
+			NetworkStream stream = new NetworkStream(soc);
+			StreamReader reader = new StreamReader(stream);
+			StreamWriter writer = new StreamWriter(stream);
+			writer.AutoFlush = true; // enable automatic flushing
+
+			string message;
+			while ((message = reader.ReadLine()) != null)
+			{
+				if (!string.IsNullOrEmpty(message))
+				{
+					Debug.Log(message);
+
+					// Need to work out how to send messages back to the main thread.
+					/*
+					switch (message)
+					{
+						case "jump":
+							player.Jump();
+							break;
+						default:
+							Debug.Log(message);
+							break;
+					}
+					*/
+				}
+			}
+		}
+		catch (IOException e)
+		{
+			Debug.LogWarning("Error while listening for messages:");
+			Debug.LogError(e);
+		}
+
+		Close();
+	}
+
+	private void Close()
+	{
+		Debug.Log("Closing stuff");
+
+		if(soc != null)
+			soc.Close();
+
+		listenThread.Abort();
+		listenThread.Join();
+	}
 
     public void OnDestroy()
     {
-
-        soc.Close();
-
-        t.Join();
+		Close();
     }
 }
