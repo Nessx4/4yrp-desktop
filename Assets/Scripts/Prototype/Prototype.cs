@@ -13,9 +13,6 @@ using System.Net.Sockets;
 public class Prototype : MonoBehaviour
 {
 	[SerializeField]
-    private Text prototext;
-
-	[SerializeField]
 	private RobotControllerScript player;
 
 	// Network communication.
