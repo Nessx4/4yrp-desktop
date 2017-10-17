@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,24 +23,26 @@ public class Prototype : MonoBehaviour
 
 	private int port = 9000;
 
+	private ConcurrentQueue<Command> qu;
+
 	// Begin a new thread to start listening on a socket.
-    public void Start()
+    private void Start()
     {
         IPAddress[] localIPs = Dns.GetHostAddresses(Dns.GetHostName());
 
         for (int i = 0; i < localIPs.Length; i++)
             Debug.Log(localIPs[i]);
 
-		listener = new TcpListener(IPAddress.Parse("0.0.0.0"), port);
-		listener.Start();
-
 		listenThread = new Thread(new ThreadStart(Setup));
-        listenThread.Start();
+       	listenThread.Start();
     }
 
 	// Accept a connection and begin to listen for messages.
-    public void Setup()
+    private void Setup()
     {
+    	listener = new TcpListener(IPAddress.Parse("0.0.0.0"), port);
+		listener.Start();
+
 		Debug.Log("Awaiting connection on port " + port);
         soc = listener.AcceptSocket();
 
@@ -65,17 +68,15 @@ public class Prototype : MonoBehaviour
 					Debug.Log(message);
 
 					// Need to work out how to send messages back to the main thread.
-					/*
 					switch (message)
 					{
 						case "jump":
-							player.Jump();
+							qu.Enqueue(new JumpCommand());
 							break;
 						default:
 							Debug.Log(message);
 							break;
 					}
-					*/
 				}
 			}
 		}
@@ -103,4 +104,22 @@ public class Prototype : MonoBehaviour
     {
 		Close();
     }
+
+    private void Update()
+    {
+    	while((Command c = qu.Dequeue()) != null)
+    	{
+    		player.Jump();
+    	}
+    }
+}
+
+private class Command
+{
+
+}
+
+private class JumpCommand : Command
+{
+
 }
