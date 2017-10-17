@@ -33,6 +33,8 @@ public class Prototype : MonoBehaviour
         for (int i = 0; i < localIPs.Length; i++)
             Debug.Log(localIPs[i]);
 
+		qu = new ConcurrentQueue<Command>();
+
 		listenThread = new Thread(new ThreadStart(Setup));
        	listenThread.Start();
     }
@@ -107,19 +109,21 @@ public class Prototype : MonoBehaviour
 
     private void Update()
     {
-    	while((Command c = qu.Dequeue()) != null)
+		Command c;
+    	while(qu.TryDequeue(out c))
     	{
+			Debug.Log("Found item in the queue");
     		player.Jump();
     	}
     }
 }
 
-private class Command
+class Command
 {
 
 }
 
-private class JumpCommand : Command
+class JumpCommand : Command
 {
 
 }

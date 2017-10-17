@@ -20,7 +20,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4754723296162966}
   - component: {fileID: 20354451828903670}
-  - component: {fileID: 92327547642003378}
   - component: {fileID: 124294455456352476}
   - component: {fileID: 81306968293973078}
   - component: {fileID: 114476729031745140}
@@ -63,7 +62,7 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 0
+  orthographic: 1
   orthographic size: 5
   m_Depth: -1
   m_CullingMask:
@@ -79,16 +78,8 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
-  m_StereoMirrorMode: 0
 --- !u!81 &81306968293973078
 AudioListener:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1010487582577306}
-  m_Enabled: 1
---- !u!92 &92327547642003378
-Behaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
