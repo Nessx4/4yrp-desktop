@@ -28,6 +28,8 @@ public class Prototype : MonoBehaviour
 	// Begin a new thread to start listening on a socket.
     private void Start()
     {
+    	qu = new ConcurrentQueue<Command>();
+
         IPAddress[] localIPs = Dns.GetHostAddresses(Dns.GetHostName());
 
         for (int i = 0; i < localIPs.Length; i++)
@@ -109,7 +111,7 @@ public class Prototype : MonoBehaviour
 
     private void Update()
     {
-		Command c;
+    	Command c;
     	while(qu.TryDequeue(out c))
     	{
 			Debug.Log("Found item in the queue");
