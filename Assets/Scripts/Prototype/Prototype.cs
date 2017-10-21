@@ -100,6 +100,8 @@ public class Prototype : MonoBehaviour
 		if(soc != null)
 			soc.Close();
 
+		qu.Enqueue(new CloseCommand());
+
 		listenThread.Abort();
 		listenThread.Join();
 	}
@@ -114,8 +116,18 @@ public class Prototype : MonoBehaviour
     	Command c;
     	while(qu.TryDequeue(out c))
     	{
-			Debug.Log("Found item in the queue");
-    		player.Jump();
+    		string type = c.GetType().ToString();
+
+    		switch(type)
+    		{
+    			case "JumpCommand":
+    				player.Jump();
+    				break;
+    			case "CloseCommand":
+    				Debug.Log("Closing safely, restarting resources.");
+    				Start();
+    				break;
+    		}
     	}
     }
 }
@@ -126,6 +138,11 @@ class Command
 }
 
 class JumpCommand : Command
+{
+
+}
+
+class CloseCommand : Command
 {
 
 }
