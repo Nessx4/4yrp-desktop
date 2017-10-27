@@ -23,19 +23,22 @@ public class Prototype : MonoBehaviour
 
 	private int port = 9000;
 
-	private ConcurrentQueue<Command> qu;
+	private ConcurrentQueue<Command> commandQueue;
 
 	// Begin a new thread to start listening on a socket.
     private void Start()
     {
-    	qu = new ConcurrentQueue<Command>();
+    	PreSetup();
+    }
+
+    private void PreSetup()
+    {
+    	commandQueue = new ConcurrentQueue<Command>();
 
         IPAddress[] localIPs = Dns.GetHostAddresses(Dns.GetHostName());
 
         for (int i = 0; i < localIPs.Length; i++)
             Debug.Log(localIPs[i]);
-
-		qu = new ConcurrentQueue<Command>();
 
 		listenThread = new Thread(new ThreadStart(Setup));
        	listenThread.Start();
@@ -70,12 +73,14 @@ public class Prototype : MonoBehaviour
 				if (!string.IsNullOrEmpty(message))
 				{
 					Debug.Log(message);
+					//message = message.ToLower();
 
 					// Need to work out how to send messages back to the main thread.
 					switch (message)
 					{
 						case "jump":
-							qu.Enqueue(new JumpCommand());
+						case "Jump":
+							commandQueue.Enqueue(new JumpCommand());
 							break;
 						default:
 							Debug.Log(message);
@@ -90,17 +95,15 @@ public class Prototype : MonoBehaviour
 			Debug.LogError(e);
 		}
 
-		Close();
+		commandQueue.Enqueue(new CloseCommand());
 	}
 
 	private void Close()
 	{
-		Debug.Log("Closing stuff");
+		Debug.Log("Closing the socket and thread.");
 
 		if(soc != null)
 			soc.Close();
-
-		qu.Enqueue(new CloseCommand());
 
 		listenThread.Abort();
 		listenThread.Join();
@@ -114,8 +117,10 @@ public class Prototype : MonoBehaviour
     private void Update()
     {
     	Command c;
-    	while(qu.TryDequeue(out c))
+    	while(commandQueue.TryDequeue(out c))
     	{
+    		//player.Jump();
+
     		string type = c.GetType().ToString();
 
     		switch(type)
@@ -125,7 +130,8 @@ public class Prototype : MonoBehaviour
     				break;
     			case "CloseCommand":
     				Debug.Log("Closing safely, restarting resources.");
-    				Start();
+    				Close();
+    				PreSetup();
     				break;
     		}
     	}
