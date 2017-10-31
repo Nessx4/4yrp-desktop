@@ -2,6 +2,7 @@
 {
 	Properties
 	{
+		_Color("Color", Color) = (0, 0, 0, 0)
 		_Radius ("Radius", Range(0, 255)) = 1
 	}
 
@@ -57,27 +58,35 @@
 				sampler2D _GrabTexture;
 				float4 _GrabTexture_TexelSize;
 				float _Radius;
+				float4 _Color;
+
+				float4 grabPixel(v2f i, float kernelx, float kernely)
+				{
+					return tex2Dproj(_GrabTexture, 
+						UNITY_PROJ_COORD(float4(i.uvgrab.x + _GrabTexture_TexelSize.x * 
+						kernelx, i.uvgrab.y + _GrabTexture_TexelSize.y * kernely, i.uvgrab.z, i.uvgrab.w)));
+				}
 
 				half4 frag(v2f i) : COLOR
 				{
 					half4 sum = half4(0, 0, 0, 0);
 
-					#define GRABXYPIXEL(kernelx, kernely) tex2Dproj(_GrabTexture,  UNITY_PROJ_COORD(float4(i.uvgrab.x + _GrabTexture_TexelSize.x * kernelx, i.uvgrab.y + _GrabTexture_TexelSize.y * kernely, i.uvgrab.z, i.uvgrab.w)))
-
-					sum += GRABXYPIXEL(0.0, 0.0);
+					sum += grabPixel(i, 0.0, 0.0);
 					int measurements = 1;
 
-					// Do a Guassian blur with 
+					// Do a Guassian blur. 
 					for(float range = 0.1f; range <= _Radius; range += 0.1f)
 					{
-						sum += GRABXYPIXEL(range, range);
-						sum += GRABXYPIXEL(-range, range);
-						sum += GRABXYPIXEL(range, -range);
-						sum += GRABXYPIXEL(-range, -range);
+						sum += grabPixel(i, range, range);
+						sum += grabPixel(i, -range, range);
+						sum += grabPixel(i, range, -range);
+						sum += grabPixel(i, -range, -range);
 						measurements += 4;
 					}
 
-					return sum / measurements;
+					half4 col = sum / measurements;
+					col = lerp(col, _Color, _Color.a);
+					return col;
 				}
 
 				ENDCG
@@ -130,23 +139,28 @@
 				float4 _GrabTexture_TexelSize;
 				float _Radius;
 
+				float4 grabPixel(v2f i, float kernelx, float kernely)
+				{
+					return tex2Dproj(_GrabTexture,
+						UNITY_PROJ_COORD(float4(i.uvgrab.x + _GrabTexture_TexelSize.x *
+							kernelx, i.uvgrab.y + _GrabTexture_TexelSize.y * kernely, i.uvgrab.z, i.uvgrab.w)));
+				}
+
 				half4 frag(v2f i) : COLOR
 				{
 					half4 sum = half4(0, 0, 0, 0);
 					float radius = 1.41421356237f * _Radius;
 
-					#define GRABXYPIXEL(kernelx, kernely) tex2Dproj(_GrabTexture,  UNITY_PROJ_COORD(float4(i.uvgrab.x + _GrabTexture_TexelSize.x * kernelx, i.uvgrab.y + _GrabTexture_TexelSize.y * kernely, i.uvgrab.z, i.uvgrab.w)))
-
-					sum += GRABXYPIXEL(0.0, 0.0);
+					sum += grabPixel(i, 0.0, 0.0);
 					int measurements = 1;
 
 					// Do a Guassian blur with 
 					for(float range = 1.41421356237f; range <= _Radius * 1.41; range += 1.41421356237f)
 					{
-						sum += GRABXYPIXEL(range, range);
-						sum += GRABXYPIXEL(-range, range);
-						sum += GRABXYPIXEL(range, -range);
-						sum += GRABXYPIXEL(-range, -range);
+						sum += grabPixel(i, range, range);
+						sum += grabPixel(i, -range, range);
+						sum += grabPixel(i, range, -range);
+						sum += grabPixel(i, -range, -range);
 						measurements += 4;
 					}
 
