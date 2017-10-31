@@ -45,14 +45,14 @@
 			uniform sampler2D _CameraDepthTexture;
 			sampler2D _MainTex, _NoiseTex;
 			float4 _MainTex_ST;
-			float _Speed, _Amount, _Height, _Foam;
+			float _Speed, _Frequency, _Height, _Foam;
 			
 			v2f vert (appdata v)
 			{
 				v2f o;
 				
 				float4 tex = tex2Dlod(_NoiseTex, float4(v.uv, 0, 0));
-				v.vertex.y += sin(_Time.z * _Speed + (v.vertex.x * _Amount * tex)) * _Height;
+				v.vertex.y += sin(_Time.z * _Speed + (v.vertex.x * v.vertex.z * _Frequency * tex)) * _Height;
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 				o.screenPos = ComputeScreenPos(o.vertex);
