@@ -30,8 +30,15 @@
 					0.189, 0.168, 0.131		// Blue.
 				);
 
-				half3 intermediate = (_BlendAmount * mul(tex.rgb, magic)) + 
-					((1 - _BlendAmount) * tex.rbg);
+				half3x3 magic2 = half3x3
+				(
+					0.393 * 1.5, 0.349 * 1.5, 0.272,	// Red.
+					0.769 * 1.5, 0.686 * 1.5, 0.534,	// Green.
+					0.189 * 1.5, 0.168 * 1.5, 0.131		// Blue.
+				);
+
+				half3 intermediate = (_BlendAmount * mul(tex.rgb, magic2)) + 
+					((1 - _BlendAmount) * tex.rgb);
 
 				return half4(intermediate, tex.a);
 			}
