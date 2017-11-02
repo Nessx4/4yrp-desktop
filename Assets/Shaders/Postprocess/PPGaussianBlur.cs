@@ -6,12 +6,10 @@ using UnityEngine;
 public class PPGaussianBlur : MonoBehaviour 
 {
 	[SerializeField]
-	RenderMode renderMode = RenderMode.Screen;
-	[SerializeField]
 	BlurKernelSize kernelSize = BlurKernelSize.Small;
 
 	[Range(0.0f, 1.0f)]
-	public float interpolation = 1.0f;
+	public float blendAmount = 1.0f;
 
 	[Range(0, 4)]
 	public int downsample = 1;
@@ -55,7 +53,7 @@ public class PPGaussianBlur : MonoBehaviour
 
 		for(int i = 0; i < iterations; ++i)
 		{
-			float radius = (float)i * interpolation + interpolation;
+			float radius = (float)i * blendAmount;
 
 			blurMat.SetFloat("_Radius", radius);
 
@@ -86,8 +84,7 @@ public class PPGaussianBlur : MonoBehaviour
 
 		Graphics.Blit(src, temp);
 
-		if(renderMode == RenderMode.Screen)
-			Blur(temp, dst);
+		Blur(temp, dst);
 
 		RenderTexture.ReleaseTemporary(temp);
 	}
@@ -95,10 +92,5 @@ public class PPGaussianBlur : MonoBehaviour
 	enum BlurKernelSize
 	{
 		Small, Medium, Large
-	}
-
-	enum RenderMode
-	{
-		Screen, UI, OnlyUI
 	}
 }
