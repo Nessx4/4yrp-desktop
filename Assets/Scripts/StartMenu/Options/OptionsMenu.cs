@@ -11,8 +11,15 @@ public class OptionsMenu : MonoBehaviour
 
 	private CanvasGroup grp;
 
+	// Is any button remap object waiting for an input?
+	private ButtonRemap activeRemap;
+
+	public static OptionsMenu menu;
+
 	private void Awake()
 	{
+		menu = this;
+
 		grp = GetComponent<CanvasGroup>();
 	}
 
@@ -34,8 +41,25 @@ public class OptionsMenu : MonoBehaviour
 		gameObject.SetActive(Mathf.Approximately(targetTrans, 1.0f));
 	}
 
+	public bool SetActiveRemap(ButtonRemap remap)
+	{
+		if(activeRemap == null)
+		{
+			activeRemap = remap;
+			return true;
+		}
+
+		return false;
+	}
+
+	public void RemoveActiveRemap()
+	{
+		activeRemap = null;
+	}
+
 	public void Close()
 	{
-		root.ChangeToStart();
+		if(activeRemap == null)
+			root.ChangeToStart();
 	}
 }

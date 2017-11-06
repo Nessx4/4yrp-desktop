@@ -12,6 +12,7 @@ public class MenuRoot : MonoBehaviour
 
 	private void Start()
 	{
+		start.gameObject.SetActive(true);
 		options.gameObject.SetActive(false);
 	}
 
