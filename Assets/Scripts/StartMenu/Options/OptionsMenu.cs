@@ -1,13 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(CanvasGroup))]
 public class OptionsMenu : MonoBehaviour
 {
 	[SerializeField]
 	private MenuRoot root;
+
+	[SerializeField]
+	private ButtonRemap[] remapButtons;
 
 	private CanvasGroup grp;
 
@@ -45,6 +52,9 @@ public class OptionsMenu : MonoBehaviour
 	{
 		if(activeRemap == null)
 		{
+			foreach (ButtonRemap rb in remapButtons)
+				rb.btn.enabled = false;
+
 			activeRemap = remap;
 			return true;
 		}
@@ -55,11 +65,79 @@ public class OptionsMenu : MonoBehaviour
 	public void RemoveActiveRemap()
 	{
 		activeRemap = null;
+
+		foreach (ButtonRemap rb in remapButtons)
+			rb.btn.enabled = true;
+	}
+
+	private void OnEnable()
+	{
+		Load();
 	}
 
 	public void Close()
 	{
+		Save();
+
 		if(activeRemap == null)
 			root.ChangeToStart();
+	}
+
+	private void Save()
+	{
+		OptionsData data = new OptionsData();
+
+		foreach (ButtonRemap rb in remapButtons)
+			data.buttons.Add(rb.buttonName.text, rb.GetCode());
+
+		BinaryFormatter bf = new BinaryFormatter();
+		FileStream file = File.Create(Application.persistentDataPath + "/options.dat");
+		bf.Serialize(file, data);
+		file.Close();
+	}
+
+	private void Load()
+	{
+		OptionsData data = null;
+
+		if(File.Exists(Application.persistentDataPath + "/options.dat"))
+		{
+			BinaryFormatter bf = new BinaryFormatter();
+			FileStream file = File.Open(Application.persistentDataPath + 
+				"/options.dat", FileMode.Open);
+
+			data = (OptionsData)bf.Deserialize(file);
+			file.Close();
+
+			if(data != null)
+			{
+				int i = 0;
+
+				foreach (string key in data.buttons.Keys)
+					remapButtons[i++].SetValues(key, data.buttons[key]);
+			}
+		}
+	}
+}
+
+// This is kind of just a hack.
+[System.Serializable]
+public class ButtonRemapDict : SDictionary<string, KeyCode> { }
+
+[System.Serializable]
+public class OptionsData
+{
+	public ButtonRemapDict buttons;
+
+	public OptionsData()
+	{
+		buttons = new ButtonRemapDict();
+
+		Debug.Log(buttons);
+	}
+
+	public OptionsData(ButtonRemapDict buttons)
+	{
+		this.buttons = buttons;
 	}
 }
