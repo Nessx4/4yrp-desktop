@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using System.IO;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
 using UnityEngine;
@@ -88,7 +89,7 @@ public class OptionsMenu : MonoBehaviour
 		OptionsData data = new OptionsData();
 
 		foreach (ButtonRemap rb in remapButtons)
-			data.buttons.Add(rb.buttonName.text, rb.GetCode());
+			data.buttons.Add(new RemapData(rb.buttonName.text, rb.GetCode()));
 
 		BinaryFormatter bf = new BinaryFormatter();
 		FileStream file = File.Create(Application.persistentDataPath + "/options.dat");
@@ -113,30 +114,38 @@ public class OptionsMenu : MonoBehaviour
 			{
 				int i = 0;
 
-				foreach (string key in data.buttons.Keys)
-					remapButtons[i++].SetValues(key, data.buttons[key]);
+				foreach(RemapData rd in data.buttons)
+					remapButtons[i++].SetValues(rd.buttonName, rd.activeKey);
 			}
 		}
 	}
 }
 
-// This is kind of just a hack.
 [System.Serializable]
-public class ButtonRemapDict : SDictionary<string, KeyCode> { }
+public struct RemapData
+{
+	public string buttonName;
+	public KeyCode activeKey;
+
+	public RemapData(string buttonName, KeyCode activeKey)
+	{
+		this.buttonName = buttonName;
+		this.activeKey = activeKey;
+	}
+}
 
 [System.Serializable]
 public class OptionsData
 {
-	public ButtonRemapDict buttons;
+	public List<RemapData> buttons;
 
 	public OptionsData()
 	{
-		buttons = new ButtonRemapDict();
-
+		buttons = new List<RemapData>();
 		Debug.Log(buttons);
 	}
 
-	public OptionsData(ButtonRemapDict buttons)
+	public OptionsData(List<RemapData> buttons)
 	{
 		this.buttons = buttons;
 	}

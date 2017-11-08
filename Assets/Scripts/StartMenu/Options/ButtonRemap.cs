@@ -15,7 +15,6 @@ public class ButtonRemap : MonoBehaviour
 	[SerializeField]
 	private Image bgImage;
 
-	[SerializeField]
 	public Button btn;
 
 	private KeyCode currKey;
