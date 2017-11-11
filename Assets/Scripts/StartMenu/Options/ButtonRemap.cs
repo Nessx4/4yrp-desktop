@@ -15,6 +15,10 @@ public class ButtonRemap : MonoBehaviour
 	[SerializeField]
 	private Image bgImage;
 
+	private Color activeColor = new Color(0.5f, 0.5f, 0.25f, 1.0f);
+	private Color inactiveColor = new Color(0.25f, 0.25f, 0.25f, 0.5f);
+	private Color invalidColor = new Color(0.5f, 0.25f, 0.25f, 0.5f);
+
 	public Button btn;
 
 	private KeyCode currKey;
@@ -32,6 +36,7 @@ public class ButtonRemap : MonoBehaviour
 					activeKey.text = k.ToString();
 					currKey = k;
 
+					OptionsMenu.menu.RemoveActiveRemap();
 					Deactivate();
 				}
 			}
@@ -42,17 +47,21 @@ public class ButtonRemap : MonoBehaviour
 	{
 		if(OptionsMenu.menu.SetActiveRemap(this))
 		{
-			bgImage.color = new Color(0.5f, 0.5f, 0.25f, 1.0f);
+			bgImage.color = activeColor;
 			isActive = true;
 		}
 	}
 
 	public void Deactivate()
 	{
-		bgImage.color = new Color(0.25f, 0.25f, 0.25f, 1.0f);
+		bgImage.color = inactiveColor;
 
 		isActive = false;
-		OptionsMenu.menu.RemoveActiveRemap();
+	}
+
+	public void Invalidate()
+	{
+		bgImage.color = inactiveColor;
 	}
 
 	public KeyCode GetCode()
