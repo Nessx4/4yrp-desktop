@@ -36,8 +36,8 @@ public class ButtonRemap : MonoBehaviour
 					activeKey.text = k.ToString();
 					currKey = k;
 
-					OptionsMenu.menu.RemoveActiveRemap();
 					Deactivate();
+					OptionsMenu.menu.RemoveActiveRemap();
 				}
 			}
 		}
@@ -61,7 +61,7 @@ public class ButtonRemap : MonoBehaviour
 
 	public void Invalidate()
 	{
-		bgImage.color = inactiveColor;
+		bgImage.color = invalidColor;
 	}
 
 	public KeyCode GetCode()

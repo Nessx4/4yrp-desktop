@@ -27,6 +27,9 @@ public class OptionsMenu : MonoBehaviour
 	[SerializeField]
 	private List<RemapData> defaultMappings;
 
+	[SerializeField] 
+	private WarningMessage warning;
+
 	private CanvasGroup grp;
 
 	// Is any button remap object waiting for an input?
@@ -88,10 +91,13 @@ public class OptionsMenu : MonoBehaviour
 
 	public void Close()
 	{
-		Save();
+		if(!FindClashes())
+		{
+			Save();
 
-		if(activeRemap == null)
-			root.ChangeToStart();
+			if(activeRemap == null)
+				root.ChangeToStart();
+		}
 	}
 
 	private void Save()
@@ -147,21 +153,31 @@ public class OptionsMenu : MonoBehaviour
 	}
 
 	// Detect places where two keys have been assigned to the same action.
-	private void FindClashes()
+	private bool FindClashes()
 	{
+		bool clashes = false;
+
 		Dictionary<KeyCode, ButtonRemap> mappings = new Dictionary<KeyCode, ButtonRemap>();
 
 		foreach(ButtonRemap rb in remapButtons)
 		{
 			KeyCode kc = rb.GetCode();
+			rb.Deactivate();
 
 			if(mappings.ContainsKey(kc))
 			{
+				mappings[kc].Invalidate();
+				rb.Invalidate();
 
+				clashes = true;
 			}
 			else
 				mappings.Add(kc, rb);
 		}
+		
+		warning.SetMessage(clashes, "Some buttons are mapped to more than one action!");
+
+		return clashes;
 	}
 }
 
