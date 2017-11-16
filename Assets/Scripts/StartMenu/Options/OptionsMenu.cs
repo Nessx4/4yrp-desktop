@@ -30,6 +30,12 @@ public class OptionsMenu : MonoBehaviour
 	[SerializeField] 
 	private WarningMessage warning;
 
+	[SerializeField]
+	private VideoSettings videoSettings;
+
+	[SerializeField]
+	private AudioSettings audioSettings;
+
 	private CanvasGroup grp;
 
 	// Is any button remap object waiting for an input?
@@ -107,6 +113,9 @@ public class OptionsMenu : MonoBehaviour
 		foreach (ButtonRemap rb in remapButtons)
 			data.buttons.Add(new RemapData(rb.buttonName.text, rb.GetCode()));
 
+		data.video = videoSettings.Save();
+		data.audio = audioSettings.Save();
+
 		BinaryFormatter bf = new BinaryFormatter();
 		FileStream file = File.Create(Application.persistentDataPath + "/options.dat");
 		bf.Serialize(file, data);
@@ -150,6 +159,9 @@ public class OptionsMenu : MonoBehaviour
 				vBox.sizeDelta = new Vector2(800, height);
 			}
 		}
+
+		videoSettings.Load(data.video);
+		audioSettings.Load(data.audio);
 	}
 
 	// Detect places where two keys have been assigned to the same action.
@@ -199,6 +211,9 @@ public class OptionsData
 {
 	public List<RemapData> buttons;
 
+	public VideoData video;
+	public AudioData audio;
+
 	public OptionsData()
 	{
 		buttons = new List<RemapData>();
@@ -207,5 +222,11 @@ public class OptionsData
 	public OptionsData(List<RemapData> buttons)
 	{
 		this.buttons = buttons;
+	}
+
+	public OptionsData(List<RemapData> buttons, VideoData video)
+	{
+		this.buttons = buttons;
+		this.video = video;
 	}
 }
