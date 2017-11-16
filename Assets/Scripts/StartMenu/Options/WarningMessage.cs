@@ -21,6 +21,8 @@ public class WarningMessage : MonoBehaviour
 	{
 		transform = GetComponent<RectTransform>();
 		anchoredPosition = transform.anchoredPosition;
+
+		SetMessage(false, "");
 	}
 
 	public void SetMessage(bool show, string message)
