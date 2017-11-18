@@ -9,6 +9,9 @@ public class CreatorCamera : MonoBehaviour
 	[SerializeField]
 	private Material mat;
 
+	private Vector2 lowerLeft = new Vector2(0, 0);
+	private Vector2 upperRight = new Vector2(100, 100);
+
 	private Camera cam;
 
 	private void Start()
@@ -18,7 +21,21 @@ public class CreatorCamera : MonoBehaviour
 
 	private void Update()
 	{
-		transform.Translate(new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")) * Time.deltaTime);
+		Vector2 move = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+		transform.Translate(move * 5.0f * Time.deltaTime);
+
+		BoundPosition();
+	}
+
+	private void BoundPosition()
+	{
+		Vector2 pos = transform.position;
+		float camSize = cam.orthographicSize;
+
+		pos.x = Mathf.Clamp(pos.x, lowerLeft.x + camSize, upperRight.x - camSize);
+		pos.y = Mathf.Clamp(pos.y, lowerLeft.y + camSize, upperRight.y - camSize);
+
+		transform.position = new Vector3(pos.x, pos.y, -10.0f);
 	}
 
 	private void OnRenderImage(RenderTexture src, RenderTexture dst)
