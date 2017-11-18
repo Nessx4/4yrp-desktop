@@ -149,7 +149,7 @@ public class OptionsMenu : MonoBehaviour
 			foreach(RemapData rd in data.buttons)
 			{
 				ButtonRemap rm = Instantiate(remapWidget);
-				rm.transform.SetParent(vBox);
+				rm.transform.SetParent(vBox, false);
 				rm.SetValues(rd.buttonName, rd.activeKey);
 
 				height += 70;

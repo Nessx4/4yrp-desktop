@@ -58,7 +58,7 @@ public class TileMenu : MonoBehaviour
 		foreach(var tile in tiles[currentSet].tiles)
 		{
 			SelectableTile sel = Instantiate(tileSelectPrefab);
-			sel.transform.SetParent(vBox);
+			sel.transform.SetParent(vBox, false);
 
 			sel.SetLinkedItem(tile, this);
 		}

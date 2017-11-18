@@ -27,6 +27,7 @@ public class CreatorCamera : MonoBehaviour
 		BoundPosition();
 	}
 
+	// Don't let the camera go too far off the edges of the editable world.
 	private void BoundPosition()
 	{
 		Vector2 pos = transform.position;
@@ -40,9 +41,10 @@ public class CreatorCamera : MonoBehaviour
 
 	private void OnRenderImage(RenderTexture src, RenderTexture dst)
 	{
-		float x = cam.transform.position.x - 0.5f - cam.aspect / 2;
-		float y = cam.transform.position.y - 0.5f;
-		Vector2 offset = new Vector2(x - (int)x, y - (int)y);
+		// Work out the x-position, shifted due to camera size.
+		float x = cam.transform.position.x - 0.5f - (cam.aspect * cam.orthographicSize);
+		float y = cam.transform.position.y - 0.5f - cam.orthographicSize;
+		Vector2 offset = new Vector2(x % 1.0f, y % 1.0f);
 		Vector2 scale = new Vector2(cam.orthographicSize * 2 * cam.aspect, cam.orthographicSize * 2);
 
 		mat.SetVector("_OffsetAndScale", new Vector4(offset.x, offset.y, scale.x, scale.y));

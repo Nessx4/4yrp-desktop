@@ -13,9 +13,13 @@ public class TilePlacement : MonoBehaviour
 	[SerializeField]
 	private LayerMask mask;
 
+	[SerializeField]
+	private Transform container;
+
 	// Currently selected tile.
 	private TileData activeTile;
 
+	// The undo/redo system relies on stacks.
 	private Stack<TileOperation> undoStack;
 	private Stack<TileOperation> redoStack;
 
@@ -26,6 +30,7 @@ public class TilePlacement : MonoBehaviour
 	private void Start()
 	{
 		placement = this;
+
 		// Camera.main is slow so cache it.
 		mainCam = Camera.main;
 
@@ -52,9 +57,9 @@ public class TilePlacement : MonoBehaviour
 				pos.y = Mathf.Round(pos.y);
 				pos.z = 0.0f;
 
-				if (Physics.Raycast(pos, Vector3.up, 0.25f, mask))
+				if(Physics2D.Raycast(pos, Vector3.up, 0.25f, mask))
 				{
-					Debug.Log("Already has a tile here.");
+					Debug.Log("Already has a tile here");
 					return;
 				}
 
@@ -64,25 +69,31 @@ public class TilePlacement : MonoBehaviour
 		}
 
 		if(Input.GetMouseButtonDown(1))
-		{
-			if(undoStack.Count > 0)
-			{
-				TileOperation op = undoStack.Pop();
-
-				op.Undo();
-				redoStack.Push(op);
-			}
-		}
+			Undo();
 
 		if(Input.GetMouseButtonDown(2))
-		{
-			if(redoStack.Count > 0)
-			{
-				TileOperation op = redoStack.Pop();
+			Redo();
+	}
 
-				op.Redo();
-				undoStack.Push(op);
-			}
+	public void Undo()
+	{
+		if (undoStack.Count > 0)
+		{
+			TileOperation op = undoStack.Pop();
+
+			op.Undo();
+			redoStack.Push(op);
+		}
+	}
+
+	public void Redo()
+	{
+		if (redoStack.Count > 0)
+		{
+			TileOperation op = redoStack.Pop();
+
+			op.Redo();
+			undoStack.Push(op);
 		}
 	}
 
