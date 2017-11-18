@@ -3,7 +3,9 @@
 
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class TilePlacement : MonoBehaviour 
 {
@@ -14,7 +16,8 @@ public class TilePlacement : MonoBehaviour
 	// Currently selected tile.
 	private TileData activeTile;
 
-	private Stack<TileOperation> operations;
+	private Stack<TileOperation> undoStack;
+	private Stack<TileOperation> redoStack;
 
 	private Camera mainCam;
 
@@ -26,7 +29,8 @@ public class TilePlacement : MonoBehaviour
 		// Camera.main is slow so cache it.
 		mainCam = Camera.main;
 
-		operations = new Stack<TileOperation>();
+		undoStack = new Stack<TileOperation>();
+		redoStack = new Stack<TileOperation>();
 	}
 
 	public void SetActiveTile(TileData tile)
@@ -38,48 +42,78 @@ public class TilePlacement : MonoBehaviour
 	{
 		if (Input.GetMouseButtonDown(0) && activeTile)
 		{
-			Vector3 mousePos = new Vector3(Input.mousePosition.x, 
-				Input.mousePosition.y, 10.0f);
-			Vector3 pos = mainCam.ScreenToWorldPoint(mousePos);
-
-			pos.x = Mathf.Round(pos.x);
-			pos.y = Mathf.Round(pos.y);
-			pos.z = 0.0f;
-
-			if (Physics.Raycast(pos, Vector3.up, 0.25f, mask))
+			if(!EventSystem.current.IsPointerOverGameObject())
 			{
-				Debug.Log("Already has a tile here.");
-				return;
+				Vector3 mousePos = new Vector3(Input.mousePosition.x, 
+					Input.mousePosition.y, 10.0f);
+				Vector3 pos = mainCam.ScreenToWorldPoint(mousePos);
+
+				pos.x = Mathf.Round(pos.x);
+				pos.y = Mathf.Round(pos.y);
+				pos.z = 0.0f;
+
+				if (Physics.Raycast(pos, Vector3.up, 0.25f, mask))
+				{
+					Debug.Log("Already has a tile here.");
+					return;
+				}
+
+				undoStack.Push(new TileOperation(activeTile.tilePrefab, pos));
+				redoStack.Clear();
 			}
-
-			GameObject newTile = Instantiate(activeTile.tilePrefab, pos, 
-				Quaternion.identity);
-
-			operations.Push(new TileOperation(newTile, activeTile.tilePrefab, pos));
 		}
 
 		if(Input.GetMouseButtonDown(1))
 		{
-			TileOperation op = operations.Pop();
+			if(undoStack.Count > 0)
+			{
+				TileOperation op = undoStack.Pop();
 
-			Destroy(op.newTile);
+				op.Undo();
+				redoStack.Push(op);
+			}
+		}
+
+		if(Input.GetMouseButtonDown(2))
+		{
+			if(redoStack.Count > 0)
+			{
+				TileOperation op = redoStack.Pop();
+
+				op.Redo();
+				undoStack.Push(op);
+			}
 		}
 	}
 
 	[System.Serializable]
 	private struct TileOperation
 	{
+		// The instance created by the operation.
 		public GameObject newTile;
 
+		// The source instance used by the operation.
 		public GameObject tilePrefab;
+
+		// Transform properties.
 		public Vector3 position;
 
-		public TileOperation(GameObject newTile, GameObject tilePrefab, 
-			Vector3 position)
+		public TileOperation(GameObject tilePrefab, Vector3 position)
 		{
-			this.newTile = newTile;
 			this.tilePrefab = tilePrefab;
 			this.position = position;
+
+			newTile = Instantiate(tilePrefab, position, Quaternion.identity);
+		}
+
+		public void Undo()
+		{
+			Destroy(newTile);
+		}
+
+		public void Redo()
+		{
+			newTile = Instantiate(tilePrefab, position, Quaternion.identity);
 		}
 	}
 }

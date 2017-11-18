@@ -31,7 +31,7 @@ public class SelectableTile : MonoBehaviour
 
 	public void OnPointerEnter()
 	{
-		Debug.Log("Tooltip: " + linkedItem.name);
+		//Debug.Log("Tooltip: " + linkedItem.name);
 		menu.SetActiveTile(linkedItem);
 	}
 }

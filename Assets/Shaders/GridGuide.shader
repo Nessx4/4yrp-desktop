@@ -50,8 +50,9 @@
 				float2 offset = _OffsetAndScale.xy;
 				float2 scale = _OffsetAndScale.zw;
 
-				fixed4 grd = tex2D(_GridTex, (i.uv + (offset / scale)) * scale);
+				fixed4 grd = tex2D(_GridTex, i.uv * scale + offset);
 				return img * grd;
+				//return fixed4(offset, 0, 1);
 			}
 			ENDCG
 		}
