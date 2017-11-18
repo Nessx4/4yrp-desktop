@@ -36,7 +36,11 @@ public class TileMenu : MonoBehaviour
 	public void SwitchTileset(bool right)
 	{
 		currentSet = currentSet + (right ? 1 : -1);
-		currentSet = Mathf.Clamp(currentSet, 0, tiles.Count - 1);
+
+		if(currentSet >= tiles.Count)
+			currentSet = 0;
+		else if(currentSet < 0)
+			currentSet = tiles.Count - 1;
 
 		SwitchTileset(currentSet);
 	}
@@ -44,6 +48,7 @@ public class TileMenu : MonoBehaviour
 	private void SwitchTileset(int index)
 	{
 		// Remove any tiles currently present.
+		// Somehow this iterates through the children...
 		foreach(Transform child in vBox)
 		{
 			Destroy(child.gameObject);
