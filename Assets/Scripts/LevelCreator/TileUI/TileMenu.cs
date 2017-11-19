@@ -4,65 +4,79 @@
 
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TileMenu : MonoBehaviour
 {
+	// All tiles that can be added by the player.
 	[SerializeField]
-	private List<TileData> tiles;
+	private List<Tileset> tiles;
+	private int currentSet = 0;
+	private int activeInSet = 0;
 
+	// Header denoting the name of the active tileset.
+	[SerializeField] 
+	private Text tilesetName;
+
+	// A prefab for the selectable tiles that sit on the UI.
 	[SerializeField]
-	private TileSelect tileSelectPrefab;
+	private SelectableTile tileSelectPrefab;
 
-	[SerializeField]
-	private LayerMask mask;
-
+	// UI element that the selectable prefabs reside in.
 	[SerializeField]
 	private Transform vBox;
 
-	private Camera mainCam;
-	private TileData activeTile;
-
 	private void Start()
 	{
-		// Camera.main is slow so cache it.
-		mainCam = Camera.main;
+		SwitchTileset(0);
+	}
+
+	public void SwitchTileset(bool right)
+	{
+		currentSet = currentSet + (right ? 1 : -1);
+
+		if(currentSet >= tiles.Count)
+			currentSet = 0;
+		else if(currentSet < 0)
+			currentSet = tiles.Count - 1;
+
+		SwitchTileset(currentSet);
+	}
+
+	private void SwitchTileset(int index)
+	{
+		// Remove any tiles currently present.
+		// Somehow this iterates through the children...
+		foreach(Transform child in vBox)
+		{
+			Destroy(child.gameObject);
+		}
 
 		// Create a tile selection on the UI for every tile type.
-		foreach(var tile in tiles)
+		foreach(var tile in tiles[currentSet].tiles)
 		{
-			TileSelect sel = Instantiate(tileSelectPrefab);
-			sel.transform.SetParent(vBox);
+			SelectableTile sel = Instantiate(tileSelectPrefab);
+			sel.transform.SetParent(vBox, false);
 
 			sel.SetLinkedItem(tile, this);
 		}
 
-		activeTile = tiles[0];
+		SetActiveTile(tiles[index].tiles[activeInSet]);
+
+		tilesetName.text = tiles[index].name;
 	}
 
 	public void SetActiveTile(TileData tile)
 	{
-		activeTile = tile;
+		TilePlacement.placement.SetActiveTile(tile);
 	}
 
-	private void Update()
+	[System.Serializable]
+	private class Tileset
 	{
-		if (Input.GetMouseButtonDown(0) && activeTile)
-		{
-			Vector3 mousePos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10.0f);
-			Vector3 pos = mainCam.ScreenToWorldPoint(mousePos);
-
-			pos.x = Mathf.Round(pos.x);
-			pos.y = Mathf.Round(pos.y);
-			pos.z = 0.0f;
-
-			if (Physics.Raycast(pos, Vector3.up, 0.25f, mask))
-			{
-				Debug.Log("Already has a tile here.");
-				return;
-			}
-
-			GameObject newTile = Instantiate(activeTile.tilePrefab, pos, Quaternion.identity);
-		}
+		public string name;
+		public List<TileData> tiles;
 	}
 }

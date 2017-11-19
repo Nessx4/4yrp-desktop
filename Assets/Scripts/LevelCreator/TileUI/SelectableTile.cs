@@ -1,5 +1,5 @@
-﻿/*	TileSelect represents one selectable UI element for the sidebar on the
- *	LevelCreator scene.
+﻿/*	Represents a selectable UI element sitting the sidebar on the LevelCreator 
+ *	scene.
  */
 
 using System.Collections;
@@ -9,7 +9,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Image))]
-public class TileSelect : MonoBehaviour
+public class SelectableTile : MonoBehaviour
 {
 	private Image img;
 	private TileData linkedItem;
@@ -31,7 +31,7 @@ public class TileSelect : MonoBehaviour
 
 	public void OnPointerEnter()
 	{
-		Debug.Log("Tooltip: " + linkedItem.name);
+		//Debug.Log("Tooltip: " + linkedItem.name);
 		menu.SetActiveTile(linkedItem);
 	}
 }

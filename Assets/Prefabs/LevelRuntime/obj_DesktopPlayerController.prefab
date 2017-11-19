@@ -23,10 +23,10 @@ GameObject:
   - component: {fileID: 23618919974517028}
   - component: {fileID: 50753745047520046}
   - component: {fileID: 61846317078445246}
-  - component: {fileID: 114545492612211180}
+  - component: {fileID: 114516240679309738}
   m_Layer: 0
   m_Name: obj_DesktopPlayerController
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -66,7 +66,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1510493541408980}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.6138148, y: 2.3874464, z: 0}
+  m_LocalPosition: {x: 18.36, y: 12.87, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4389627794595642}
@@ -82,11 +82,12 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 78f824a751d2f4f1cbbf8bb98b4500e7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -97,6 +98,7 @@ MeshRenderer:
   m_PreserveUVs: 1
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -126,12 +128,12 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 20
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!61 &61846317078445246
 BoxCollider2D:
   m_ObjectHideFlags: 1
@@ -140,7 +142,7 @@ BoxCollider2D:
   m_GameObject: {fileID: 1510493541408980}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 7299f5fb2ce72754b9e0f458fc825809, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -153,11 +155,11 @@ BoxCollider2D:
     adaptiveTilingThreshold: 0
     drawMode: 0
     adaptiveTiling: 0
-  m_AutoTiling: 0
+  m_AutoTiling: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &114545492612211180
+--- !u!114 &114516240679309738
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -165,15 +167,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 1510493541408980}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 95a22ec823cf05747ba3029383bf080e, type: 3}
+  m_Script: {fileID: 11500000, guid: 9f3072433028f0846a2793ce1ed8b92e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  facingRight: 1
-  jump: 1
+  climbSpeed: 10
   maxSpeed: 10
-  moveForce: 365
-  jumpForce: 350
+  moveForce: 350
+  jumpForce: 1400
+  playerGrav: 6
+  playerDrag: 0.1
   groundCheck: {fileID: 4389627794595642}
+  grounded: 1
+  onLadder: 0
   whatsGround:
     serializedVersion: 2
     m_Bits: 256

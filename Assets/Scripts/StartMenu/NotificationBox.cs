@@ -22,7 +22,7 @@ public class NotificationBox : MonoBehaviour
 		for(int i = 0; i < notifications.Length; ++i)
 		{
 			Notification newNotification = Instantiate(notificationPrefab);
-			newNotification.transform.SetParent(notificationArea);
+			newNotification.transform.SetParent(notificationArea, false);
 
 			newNotification.SetText(notifications[i]);
 			newNotification.SetIcon(sprites[i]);
