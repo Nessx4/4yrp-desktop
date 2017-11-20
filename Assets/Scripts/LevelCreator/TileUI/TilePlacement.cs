@@ -43,6 +43,17 @@ public class TilePlacement : MonoBehaviour
 		activeTile = tile;
 	}
 
+	public void DeleteUndoHistory()
+	{
+		undoStack = new Stack<TileOperation>();
+		redoStack = new Stack<TileOperation>();
+	}
+
+	public Transform GetRoot()
+	{
+		return container;
+	}
+
 	private void Update()
 	{
 		if (Input.GetMouseButtonDown(0) && activeTile)
@@ -114,7 +125,7 @@ public class TilePlacement : MonoBehaviour
 			this.tilePrefab = tilePrefab;
 			this.position = position;
 
-			newTile = Instantiate(tilePrefab, position, Quaternion.identity);
+			newTile = Instantiate(tilePrefab, position, Quaternion.identity, placement.GetRoot());
 		}
 
 		public void Undo()
@@ -124,7 +135,7 @@ public class TilePlacement : MonoBehaviour
 
 		public void Redo()
 		{
-			newTile = Instantiate(tilePrefab, position, Quaternion.identity);
+			newTile = Instantiate(tilePrefab, position, Quaternion.identity, placement.GetRoot());
 		}
 	}
 }
