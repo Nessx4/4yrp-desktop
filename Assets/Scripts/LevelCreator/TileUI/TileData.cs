@@ -7,5 +7,5 @@ public class TileData : ScriptableObject
 {
 	public string tileName;
 	public Sprite tileSprite;
-	public GameObject tilePrefab;
+	public Block tilePrefab;
 }

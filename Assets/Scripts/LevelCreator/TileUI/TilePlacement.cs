@@ -57,6 +57,22 @@ public class TilePlacement : MonoBehaviour
 	private void Update()
 	{
 		if (Input.GetMouseButtonDown(0) && activeTile)
+			StartCoroutine(PlaceTiles());
+
+		if(Input.GetMouseButtonDown(1))
+			Undo();
+
+		if(Input.GetMouseButtonDown(2))
+			Redo();
+	}
+
+	private IEnumerator PlaceTiles()
+	{
+		WaitForEndOfFrame wait = new WaitForEndOfFrame();
+
+		List<TilePosition> tilePositions = new List<TilePosition>();
+
+		while(Input.GetMouseButton(0))
 		{
 			if(!EventSystem.current.IsPointerOverGameObject())
 			{
@@ -64,26 +80,42 @@ public class TilePlacement : MonoBehaviour
 					Input.mousePosition.y, 10.0f);
 				Vector3 pos = mainCam.ScreenToWorldPoint(mousePos);
 
-				pos.x = Mathf.Round(pos.x);
-				pos.y = Mathf.Round(pos.y);
-				pos.z = 0.0f;
+				TilePosition tp = new TilePosition(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y));
 
-				if(Physics2D.Raycast(pos, Vector3.up, 0.25f, mask))
+				bool hasPlacedHere = false;
+				foreach(TilePosition tilePosition in tilePositions)
 				{
-					Debug.Log("Already has a tile here");
-					return;
+					if(tilePosition == tp)
+					{
+						hasPlacedHere = true;
+						break;
+					}
 				}
 
-				undoStack.Push(new TileOperation(activeTile.tilePrefab, pos));
-				redoStack.Clear();
+				if(!hasPlacedHere)
+				{
+					pos.x = tp.x;
+					pos.y = tp.y;
+					pos.z = 0.0f;
+
+					tilePositions.Add(tp);
+
+					RaycastHit2D hitObj = Physics2D.Raycast(pos, Vector3.up, 0.25f, mask);
+					Block existingTile = null;
+
+					if(hitObj.transform != null)
+					{
+						Debug.Log("HIT");
+						existingTile = hitObj.transform.GetComponent<Block>();
+					}
+
+					undoStack.Push(new TileOperation(activeTile.tilePrefab, existingTile, pos));
+					redoStack.Clear();
+				}
 			}
+
+			yield return wait;
 		}
-
-		if(Input.GetMouseButtonDown(1))
-			Undo();
-
-		if(Input.GetMouseButtonDown(2))
-			Redo();
 	}
 
 	public void Undo()
@@ -111,31 +143,89 @@ public class TilePlacement : MonoBehaviour
 	[System.Serializable]
 	private struct TileOperation
 	{
-		// The instance created by the operation.
-		public GameObject newTile;
+		// An instance of the added tile.
+		public Block newTileInst;
 
-		// The source instance used by the operation.
-		public GameObject tilePrefab;
+		// The prefab of the added tile.
+		public Block newTilePre;
+
+		// The instance of the replaced tile.
+		public Block oldTileInst;
+
+		// The prefab of the replaced tile.
+		public Block oldTilePre;
 
 		// Transform properties.
 		public Vector3 position;
 
-		public TileOperation(GameObject tilePrefab, Vector3 position)
+		public TileOperation(Block newTilePre, Block oldTileInst, Vector3 position)
 		{
-			this.tilePrefab = tilePrefab;
+			this.newTilePre = newTilePre;
 			this.position = position;
+			this.oldTileInst = oldTileInst;
 
-			newTile = Instantiate(tilePrefab, position, Quaternion.identity, placement.GetRoot());
+			oldTilePre = null;
+
+			if(oldTileInst != null)
+			{
+				oldTilePre = oldTileInst.GetTilePrefab();
+				oldTileInst.gameObject.SetActive(false);
+			}
+
+			newTileInst = Instantiate(newTilePre, position, Quaternion.identity, placement.GetRoot());
+			newTileInst.SetTilePrefab(newTilePre);
 		}
 
 		public void Undo()
 		{
-			Destroy(newTile);
+			newTileInst.gameObject.SetActive(false);
+
+			if(oldTilePre != null)
+				oldTileInst.gameObject.SetActive(true);
 		}
 
 		public void Redo()
 		{
-			newTile = Instantiate(tilePrefab, position, Quaternion.identity, placement.GetRoot());
+			if(oldTileInst != null)
+			{
+				oldTileInst.gameObject.SetActive(false);
+			}
+
+			newTileInst.gameObject.SetActive(true);
+		}
+	}
+
+	private struct TilePosition
+	{
+		public int x;
+		public int y;
+
+		public TilePosition(int x, int y)
+		{
+			this.x = x;
+			this.y = y;
+		}
+
+		public static bool operator== (TilePosition a, TilePosition b)
+		{
+			return (a.x == b.x) && (a.y == b.y);
+		}
+
+		public static bool operator!= (TilePosition a, TilePosition b)
+		{
+			return !(a == b);
+		}
+	}
+
+	private struct TileContents
+	{
+		public TilePosition pos;
+		public Block block;
+
+		public TileContents(TilePosition pos, Block block)
+		{
+			this.pos = pos;
+			this.block = block;
 		}
 	}
 }
