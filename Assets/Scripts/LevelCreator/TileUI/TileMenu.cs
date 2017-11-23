@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(RectTransform))]
 public class TileMenu : MonoBehaviour
 {
 	// All tiles that can be added by the player.
@@ -28,8 +29,17 @@ public class TileMenu : MonoBehaviour
 	[SerializeField]
 	private Transform vBox;
 
+	[SerializeField] 
+	private RectTransform dropDownArrow;
+
+	private bool extended = true;
+
+	private new RectTransform transform;
+
 	private void Start()
 	{
+		transform = GetComponent<RectTransform>();
+
 		SwitchTileset(0);
 	}
 
@@ -66,6 +76,13 @@ public class TileMenu : MonoBehaviour
 		SetActiveTile(tiles[index].tiles[activeInSet]);
 
 		tilesetName.text = tiles[index].name;
+	}
+
+	public void ToggleExtended()
+	{
+		extended = !extended;
+		dropDownArrow.rotation = Quaternion.EulerAngles(0.0f, 0.0f, extended ? -Mathf.PI / 2 : Mathf.PI / 2);
+		transform.offsetMin = new Vector2(transform.offsetMin.x, extended ? 25 : 865);
 	}
 
 	public void SetActiveTile(TileData tile)

@@ -57,23 +57,23 @@ public class TilePlacement : MonoBehaviour
 	private void Update()
 	{
 		if (Input.GetMouseButtonDown(0) && activeTile)
-			StartCoroutine(PlaceTiles());
+			StartCoroutine(PlaceTiles(activeTile.tilePrefab, 0));
 
-		if(Input.GetMouseButtonDown(1))
-			Undo();
+		if (Input.GetMouseButtonDown(1) && activeTile)
+			StartCoroutine(PlaceTiles(null, 1));
 
 		if(Input.GetMouseButtonDown(2))
 			Redo();
 	}
 
-	private IEnumerator PlaceTiles()
+	private IEnumerator PlaceTiles(Block newTilePre, int mouseButton)
 	{
 		WaitForEndOfFrame wait = new WaitForEndOfFrame();
-
 		List<TilePosition> tilePositions = new List<TilePosition>();
 
-		while(Input.GetMouseButton(0))
+		while(Input.GetMouseButton(mouseButton))
 		{
+			// Do not place tiles when mouse is on top of the UI elements.
 			if(!EventSystem.current.IsPointerOverGameObject())
 			{
 				Vector3 mousePos = new Vector3(Input.mousePosition.x, 
@@ -104,13 +104,18 @@ public class TilePlacement : MonoBehaviour
 					Block existingTile = null;
 
 					if(hitObj.transform != null)
-					{
-						Debug.Log("HIT");
 						existingTile = hitObj.transform.GetComponent<Block>();
-					}
 
-					undoStack.Push(new TileOperation(activeTile.tilePrefab, existingTile, pos));
-					redoStack.Clear();
+					// Don't place tiles if the result would be the same.
+					bool sameTile = (existingTile != null && existingTile.GetTilePrefab() == newTilePre);
+					// Don't replace air with air.
+					bool bothAir = (existingTile == null && newTilePre == null);
+
+					if(!sameTile && !bothAir)
+					{
+						undoStack.Push(new TileOperation(newTilePre, existingTile, pos));
+						redoStack.Clear();
+					}
 				}
 			}
 
@@ -158,6 +163,7 @@ public class TilePlacement : MonoBehaviour
 		// Transform properties.
 		public Vector3 position;
 
+		// Create a new block and remove an old one.
 		public TileOperation(Block newTilePre, Block oldTileInst, Vector3 position)
 		{
 			this.newTilePre = newTilePre;
@@ -165,6 +171,7 @@ public class TilePlacement : MonoBehaviour
 			this.oldTileInst = oldTileInst;
 
 			oldTilePre = null;
+			newTileInst = null;
 
 			if(oldTileInst != null)
 			{
@@ -172,29 +179,35 @@ public class TilePlacement : MonoBehaviour
 				oldTileInst.gameObject.SetActive(false);
 			}
 
-			newTileInst = Instantiate(newTilePre, position, Quaternion.identity, placement.GetRoot());
-			newTileInst.SetTilePrefab(newTilePre);
+			if(newTilePre != null)
+			{
+				newTileInst = Instantiate(newTilePre, position, Quaternion.identity, placement.GetRoot());
+				newTileInst.SetTilePrefab(newTilePre);
+			}
 		}
 
+		// Replace the new block with the old one.
 		public void Undo()
 		{
-			newTileInst.gameObject.SetActive(false);
+			if(newTileInst != null)
+				newTileInst.gameObject.SetActive(false);
 
 			if(oldTilePre != null)
 				oldTileInst.gameObject.SetActive(true);
 		}
 
+		// Replace the old block with the new one.
 		public void Redo()
 		{
 			if(oldTileInst != null)
-			{
 				oldTileInst.gameObject.SetActive(false);
-			}
 
-			newTileInst.gameObject.SetActive(true);
+			if(newTileInst != null)
+				newTileInst.gameObject.SetActive(true);
 		}
 	}
 
+	// Denotes an integer position on the tile grid.
 	private struct TilePosition
 	{
 		public int x;
@@ -217,6 +230,7 @@ public class TilePlacement : MonoBehaviour
 		}
 	}
 
+	// Denotes a tile position and the tile held at that position.
 	private struct TileContents
 	{
 		public TilePosition pos;

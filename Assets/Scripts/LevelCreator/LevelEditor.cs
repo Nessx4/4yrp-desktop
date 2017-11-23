@@ -22,13 +22,16 @@ public class LevelEditor : MonoBehaviour
 	[SerializeField]
 	private GameObject semisolid;
 
+	[SerializeField] 
+	private WarningMessage warning;
+
 	public void Save()
 	{
 		string levelName = nameField.GetName().Replace(" ", "_").ToLower();
 
 		if(levelName == "")
 		{
-			Debug.LogError("Invalid filename; please fill in the name field.");
+			warning.SetMessage(true, "Name your level!");
 			return;
 		}
 

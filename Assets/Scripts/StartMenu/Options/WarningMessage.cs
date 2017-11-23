@@ -40,6 +40,12 @@ public class WarningMessage : MonoBehaviour
 		}
 	}
 
+	public void Hide()
+	{
+		img.gameObject.SetActive(false);
+		txt.text = "";
+	}
+
 	private IEnumerator Shake()
 	{
 		WaitForEndOfFrame wait = new WaitForEndOfFrame();
