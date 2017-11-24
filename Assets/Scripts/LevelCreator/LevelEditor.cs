@@ -66,7 +66,7 @@ public class LevelEditor : MonoBehaviour
 
 		if (levelName == "")
 		{
-			Debug.LogError("Invalid filename; please fill in the name field.");
+			warning.SetMessage(true, "Level does not exist!");
 			return;
 		}
 
@@ -94,6 +94,10 @@ public class LevelEditor : MonoBehaviour
 				else
 					Instantiate(semisolid, position, Quaternion.identity, tileRoot);
 			}
+		}
+		else
+		{
+			warning.SetMessage(true, "Level does not exist!");
 		}
 	}
 }
