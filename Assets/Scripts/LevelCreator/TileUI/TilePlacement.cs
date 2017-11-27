@@ -23,6 +23,8 @@ public class TilePlacement : MonoBehaviour
 	private Stack<TileOperation> undoStack;
 	private Stack<TileOperation> redoStack;
 
+	private ToolType activeTool = ToolType.PENCIL;
+
 	private Camera mainCam;
 
 	public static TilePlacement placement;
@@ -56,14 +58,19 @@ public class TilePlacement : MonoBehaviour
 
 	private void Update()
 	{
-		if (Input.GetMouseButtonDown(0) && activeTile)
-			StartCoroutine(PlaceTiles(activeTile.tilePrefab, 0));
+		if (Input.GetMouseButtonDown(0))
+		{
+			Debug.Log(activeTool);
+			if(activeTool == ToolType.PENCIL)
+				StartCoroutine(PlaceTiles(activeTile.tilePrefab, 0));
+			else if(activeTool == ToolType.ERASER)
+				StartCoroutine(PlaceTiles(null, 0));
+		}
+	}
 
-		if (Input.GetMouseButtonDown(1) && activeTile)
-			StartCoroutine(PlaceTiles(null, 1));
-
-		if(Input.GetMouseButtonDown(2))
-			Redo();
+	public void SetTool(ToolType tool)
+	{
+		activeTool = tool;
 	}
 
 	private IEnumerator PlaceTiles(Block newTilePre, int mouseButton)
@@ -242,4 +249,9 @@ public class TilePlacement : MonoBehaviour
 			this.block = block;
 		}
 	}
+}
+
+public enum ToolType
+{
+	PENCIL, ERASER, FILL
 }

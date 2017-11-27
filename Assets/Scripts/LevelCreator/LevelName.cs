@@ -9,6 +9,10 @@ using UnityEngine.UI;
 [RequireComponent(typeof(InputField))]
 public class LevelName : MonoBehaviour 
 {
+	// The maximum number of characters for the name.
+	[SerializeField] 
+	private int charLimit;
+
 	// The level name when this level was loaded.
 	private string levelLoaded;
 
@@ -22,13 +26,14 @@ public class LevelName : MonoBehaviour
 	private void Start()
 	{
 		input = GetComponent<InputField>();
+		input.characterLimit = charLimit;
 	}
 
 	private void Update()
 	{
 		counter.gameObject.SetActive(input.isFocused);
 
-		counter.text = (25 - input.text.Length).ToString();
+		counter.text = (charLimit - input.text.Length).ToString();
 	}
 
 	public void UpdateInput()

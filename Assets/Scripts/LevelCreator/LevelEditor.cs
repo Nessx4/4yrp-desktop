@@ -25,6 +25,13 @@ public class LevelEditor : MonoBehaviour
 	[SerializeField] 
 	private WarningMessage warning;
 
+	public static LevelEditor editor;
+
+	private void Start()
+	{
+		editor = this;
+	}
+
 	public void Save()
 	{
 		string levelName = nameField.GetName().Replace(" ", "_").ToLower();

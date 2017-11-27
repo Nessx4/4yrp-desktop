@@ -82,7 +82,7 @@ public class TileMenu : MonoBehaviour
 	{
 		extended = !extended;
 		dropDownArrow.rotation = Quaternion.EulerAngles(0.0f, 0.0f, extended ? -Mathf.PI / 2 : Mathf.PI / 2);
-		transform.offsetMin = new Vector2(transform.offsetMin.x, extended ? 25 : 865);
+		transform.offsetMin = new Vector2(transform.offsetMin.x, extended ? 25 : 850);
 	}
 
 	public void SetActiveTile(TileData tile)
