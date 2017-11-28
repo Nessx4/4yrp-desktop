@@ -9,9 +9,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d3e05167f473eb34fa18363b6502c6aa, type: 3}
-  m_Name: tl_SolidTile
+  m_Name: tl_UFO
   m_EditorClassIdentifier: 
   tileName: Solid Tile
-  tileSprite: {fileID: 21300000, guid: 135a0013a35ed5548b364a6d9212938c, type: 3}
+  tileSprite: {fileID: 21300000, guid: 9b8d26d3ebeeedf41bb9a6001cc16fe6, type: 3}
   tilePrefab: {fileID: 114352042795515952, guid: f9214c29aab6ee94aaf5968ed8b259c1,
     type: 2}
