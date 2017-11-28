@@ -16,7 +16,9 @@ using System.Globalization;
 public class Prototype : MonoBehaviour
 {
 	[SerializeField]
-	private RobotControllerScript player;
+	private Player player;
+    [SerializeField]
+    private UFO ufo;
 
 	// Network communication.
     private Thread listenThread;
