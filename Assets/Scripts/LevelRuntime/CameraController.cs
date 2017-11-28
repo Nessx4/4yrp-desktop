@@ -5,7 +5,7 @@ public class CameraController : MonoBehaviour
 {
     [SerializeField]
     private GameObject player;
-    private Vector3 offset = new Vector3(0, 0, -10);
+    private Vector3 offset = new Vector3(0, 0, -20);
 
     // Update is called once per frame
     void LateUpdate()

@@ -78,14 +78,14 @@ public class Player : MonoBehaviour
         {
             if (onLadder)
             {
-                rigidBody2D.AddForce(new Vector2(h * moveForce, jumpForce*0.5f));
+                rigidBody2D.AddForce(new Vector2(h * moveForce, jumpForce * 0.5f));
                 onLadder = false;
             }
             else rigidBody2D.AddForce(new Vector2(0f, jumpForce));
 
             canJump = false;
         }
-        
+
         if (verticalMove == true)
         {
 
@@ -132,6 +132,11 @@ public class Player : MonoBehaviour
             //anim.SetBool("OnLadder", false);
         }
 
+
+    }
+
+    public void Jump()
+    {
 
     }
 

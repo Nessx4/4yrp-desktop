@@ -6,8 +6,9 @@ public class UFO : MonoBehaviour {
 
     private Rigidbody2D rigidBody2D;
     public Rigidbody2D bullet;
-    private float ufoSpeed = 1f;
+    private float ufoSpeed = 10f;
     private float bulletSpeed = 5f;
+    public Vector2 direction;
 
     // Use this for initialization
     void Awake () {
@@ -25,12 +26,15 @@ public class UFO : MonoBehaviour {
 
     void FixedUpdate()
     {
-        float x_dir = 1f; //Input.GetAxis("Horizontal");
-        float y_dir = 1f;
-        rigidBody2D.velocity = new Vector2(x_dir * ufoSpeed, y_dir * ufoSpeed);
+        rigidBody2D.velocity = direction * ufoSpeed;
     }
 
-    void Fire()
+    public void Move(Vector2 direction)
+    {
+        this.direction = direction;
+    }
+
+    public void Fire()
     {
         Rigidbody2D bulletClone = (Rigidbody2D)Instantiate(bullet, new Vector3(transform.position.x, transform.position.y - 2), transform.rotation);
         bulletClone.velocity = new Vector2(0f, -3f * bulletSpeed);
