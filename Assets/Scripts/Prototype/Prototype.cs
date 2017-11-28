@@ -11,6 +11,8 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 
+using System.Globalization;
+
 public class Prototype : MonoBehaviour
 {
 	[SerializeField]
@@ -23,7 +25,7 @@ public class Prototype : MonoBehaviour
 
 	private int port = 9000;
 
-	private ConcurrentQueue<Command> commandQueue;
+	private ConcurrentQueue<string> commandQueue;
 
 	// Begin a new thread to start listening on a socket.
     private void Start()
@@ -33,7 +35,7 @@ public class Prototype : MonoBehaviour
 
     private void PreSetup()
     {
-    	commandQueue = new ConcurrentQueue<Command>();
+    	commandQueue = new ConcurrentQueue<string>();
 
         IPAddress[] localIPs = Dns.GetHostAddresses(Dns.GetHostName());
 
@@ -73,19 +75,7 @@ public class Prototype : MonoBehaviour
 				if (!string.IsNullOrEmpty(message))
 				{
 					Debug.Log(message);
-					//message = message.ToLower();
-
-					// Need to work out how to send messages back to the main thread.
-					switch (message)
-					{
-						case "jump":
-						case "Jump":
-							commandQueue.Enqueue(new JumpCommand());
-							break;
-						default:
-							Debug.Log(message);
-							break;
-					}
+					commandQueue.Enqueue(message);
 				}
 			}
 		}
@@ -95,7 +85,7 @@ public class Prototype : MonoBehaviour
 			Debug.LogError(e);
 		}
 
-		commandQueue.Enqueue(new CloseCommand());
+		commandQueue.Enqueue("close");
 	}
 
 	private void Close()
@@ -116,39 +106,33 @@ public class Prototype : MonoBehaviour
 
     private void Update()
     {
-    	Command c;
-    	while(commandQueue.TryDequeue(out c))
+    	string cmd;
+    	while(commandQueue.TryDequeue(out cmd))
     	{
     		//player.Jump();
 
-    		string type = c.GetType().ToString();
-
-    		switch(type)
+    		switch(cmd)
     		{
-    			case "JumpCommand":
+    			case "Jump":
+				case "jump":
     				player.Jump();
     				break;
-    			case "CloseCommand":
+    			case "Close":
+				case "close":
     				Debug.Log("Closing safely, restarting resources.");
     				Close();
-    				PreSetup();
+    				//PreSetup();
     				break;
+				default:
+					string[] floats = cmd.Split(',');
+					float[] actualFloats = new float[floats.Length];
+
+					for (int i = 0; i < floats.Length; ++i)
+						actualFloats[i] = float.Parse(floats[i], CultureInfo.InvariantCulture);
+
+					Debug.Log(actualFloats[0] + ", " + actualFloats[1]);
+					break;
     		}
     	}
     }
-}
-
-class Command
-{
-
-}
-
-class JumpCommand : Command
-{
-
-}
-
-class CloseCommand : Command
-{
-
 }

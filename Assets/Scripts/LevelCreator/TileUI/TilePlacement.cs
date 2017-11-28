@@ -20,8 +20,8 @@ public class TilePlacement : MonoBehaviour
 	private TileData activeTile;
 
 	// The undo/redo system relies on stacks.
-	private Stack<TileOperation> undoStack;
-	private Stack<TileOperation> redoStack;
+	private Stack<List<TileOperation>> undoStack;
+	private Stack<List<TileOperation>> redoStack;
 
 	private ToolType activeTool = ToolType.PENCIL;
 
@@ -36,8 +36,8 @@ public class TilePlacement : MonoBehaviour
 		// Camera.main is slow so cache it.
 		mainCam = Camera.main;
 
-		undoStack = new Stack<TileOperation>();
-		redoStack = new Stack<TileOperation>();
+		undoStack = new Stack<List<TileOperation>>();
+		redoStack = new Stack<List<TileOperation>>();
 	}
 
 	public void SetActiveTile(TileData tile)
@@ -47,8 +47,8 @@ public class TilePlacement : MonoBehaviour
 
 	public void DeleteUndoHistory()
 	{
-		undoStack = new Stack<TileOperation>();
-		redoStack = new Stack<TileOperation>();
+		undoStack = new Stack<List<TileOperation>>();
+		redoStack = new Stack<List<TileOperation>>();
 	}
 
 	public Transform GetRoot()
@@ -60,7 +60,6 @@ public class TilePlacement : MonoBehaviour
 	{
 		if (Input.GetMouseButtonDown(0))
 		{
-			Debug.Log(activeTool);
 			if(activeTool == ToolType.PENCIL)
 				StartCoroutine(PlaceTiles(activeTile.tilePrefab, 0));
 			else if(activeTool == ToolType.ERASER)
@@ -77,6 +76,8 @@ public class TilePlacement : MonoBehaviour
 	{
 		WaitForEndOfFrame wait = new WaitForEndOfFrame();
 		List<TilePosition> tilePositions = new List<TilePosition>();
+
+		List<TileOperation> operations = new List<TileOperation>();
 
 		while(Input.GetMouseButton(mouseButton))
 		{
@@ -95,7 +96,7 @@ public class TilePlacement : MonoBehaviour
 					if(tilePosition == tp)
 					{
 						hasPlacedHere = true;
-						break;
+						continue;
 					}
 				}
 
@@ -119,14 +120,18 @@ public class TilePlacement : MonoBehaviour
 					bool bothAir = (existingTile == null && newTilePre == null);
 
 					if(!sameTile && !bothAir)
-					{
-						undoStack.Push(new TileOperation(newTilePre, existingTile, pos));
-						redoStack.Clear();
-					}
+						operations.Add(new TileOperation(newTilePre, existingTile, pos));
 				}
 			}
 
 			yield return wait;
+		}
+
+		// Add the drawn tiles to the undo history.
+		if (operations.Count > 0)
+		{
+			undoStack.Push(operations);
+			redoStack.Clear();
 		}
 	}
 
@@ -134,10 +139,12 @@ public class TilePlacement : MonoBehaviour
 	{
 		if (undoStack.Count > 0)
 		{
-			TileOperation op = undoStack.Pop();
+			List<TileOperation> ops = undoStack.Pop();
 
-			op.Undo();
-			redoStack.Push(op);
+			foreach(TileOperation op in ops)
+				op.Undo();
+
+			redoStack.Push(ops);
 		}
 	}
 
@@ -145,10 +152,12 @@ public class TilePlacement : MonoBehaviour
 	{
 		if (redoStack.Count > 0)
 		{
-			TileOperation op = redoStack.Pop();
+			List<TileOperation> ops = redoStack.Pop();
 
-			op.Redo();
-			undoStack.Push(op);
+			foreach(TileOperation op in ops)
+				op.Redo();
+
+			undoStack.Push(ops);
 		}
 	}
 
