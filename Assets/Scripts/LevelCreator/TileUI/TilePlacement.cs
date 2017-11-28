@@ -16,6 +16,12 @@ public class TilePlacement : MonoBehaviour
 	[SerializeField]
 	private Transform container;
 
+	[SerializeField]
+	private Transform permanentContainer;
+
+	[SerializeField]
+	private Block startTiles;
+
 	// Currently selected tile.
 	private TileData activeTile;
 
@@ -38,6 +44,35 @@ public class TilePlacement : MonoBehaviour
 
 		undoStack = new Stack<List<TileOperation>>();
 		redoStack = new Stack<List<TileOperation>>();
+
+		// Left-hand side.
+		for(int i = 0; i < 100; ++i)
+		{
+			Block b = Instantiate(startTiles, new Vector3(0.0f, i, 0.0f), Quaternion.identity, permanentContainer);
+			b.SetBlockType(BlockType.PERMANENT);
+
+			b = Instantiate(startTiles, new Vector3(99.0f, i, 0.0f), Quaternion.identity, permanentContainer);
+			b.SetBlockType(BlockType.PERMANENT);
+		}
+
+		// Top side.
+		for (int i = 1; i < 99; ++i)
+		{
+			Block b = Instantiate(startTiles, new Vector3(i, 99.0f, 0.0f), Quaternion.identity, permanentContainer);
+			b.SetBlockType(BlockType.PERMANENT);
+		}
+
+		// Bottom side.
+		for (int i = 1; i < 10; ++i)
+		{
+			Block b = Instantiate(startTiles, new Vector3(i, 0.0f, 0.0f), Quaternion.identity, permanentContainer);
+			b.SetBlockType(BlockType.PERMANENT);
+
+			b = Instantiate(startTiles, new Vector3(99 - i, 0.0f, 0.0f), Quaternion.identity, permanentContainer);
+			b.SetBlockType(BlockType.PERMANENT);
+		}
+
+
 	}
 
 	public void SetActiveTile(TileData tile)
@@ -91,9 +126,10 @@ public class TilePlacement : MonoBehaviour
 				TilePosition tp = new TilePosition(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y));
 
 				bool hasPlacedHere = false;
-				foreach(TilePosition tilePosition in tilePositions)
+
+				foreach (TilePosition tilePosition in tilePositions)
 				{
-					if(tilePosition == tp)
+					if (tilePosition == tp)
 					{
 						hasPlacedHere = true;
 						continue;
@@ -119,7 +155,9 @@ public class TilePlacement : MonoBehaviour
 					// Don't replace air with air.
 					bool bothAir = (existingTile == null && newTilePre == null);
 
-					if(!sameTile && !bothAir)
+					bool permanent = (existingTile != null && existingTile.GetBlockType() == BlockType.PERMANENT);
+
+					if(!sameTile && !bothAir && !permanent)
 						operations.Add(new TileOperation(newTilePre, existingTile, pos));
 				}
 			}

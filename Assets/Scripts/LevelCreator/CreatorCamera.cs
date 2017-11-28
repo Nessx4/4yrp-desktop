@@ -9,8 +9,8 @@ public class CreatorCamera : MonoBehaviour
 	[SerializeField]
 	private Material mat;
 
-	private Vector2 lowerLeft = new Vector2(0, 0);
-	private Vector2 upperRight = new Vector2(100, 100);
+	private Vector2 lowerLeft = new Vector2(0.5f, 0.0f);
+	private Vector2 upperRight = new Vector2(100.5f, 100.5f);
 
 	private Camera cam;
 
@@ -33,8 +33,11 @@ public class CreatorCamera : MonoBehaviour
 		Vector2 pos = transform.position;
 		float camSize = cam.orthographicSize;
 
-		pos.x = Mathf.Clamp(pos.x, lowerLeft.x + camSize, upperRight.x - camSize);
-		pos.y = Mathf.Clamp(pos.y, lowerLeft.y + camSize, upperRight.y - camSize);
+		Vector2 lowerLeft = new Vector2(camSize * cam.aspect - 0.5f, camSize - 0.5f);
+		Vector2 upperRight = new Vector2(99.5f - camSize * cam.aspect, 99.5f - camSize);
+
+		pos.x = Mathf.Clamp(pos.x, lowerLeft.x, upperRight.x);
+		pos.y = Mathf.Clamp(pos.y, lowerLeft.y, upperRight.y);
 
 		transform.position = new Vector3(pos.x, pos.y, -10.0f);
 	}

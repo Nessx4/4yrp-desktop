@@ -7,6 +7,8 @@ public class Block : MonoBehaviour
 {
 	private Block tilePrefab;
 
+	private BlockType type = BlockType.NORMAL;
+
 	public Block GetTilePrefab()
 	{
 		return tilePrefab;
@@ -16,4 +18,19 @@ public class Block : MonoBehaviour
 	{
 		this.tilePrefab = tilePrefab;
 	}
+
+	public BlockType GetBlockType()
+	{
+		return type;
+	}
+
+	public void SetBlockType(BlockType type)
+	{
+		this.type = type;
+	}
+}
+
+public enum BlockType
+{
+	NORMAL, PERMANENT
 }
