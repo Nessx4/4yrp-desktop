@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-public class ToolbarButton : MonoBehaviour 
+public class ToolbarButton : MonoBehaviour
 {
 	public void Undo()
 	{
@@ -33,5 +33,10 @@ public class ToolbarButton : MonoBehaviour
 	public void Eraser()
 	{
 		TilePlacement.placement.SetTool(ToolType.ERASER);
+	}
+
+	public void Menu()
+	{
+		LevelSettings.settings.ToggleVisible();
 	}
 }
