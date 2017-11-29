@@ -22,15 +22,21 @@ public class LevelPreviewBox : MonoBehaviour
 	private Sprite emptyStar;
 
 	[SerializeField]
+	private Sprite halfStar;
+
+	[SerializeField]
 	private Sprite fullStar;
 
 	public void SetParameters(string name, Sprite image, int views, int rating)
 	{
 		levelName.text = name;
-		levelSnapshot.sprite = image;
+		//levelSnapshot.sprite = image;
 		viewCount.text = views.ToString();
 
 		for(int i = 0; i < ratingStars.Length; ++i)
-			ratingStars[i].sprite = (i < rating) ? fullStar : emptyStar;
+		{
+			ratingStars[i].sprite = (i < rating / 2) ? fullStar : 
+				((i < rating / 2 + 1) ? halfStar : emptyStar);
+		}
 	}
 }

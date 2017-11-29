@@ -51,20 +51,19 @@ public class LevelEditor : MonoBehaviour
 		{
 			Debug.LogError("Later, this will need to bring up a prompt asking to overwrite.");
 		}
-		//else
-		//{
+		else
+		{
 			LevelSaveData data = new LevelSaveData("");
+			data.name = nameField.GetName();
 
 			foreach (Transform tile in tileRoot)
 				data.tiles.Add(new TileSaveData(TileType.SOLID, tile.position));
-
-			Debug.Log(data.tiles);
 
 			BinaryFormatter bf = new BinaryFormatter();
 			FileStream file = File.Create(fileName);
 			bf.Serialize(file, data);
 			file.Close();
-		//}
+		}
 	}
 
 	public void Load()
@@ -90,8 +89,6 @@ public class LevelEditor : MonoBehaviour
 			FileStream file = File.Open(fileName, FileMode.Open);
 			LevelSaveData data = (LevelSaveData)bf.Deserialize(file);
 			file.Close();
-
-			Debug.Log(data.tiles);
 
 			foreach(TileSaveData tile in data.tiles)
 			{
