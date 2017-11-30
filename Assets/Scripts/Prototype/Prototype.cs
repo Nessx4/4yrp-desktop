@@ -19,8 +19,10 @@ public class Prototype : MonoBehaviour
 	private Player player;
     [SerializeField]
     private UFO ufo;
+    [SerializeField]
+    private Cursor cursor;
 
-	// Network communication.
+    // Network communication.
     private Thread listenThread;
     private TcpListener listener;
     private Socket soc;
@@ -132,7 +134,8 @@ public class Prototype : MonoBehaviour
 					for (int i = 0; i < floats.Length; ++i)
 						actualFloats[i] = float.Parse(floats[i], CultureInfo.InvariantCulture);
 
-					Debug.Log(actualFloats[0] + ", " + actualFloats[1]);
+                    Debug.Log(actualFloats[0] + ", " + actualFloats[1]);
+                    cursor.Move(actualFloats[0], actualFloats[1]);
 					break;
     		}
     	}

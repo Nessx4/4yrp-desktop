@@ -25,7 +25,7 @@ GameObject:
   - component: {fileID: 61846317078445246}
   - component: {fileID: 114516240679309738}
   m_Layer: 0
-  m_Name: obj_DesktopPlayerController
+  m_Name: obj_DesktopPlayer
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -177,6 +177,7 @@ MonoBehaviour:
   playerGrav: 6
   playerDrag: 0.1
   groundCheck: {fileID: 4389627794595642}
+  startPoint: {fileID: 0}
   grounded: 1
   onLadder: 0
   whatsGround:

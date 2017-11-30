@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class Player : MonoBehaviour
@@ -16,10 +17,12 @@ public class Player : MonoBehaviour
     public float playerGrav = 200f;
     public float playerDrag = 0.985f;
     public Transform groundCheck;
+    public Transform startPoint;
 
     public bool grounded = false;
     public bool onLadder = false;
     private Rigidbody2D rigidBody2D;
+    
     //private Animator anim;
 
     //float groundRadius = 0.2f;
@@ -31,7 +34,7 @@ public class Player : MonoBehaviour
         //anim = GetComponent<Animator>();
         rigidBody2D = GetComponent<Rigidbody2D>();
         rigidBody2D.gravityScale = playerGrav;
-
+        rigidBody2D.position = startPoint.position;
     }
 
     void Update()
@@ -147,5 +150,15 @@ public class Player : MonoBehaviour
         Vector3 theScale = transform.localScale;
         theScale.x *= -1;
         transform.localScale = theScale;
+    }
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.collider.tag == "Enemy")
+        {
+            Destroy(rigidBody2D);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+
     }
 }

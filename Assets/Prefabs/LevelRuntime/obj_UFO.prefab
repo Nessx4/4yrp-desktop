@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 70539391026239478}
   m_Layer: 0
   m_Name: Sphere
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -44,7 +44,7 @@ GameObject:
   - component: {fileID: 114970445802932832}
   m_Layer: 0
   m_Name: obj_UFO
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -177,7 +177,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 4
+  m_Constraints: 6
 --- !u!58 &58675586816888300
 CircleCollider2D:
   m_ObjectHideFlags: 1
@@ -186,7 +186,7 @@ CircleCollider2D:
   m_GameObject: {fileID: 1316628849349422}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 80d29f66adea8e54392dccb04f820efa, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -201,7 +201,7 @@ CapsuleCollider2D:
   m_GameObject: {fileID: 1280343334492740}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 80d29f66adea8e54392dccb04f820efa, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -220,4 +220,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bullet: {fileID: 50094055863225048, guid: 2e9d0b0c813405c4c9c1ebd0ebd85597, type: 2}
-  speed: 10
+  direction: {x: 0, y: 0}
