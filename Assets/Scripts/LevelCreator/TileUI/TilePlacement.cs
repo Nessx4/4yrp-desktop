@@ -300,5 +300,5 @@ public class TilePlacement : MonoBehaviour
 
 public enum ToolType
 {
-	PENCIL, ERASER, FILL
+	PENCIL, ERASER, GRAB, FILL, RECT_HOLLOW, RECT_FILL
 }
