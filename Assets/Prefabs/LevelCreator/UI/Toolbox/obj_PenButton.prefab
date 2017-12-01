@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 114928803783092204}
   - component: {fileID: 114791725477406348}
   - component: {fileID: 114213451518527874}
+  - component: {fileID: 114701642650526944}
   m_Layer: 5
   m_Name: obj_PenButton
   m_TagString: Untagged
@@ -59,6 +60,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e44c50c81efa6443eb46b3175b4bb8c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  toolbar: {fileID: 0}
+  tool: 0
+--- !u!114 &114701642650526944
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1799071388762070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1573420865, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 5, y: -5}
+  m_UseGraphicAlpha: 1
 --- !u!114 &114791725477406348
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -110,7 +127,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 114213451518527874}
-        m_MethodName: Pencil
+        m_MethodName: SetTool
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -171,5 +188,5 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -230, y: -50.000122}
-  m_SizeDelta: {x: 75, y: 75}
+  m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
