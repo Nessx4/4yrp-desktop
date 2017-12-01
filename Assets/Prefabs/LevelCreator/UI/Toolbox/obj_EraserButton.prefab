@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 114793780975372890}
   - component: {fileID: 114346440770008452}
   - component: {fileID: 114268147659198536}
+  - component: {fileID: 114179864056824128}
   m_Layer: 5
   m_Name: obj_EraserButton
   m_TagString: Untagged
@@ -48,6 +49,20 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114179864056824128
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1515115806692800}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1573420865, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 5, y: -5}
+  m_UseGraphicAlpha: 1
 --- !u!114 &114268147659198536
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -59,6 +74,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e44c50c81efa6443eb46b3175b4bb8c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  toolbar: {fileID: 0}
+  tool: 1
 --- !u!114 &114346440770008452
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -110,12 +127,12 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 114268147659198536}
-        m_MethodName: Eraser
+        m_MethodName: SetTool
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -162,7 +179,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1515115806692800}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 110.00012, y: -50.000122, z: 0}
+  m_LocalPosition: {x: 109.99963, y: -50.000122, z: 0}
   m_LocalScale: {x: 1.0000015, y: 1.0000015, z: 1.0000015}
   m_Children: []
   m_Father: {fileID: 0}
@@ -170,6 +187,6 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 110.00012, y: -50.000122}
-  m_SizeDelta: {x: 75, y: 75}
+  m_AnchoredPosition: {x: 109.99963, y: -50.000122}
+  m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
