@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class LevelPreviewBox : MonoBehaviour
 {
+	private long timestamp;
+
 	[SerializeField]
 	private Text levelName;
 
@@ -27,7 +29,7 @@ public class LevelPreviewBox : MonoBehaviour
 	[SerializeField]
 	private Sprite fullStar;
 
-	public void SetParameters(string name, Sprite image, int views, int rating)
+	public void SetParameters(string name, Sprite image, int views, int rating, long timestamp)
 	{
 		levelName.text = name;
 		//levelSnapshot.sprite = image;
@@ -38,5 +40,12 @@ public class LevelPreviewBox : MonoBehaviour
 			ratingStars[i].sprite = (i < rating / 2) ? fullStar : 
 				((i < rating / 2 + 1) ? halfStar : emptyStar);
 		}
+
+		this.timestamp = timestamp;
+	}
+
+	public long GetTimestamp()
+	{
+		return timestamp;
 	}
 }

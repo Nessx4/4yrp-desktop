@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 using System.IO;
@@ -53,7 +54,7 @@ public class LevelEditor : MonoBehaviour
 		}
 		else
 		{
-			LevelSaveData data = new LevelSaveData("");
+			LevelSaveData data = new LevelSaveData("", DateTime.Now);
 			data.name = nameField.GetName();
 
 			foreach (Transform tile in tileRoot)
@@ -106,16 +107,19 @@ public class LevelEditor : MonoBehaviour
 	}
 }
 
-[System.Serializable]
+[Serializable]
 public struct LevelSaveData
 {
 	public string name;
 
+	public long timestamp;
+
 	public List<TileSaveData> tiles;
 
-	public LevelSaveData(string name)
+	public LevelSaveData(string name, DateTime timestamp)
 	{
 		this.name = name;
+		this.timestamp = timestamp.Ticks;
 		tiles = new List<TileSaveData>();
 	}
 }
