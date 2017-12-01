@@ -17,7 +17,7 @@ public class Player : MonoBehaviour
     public float playerGrav = 200f;
     public float playerDrag = 0.985f;
     public Transform groundCheck;
-    public Transform startPoint;
+    public Transform savePoint;
 
     public bool grounded = false;
     public bool onLadder = false;
@@ -34,7 +34,7 @@ public class Player : MonoBehaviour
         //anim = GetComponent<Animator>();
         rigidBody2D = GetComponent<Rigidbody2D>();
         rigidBody2D.gravityScale = playerGrav;
-        rigidBody2D.position = startPoint.position;
+        rigidBody2D.position = savePoint.position;
     }
 
     void Update()
@@ -152,12 +152,31 @@ public class Player : MonoBehaviour
         transform.localScale = theScale;
     }
 
+    public void OnTriggerEnter2D(Collider2D collider)
+    {
+        switch (collider.tag)
+        {
+            case "Sweets":
+                Destroy(collider.gameObject);
+                UIController.controller.Score(50);
+                break;
+            case "Savepoint":
+                savePoint = collider.transform.parent;
+                break;
+            default:
+                break;
+        }
+    }
+
     public void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.collider.tag == "Enemy")
+        switch (collision.collider.tag)
         {
-            Destroy(rigidBody2D);
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            case "Enemy":
+                rigidBody2D.position = savePoint.position;
+                break;
+            default:
+                break;
         }
 
     }

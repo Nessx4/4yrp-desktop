@@ -7,12 +7,12 @@ public class Cursor : MonoBehaviour {
     Transform target;
     public Camera cam;
     public float speed = 2.5f;
-	// Use this for initialization
+
 	void Start () {
         target = GetComponent<Transform>();
 	}
 	
-	// Update is called once per frame
+
 	void Update () {
 
         //target.position += Vector3.right * 0.01F;

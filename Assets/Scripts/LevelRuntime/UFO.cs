@@ -10,12 +10,10 @@ public class UFO : MonoBehaviour {
     private float bulletSpeed = 5f;
     public Vector2 direction;
 
-    // Use this for initialization
     void Awake () {
         rigidBody2D = GetComponent<Rigidbody2D>();
     }
 	
-	// Update is called once per frame
 	void Update () {
 
 		if (Input.GetKeyDown(KeyCode.F))

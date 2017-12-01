@@ -25,7 +25,7 @@ GameObject:
   - component: {fileID: 61846317078445246}
   - component: {fileID: 114516240679309738}
   m_Layer: 0
-  m_Name: obj_DesktopPlayer
+  m_Name: obj_DesktopPlayerController
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
