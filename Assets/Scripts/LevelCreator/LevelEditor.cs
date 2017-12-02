@@ -124,8 +124,8 @@ public struct LevelSaveData
 	}
 }
 
-[System.Serializable]
-public struct TileSaveData
+[Serializable]
+public class TileSaveData
 {
 	public TileType type;
 	public float positionX;
@@ -143,5 +143,5 @@ public struct TileSaveData
 
 public enum TileType
 {
-	SOLID, SEMISOLID
+	SOLID, SEMISOLID, UFO
 }

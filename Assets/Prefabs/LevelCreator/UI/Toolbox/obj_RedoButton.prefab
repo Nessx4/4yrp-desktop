@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 114051563202738230}
   - component: {fileID: 114496814301680524}
   - component: {fileID: 114010687245043458}
+  - component: {fileID: 114826498601838090}
   m_Layer: 5
   m_Name: obj_RedoButton
   m_TagString: Untagged
@@ -59,6 +60,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e44c50c81efa6443eb46b3175b4bb8c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  toolbar: {fileID: 0}
+  tool: 0
 --- !u!114 &114051563202738230
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -133,7 +136,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: Shake
+          m_StringArgument: Press
           m_BoolArgument: 1
         m_CallState: 2
       - m_Target: {fileID: 114010687245043458}
@@ -149,6 +152,20 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114826498601838090
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1890560805606062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1573420865, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 5, y: -5}
+  m_UseGraphicAlpha: 1
 --- !u!222 &222159029995167286
 CanvasRenderer:
   m_ObjectHideFlags: 1
@@ -171,5 +188,5 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -85, y: -30}
-  m_SizeDelta: {x: 75, y: 75}
+  m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}

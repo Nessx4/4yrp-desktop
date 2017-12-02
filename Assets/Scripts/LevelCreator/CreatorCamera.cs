@@ -9,6 +9,9 @@ public class CreatorCamera : MonoBehaviour
 	[SerializeField]
 	private Material mat;
 
+	[SerializeField]
+	private float moveSpeed;
+
 	private Vector2 lowerLeft = new Vector2(0.5f, 0.0f);
 	private Vector2 upperRight = new Vector2(100.5f, 100.5f);
 
@@ -22,7 +25,7 @@ public class CreatorCamera : MonoBehaviour
 	private void Update()
 	{
 		Vector2 move = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-		transform.Translate(move * 5.0f * Time.deltaTime);
+		transform.Translate(move * moveSpeed * Time.deltaTime);
 
 		BoundPosition();
 	}

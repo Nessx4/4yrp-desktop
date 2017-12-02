@@ -29,6 +29,11 @@ public class TileMenu : MonoBehaviour
 	[SerializeField]
 	private Transform vBox;
 
+	// The currently selected tile.
+	private SelectableTile activeTile;
+
+	private List<SelectableTile> visibleTiles;
+
 	[SerializeField] 
 	private RectTransform dropDownArrow;
 
@@ -60,20 +65,21 @@ public class TileMenu : MonoBehaviour
 		// Remove any tiles currently present.
 		// Somehow this iterates through the children...
 		foreach(Transform child in vBox)
-		{
 			Destroy(child.gameObject);
-		}
+
+		visibleTiles = new List<SelectableTile>();
 
 		// Create a tile selection on the UI for every tile type.
 		foreach(var tile in tiles[currentSet].tiles)
 		{
 			SelectableTile sel = Instantiate(tileSelectPrefab);
 			sel.transform.SetParent(vBox, false);
+			visibleTiles.Add(sel);
 
 			sel.SetLinkedItem(tile, this);
 		}
 
-		SetActiveTile(tiles[index].tiles[activeInSet]);
+		SetActiveTile(tiles[index].tiles[activeInSet], visibleTiles[0]);
 
 		tilesetName.text = tiles[index].name;
 	}
@@ -81,13 +87,19 @@ public class TileMenu : MonoBehaviour
 	public void ToggleExtended()
 	{
 		extended = !extended;
-		dropDownArrow.rotation = Quaternion.EulerAngles(0.0f, 0.0f, extended ? Mathf.PI / 2 : -Mathf.PI / 2);
+		dropDownArrow.rotation = Quaternion.Euler(0.0f, 0.0f, extended ? 90.0f : -90.0f);
 		transform.offsetMin = new Vector2(transform.offsetMin.x, extended ? 25 : 850);
 	}
 
-	public void SetActiveTile(TileData tile)
+	public void SetActiveTile(TileData data, SelectableTile tile)
 	{
-		TilePlacement.placement.SetActiveTile(tile);
+		TilePlacement.placement.SetActiveTile(data);
+
+		if(activeTile != null)
+			activeTile.Deactivate();
+
+		activeTile = tile;
+		activeTile.Activate();
 	}
 
 	[System.Serializable]

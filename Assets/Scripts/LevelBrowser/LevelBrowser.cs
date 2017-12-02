@@ -18,27 +18,30 @@ public class LevelBrowser : MonoBehaviour
 
 	private void Start()
 	{
-		string[] filenames = Directory.GetFiles(Application.persistentDataPath + "/levels");
-		List<LevelSaveData> levels = new List<LevelSaveData>();
-
-		// Load all level data objects.
-		foreach (string filename in filenames)
+		if(Directory.Exists(Application.persistentDataPath + "/levels"))
 		{
-			BinaryFormatter bf = new BinaryFormatter();
-			FileStream file = File.Open(filename, FileMode.Open);
-			LevelSaveData data = (LevelSaveData)bf.Deserialize(file);
-			file.Close();
+			string[] filenames = Directory.GetFiles(Application.persistentDataPath + "/levels");
+			List<LevelSaveData> levels = new List<LevelSaveData>();
 
-			levels.Add(data);
-		}
+			// Load all level data objects.
+			foreach (string filename in filenames)
+			{
+				BinaryFormatter bf = new BinaryFormatter();
+				FileStream file = File.Open(filename, FileMode.Open);
+				LevelSaveData data = (LevelSaveData)bf.Deserialize(file);
+				file.Close();
 
-		// Sort the list of data backwards, so oldest are last in list.
-		levels.Sort((l1, l2) => l2.timestamp.CompareTo(l1.timestamp));
+				levels.Add(data);
+			}
 
-		foreach(LevelSaveData level in levels)
-		{
-			LevelPreviewBox newBox = Instantiate(box, container);
-			newBox.SetParameters(level.name, null, Random.Range(1, 1000), Random.Range(1, 11), level.timestamp);
+			// Sort the list of data backwards, so oldest are last in list.
+			levels.Sort((l1, l2) => l2.timestamp.CompareTo(l1.timestamp));
+
+			foreach (LevelSaveData level in levels)
+			{
+				LevelPreviewBox newBox = Instantiate(box, container);
+				newBox.SetParameters(level.name, null, Random.Range(1, 1000), Random.Range(1, 11), level.timestamp);
+			}
 		}
 	}
 }

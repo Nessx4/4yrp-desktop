@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 114650755762157982}
   - component: {fileID: 114764796152810750}
   - component: {fileID: 114378293327200750}
+  - component: {fileID: 114280962605041076}
   m_Layer: 5
   m_Name: obj_SaveButton
   m_TagString: Untagged
@@ -48,6 +49,20 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114280962605041076
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1532257676294176}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1573420865, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 5, y: -5}
+  m_UseGraphicAlpha: 1
 --- !u!114 &114378293327200750
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -59,6 +74,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e44c50c81efa6443eb46b3175b4bb8c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  toolbar: {fileID: 0}
+  tool: 0
 --- !u!114 &114650755762157982
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -133,7 +150,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: Shake
+          m_StringArgument: Press
           m_BoolArgument: 1
         m_CallState: 2
       - m_Target: {fileID: 114378293327200750}
@@ -171,5 +188,5 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -269.99988, y: -50.000122}
-  m_SizeDelta: {x: 75, y: 75}
+  m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}

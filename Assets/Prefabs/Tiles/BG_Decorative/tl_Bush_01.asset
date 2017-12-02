@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3e05167f473eb34fa18363b6502c6aa, type: 3}
+  m_Name: tl_Bush_01
+  m_EditorClassIdentifier: 
+  tileName: Bush 1
+  tileSprite: {fileID: 21300000, guid: 45a6efcb2a2a04f4da6ffc67361593db, type: 3}
+  tilePrefab: {fileID: 114599668389572290, guid: 700ccf3a0e3f5d54baf843153730eb32,
+    type: 2}

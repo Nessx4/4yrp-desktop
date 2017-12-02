@@ -45,6 +45,7 @@ public class TilePlacement : MonoBehaviour
 		undoStack = new Stack<List<TileOperation>>();
 		redoStack = new Stack<List<TileOperation>>();
 
+		/*
 		// Left-hand side.
 		for(int i = 0; i < 100; ++i)
 		{
@@ -71,8 +72,7 @@ public class TilePlacement : MonoBehaviour
 			b = Instantiate(startTiles, new Vector3(99 - i, 0.0f, 0.0f), Quaternion.identity, permanentContainer);
 			b.SetBlockType(BlockType.PERMANENT);
 		}
-
-
+		*/
 	}
 
 	public void SetActiveTile(TileData tile)

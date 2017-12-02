@@ -11,6 +11,9 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Image))]
 public class SelectableTile : MonoBehaviour
 {
+	[SerializeField]
+	private Color activeColor;
+
 	private Image img;
 	private TileData linkedItem;
 	private TileMenu menu;
@@ -29,9 +32,18 @@ public class SelectableTile : MonoBehaviour
 		img.sprite = linkedItem.tileSprite;
 	}
 
-	public void OnPointerEnter()
+	public void OnPress()
 	{
-		//Debug.Log("Tooltip: " + linkedItem.name);
-		menu.SetActiveTile(linkedItem);
+		menu.SetActiveTile(linkedItem, this);
+	}
+
+	public void Activate()
+	{
+		img.color = activeColor;
+	}
+
+	public void Deactivate()
+	{
+		img.color = Color.white;
 	}
 }

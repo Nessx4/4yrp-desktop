@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 114736863729992894}
   - component: {fileID: 114922829887548742}
   - component: {fileID: 114307744795218892}
+  - component: {fileID: 114716301964773758}
   m_Layer: 5
   m_Name: obj_UndoButton
   m_TagString: Untagged
@@ -59,6 +60,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e44c50c81efa6443eb46b3175b4bb8c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  toolbar: {fileID: 0}
+  tool: 0
+--- !u!114 &114716301964773758
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1480154562433310}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1573420865, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 5, y: -5}
+  m_UseGraphicAlpha: 1
 --- !u!114 &114736863729992894
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -133,7 +150,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: Shake
+          m_StringArgument: Press
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 114307744795218892}
@@ -171,5 +188,5 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: -15}
-  m_SizeDelta: {x: 75, y: 75}
+  m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
