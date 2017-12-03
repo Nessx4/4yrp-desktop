@@ -24,7 +24,16 @@ public class TilePlacement : MonoBehaviour
 	private ToolbarButton undoButton;
 
 	[SerializeField]
-	private ToolbarButton redoButton; 
+	private ToolbarButton redoButton;
+
+	[SerializeField]
+	private ToolbarButton fillButton;
+
+	[SerializeField]
+	private ToolbarButton rectFilledButton;
+
+	[SerializeField]
+	private ToolbarButton rectHollowButton;
 
 	// Currently selected tile.
 	private TileData activeTile;
@@ -57,6 +66,19 @@ public class TilePlacement : MonoBehaviour
 	public void SetActiveTile(TileData tile)
 	{
 		activeTile = tile;
+
+		if(tile.IsUnitSize())
+		{
+			fillButton.Show();
+			rectFilledButton.Show();
+			rectHollowButton.Show();
+		}
+		else
+		{
+			fillButton.Hide();
+			rectFilledButton.Hide();
+			rectHollowButton.Hide();
+		}
 	}
 
 	public void DeleteUndoHistory()

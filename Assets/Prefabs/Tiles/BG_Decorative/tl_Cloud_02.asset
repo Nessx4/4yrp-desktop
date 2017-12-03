@@ -15,3 +15,5 @@ MonoBehaviour:
   tileSprite: {fileID: 21300000, guid: a77aad45bdb31dd4baf24b4d3ad49e38, type: 3}
   tilePrefab: {fileID: 114263591744150912, guid: 495992c7fda6a59478207314c57a0d54,
     type: 2}
+  sizeX: 6
+  sizeY: 4

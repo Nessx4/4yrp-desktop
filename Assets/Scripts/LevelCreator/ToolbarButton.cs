@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Image))]
+[RequireComponent(typeof(Animator))]
 public class ToolbarButton : MonoBehaviour
 {
 	[SerializeField]
@@ -19,11 +20,15 @@ public class ToolbarButton : MonoBehaviour
 	[SerializeField]
 	private Color hideColor;
 
+	private bool isShown = true;
+
 	private Image image;
+	private Animator anim;
 
 	private void Start()
 	{
 		image = GetComponent<Image>();
+		anim = GetComponent<Animator>();
 	}
 
 	public void SetColor(Color newColor)
@@ -48,7 +53,8 @@ public class ToolbarButton : MonoBehaviour
 
 	public void SetTool()
 	{
-		toolbar.SetTool(this);
+		if(isShown)
+			toolbar.SetTool(this);
 	}
 
 	public void Clear()
@@ -66,13 +72,20 @@ public class ToolbarButton : MonoBehaviour
 		return tool;
 	}
 
+	public void Press()
+	{
+		anim.SetTrigger(isShown ? "Press" : "Shake");
+	}
+
 	public void Show()
 	{
 		image.color = showColor;
+		isShown = true;
 	}
 
 	public void Hide()
 	{
 		image.color = hideColor;
+		isShown = false;
 	}
 }

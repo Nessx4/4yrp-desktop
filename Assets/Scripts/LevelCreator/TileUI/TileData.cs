@@ -8,4 +8,11 @@ public class TileData : ScriptableObject
 	public string tileName;
 	public Sprite tileSprite;
 	public Block tilePrefab;
+	public int sizeX;
+	public int sizeY;
+
+	public bool IsUnitSize()
+	{
+		return sizeX == 1 && sizeY == 1;
+	}
 }

@@ -93,7 +93,7 @@ GameObject:
   - component: {fileID: 114252944649443650}
   - component: {fileID: 114551341892668764}
   m_Layer: 5
-  m_Name: obj_TileSelectArea
+  m_Name: obj_TilePalette
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

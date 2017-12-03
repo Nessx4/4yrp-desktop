@@ -33,7 +33,7 @@ public class LevelPreviewBox : MonoBehaviour
 	public void SetParameters(string name, Sprite image, int views, int rating, long timestamp)
 	{
 		levelName.text = name;
-		//levelSnapshot.sprite = image;
+		levelSnapshot.sprite = image;
 		viewCount.text = views.ToString();
 
 		for(int i = 0; i < ratingStars.Length; ++i)

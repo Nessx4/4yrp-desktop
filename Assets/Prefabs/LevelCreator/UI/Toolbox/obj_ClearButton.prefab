@@ -90,9 +90,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 95793614365171090}
-        m_MethodName: SetTrigger
-        m_Mode: 5
+      - m_Target: {fileID: 114998890551463892}
+        m_MethodName: Press
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

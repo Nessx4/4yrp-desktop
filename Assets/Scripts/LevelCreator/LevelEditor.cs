@@ -7,6 +7,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 using UnityEngine;
 
+[RequireComponent(typeof(Camera))]
 public class LevelEditor : MonoBehaviour 
 {
 	// The user-input name of the level.
@@ -30,13 +31,21 @@ public class LevelEditor : MonoBehaviour
 	[SerializeField] 
 	private WarningMessage warning;
 
+	[SerializeField]
+	private Camera mainCamera;
+
+	private Camera previewCamera;
+
 	public static LevelEditor editor;
 
 	private void Start()
 	{
 		editor = this;
 
-		if(LevelLoader.loader != null)
+		previewCamera = GetComponent<Camera>();
+		previewCamera.enabled = false;
+
+		if (LevelLoader.loader != null)
 			Load(LevelLoader.loader.GetLevel());
 	}
 
@@ -61,7 +70,7 @@ public class LevelEditor : MonoBehaviour
 		}
 		else
 		{
-			LevelSaveData data = new LevelSaveData("", DateTime.Now);
+			LevelSaveData data = new LevelSaveData(nameField.GetName(), TakeScreenshot(), DateTime.Now);
 			data.name = nameField.GetName();
 
 			foreach (Block block in TilePlacement.placement.GetBlocks())
@@ -75,6 +84,37 @@ public class LevelEditor : MonoBehaviour
 			bf.Serialize(file, data);
 			file.Close();
 		}
+	}
+
+	private byte[] TakeScreenshot()
+	{
+		RenderTexture activeTexture = RenderTexture.active;
+		RenderTexture tempTexture = new RenderTexture(800, 200, 24);
+		//previewCamera.enabled = true;
+		previewCamera.targetTexture = tempTexture;
+		previewCamera.orthographicSize = 2.5f * mainCamera.aspect;
+		previewCamera.aspect = 4.0f;
+
+		// Move the preview camera where it needs to be.
+		transform.position = mainCamera.transform.position + new Vector3(0.0f,
+			previewCamera.orthographicSize - mainCamera.orthographicSize, 0.0f);
+
+		RenderTexture.active = previewCamera.targetTexture;
+		previewCamera.Render();
+
+		Texture2D previewImage = new Texture2D(tempTexture.width, tempTexture.height, 
+			TextureFormat.RGB24, false);
+
+		previewImage.ReadPixels(new Rect(0, 0, tempTexture.width, tempTexture.height), 
+			0, 0);
+		previewImage.Apply();
+
+		RenderTexture.active = activeTexture;
+		previewCamera.targetTexture = null;
+		Destroy(tempTexture);
+
+		byte[] bytes = previewImage.EncodeToPNG();
+		return bytes;
 	}
 
 	public void Load(string levelName)
@@ -143,13 +183,16 @@ public struct LevelSaveData
 {
 	public string name;
 
+	public byte[] previewImage;
+
 	public long timestamp;
 
 	public List<TileSaveData> tiles;
 
-	public LevelSaveData(string name, DateTime timestamp)
+	public LevelSaveData(string name, byte[] previewImage, DateTime timestamp)
 	{
 		this.name = name;
+		this.previewImage = previewImage;
 		this.timestamp = timestamp.Ticks;
 		tiles = new List<TileSaveData>();
 	}

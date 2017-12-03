@@ -78,6 +78,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   toolbar: {fileID: 0}
   tool: 0
+  showColor: {r: 0, g: 0, b: 0, a: 0}
+  hideColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!114 &114489784505699090
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -203,9 +205,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 95304969994940536}
-        m_MethodName: SetTrigger
-        m_Mode: 5
+      - m_Target: {fileID: 114378293327200750}
+        m_MethodName: Press
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

@@ -37,10 +37,16 @@ public class LevelBrowser : MonoBehaviour
 			// Sort the list of data backwards, so oldest are last in list.
 			levels.Sort((l1, l2) => l2.timestamp.CompareTo(l1.timestamp));
 
+			// Create an entry in the browser list for each level.
 			foreach (LevelSaveData level in levels)
 			{
 				LevelPreviewBox newBox = Instantiate(box, container);
-				newBox.SetParameters(level.name, null, Random.Range(1, 1000), Random.Range(1, 11), level.timestamp);
+
+				Texture2D preview = new Texture2D(800, 200, TextureFormat.RGB24, false);
+				preview.LoadImage(level.previewImage);
+				
+				Sprite previewSprite = Sprite.Create(preview, new Rect(0.0f, 0.0f, preview.width, preview.height), new Vector2(0.5f, 0.5f), 100.0f);
+				newBox.SetParameters(level.name, previewSprite, Random.Range(1, 1000), Random.Range(1, 11), level.timestamp);
 			}
 		}
 	}
