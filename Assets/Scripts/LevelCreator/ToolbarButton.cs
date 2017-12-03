@@ -45,6 +45,11 @@ public class ToolbarButton : MonoBehaviour
 		toolbar.SetTool(this);
 	}
 
+	public void Clear()
+	{
+		TilePlacement.placement.Clear();
+	}
+
 	public void Menu()
 	{
 		LevelSettings.settings.ToggleVisible();

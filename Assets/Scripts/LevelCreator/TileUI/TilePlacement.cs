@@ -14,10 +14,8 @@ public class TilePlacement : MonoBehaviour
 	private LayerMask mask;
 
 	[SerializeField]
-	private Transform container;
-
-	[SerializeField]
-	private Transform permanentContainer;
+	private Transform tileRoot;
+	private List<Block> blocks;
 
 	[SerializeField]
 	private Block startTiles;
@@ -44,6 +42,8 @@ public class TilePlacement : MonoBehaviour
 
 		undoStack = new Stack<List<TileOperation>>();
 		redoStack = new Stack<List<TileOperation>>();
+
+		blocks = new List<Block>();
 
 		/*
 		// Left-hand side.
@@ -88,7 +88,7 @@ public class TilePlacement : MonoBehaviour
 
 	public Transform GetRoot()
 	{
-		return container;
+		return tileRoot;
 	}
 
 	private void Update()
@@ -173,6 +173,11 @@ public class TilePlacement : MonoBehaviour
 		}
 	}
 
+	public void AddBlock(Block block)
+	{
+		blocks.Add(block);
+	}
+
 	public void Undo()
 	{
 		if (undoStack.Count > 0)
@@ -197,6 +202,17 @@ public class TilePlacement : MonoBehaviour
 
 			undoStack.Push(ops);
 		}
+	}
+
+	public void Clear()
+	{
+		List<TileOperation> operations = new List<TileOperation>();
+
+		foreach (Block block in blocks)
+			operations.Add(new TileOperation(null, block, block.transform.position));
+
+		undoStack.Push(operations);
+		redoStack.Clear();
 	}
 
 	[System.Serializable]
@@ -237,6 +253,7 @@ public class TilePlacement : MonoBehaviour
 			{
 				newTileInst = Instantiate(newTilePre, position, Quaternion.identity, placement.GetRoot());
 				newTileInst.SetTilePrefab(newTilePre);
+				placement.AddBlock(newTileInst);
 			}
 		}
 
