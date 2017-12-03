@@ -164,6 +164,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   toolbar: {fileID: 0}
   tool: 4
+  showColor: {r: 1, g: 1, b: 1, a: 1}
+  hideColor: {r: 0.24705882, g: 0.24705882, b: 0.24705882, a: 1}
 --- !u!114 &114998079816220504
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -20,6 +20,12 @@ public class TilePlacement : MonoBehaviour
 	[SerializeField]
 	private Block startTiles;
 
+	[SerializeField]
+	private ToolbarButton undoButton;
+
+	[SerializeField]
+	private ToolbarButton redoButton; 
+
 	// Currently selected tile.
 	private TileData activeTile;
 
@@ -45,34 +51,7 @@ public class TilePlacement : MonoBehaviour
 
 		blocks = new List<Block>();
 
-		/*
-		// Left-hand side.
-		for(int i = 0; i < 100; ++i)
-		{
-			Block b = Instantiate(startTiles, new Vector3(0.0f, i, 0.0f), Quaternion.identity, permanentContainer);
-			b.SetBlockType(BlockType.PERMANENT);
-
-			b = Instantiate(startTiles, new Vector3(99.0f, i, 0.0f), Quaternion.identity, permanentContainer);
-			b.SetBlockType(BlockType.PERMANENT);
-		}
-
-		// Top side.
-		for (int i = 1; i < 99; ++i)
-		{
-			Block b = Instantiate(startTiles, new Vector3(i, 99.0f, 0.0f), Quaternion.identity, permanentContainer);
-			b.SetBlockType(BlockType.PERMANENT);
-		}
-
-		// Bottom side.
-		for (int i = 1; i < 10; ++i)
-		{
-			Block b = Instantiate(startTiles, new Vector3(i, 0.0f, 0.0f), Quaternion.identity, permanentContainer);
-			b.SetBlockType(BlockType.PERMANENT);
-
-			b = Instantiate(startTiles, new Vector3(99 - i, 0.0f, 0.0f), Quaternion.identity, permanentContainer);
-			b.SetBlockType(BlockType.PERMANENT);
-		}
-		*/
+		CheckUndoRedo();
 	}
 
 	public void SetActiveTile(TileData tile)
@@ -102,11 +81,14 @@ public class TilePlacement : MonoBehaviour
 		}
 	}
 
+	// Change the active tool.
 	public void SetTool(ToolType tool)
 	{
 		activeTool = tool;
 	}
 
+	// While still holding down the placement button, continually place or
+	// remove tiles.
 	private IEnumerator PlaceTiles(Block newTilePre, int mouseButton)
 	{
 		WaitForEndOfFrame wait = new WaitForEndOfFrame();
@@ -168,19 +150,24 @@ public class TilePlacement : MonoBehaviour
 		{
 			undoStack.Push(operations);
 			redoStack.Clear();
+
+			CheckUndoRedo();
 		}
 	}
 
+	// Add a Block to the list of blocks being tracked.
 	public void AddBlock(Block block)
 	{
 		blocks.Add(block);
 	}
 
+	// Get the whole list of Block objects in the level.
 	public List<Block> GetBlocks()
 	{
 		return blocks;
 	}
 
+	// Revert the state of the level back to before an operation.
 	public void Undo()
 	{
 		if (undoStack.Count > 0)
@@ -191,9 +178,12 @@ public class TilePlacement : MonoBehaviour
 				op.Undo();
 
 			redoStack.Push(ops);
+
+			CheckUndoRedo();
 		}
 	}
 
+	// Reapply the last change that was undone.
 	public void Redo()
 	{
 		if (redoStack.Count > 0)
@@ -204,7 +194,23 @@ public class TilePlacement : MonoBehaviour
 				op.Redo();
 
 			undoStack.Push(ops);
+
+			CheckUndoRedo();
 		}
+	}
+
+	// Check if the Undo and Redo buttons need to be greyed out.
+	public void CheckUndoRedo()
+	{
+		if (undoStack.Count > 0)
+			undoButton.Show();
+		else
+			undoButton.Hide();
+
+		if (redoStack.Count > 0)
+			redoButton.Show();
+		else
+			redoButton.Hide();
 	}
 
 	public void Clear()
@@ -216,6 +222,8 @@ public class TilePlacement : MonoBehaviour
 
 		undoStack.Push(operations);
 		redoStack.Clear();
+
+		CheckUndoRedo();
 	}
 
 	[System.Serializable]

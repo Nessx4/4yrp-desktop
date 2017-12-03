@@ -227,6 +227,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   toolbar: {fileID: 0}
   tool: 3
+  showColor: {r: 1, g: 1, b: 1, a: 1}
+  hideColor: {r: 0.24705882, g: 0.24705882, b: 0.24705882, a: 1}
 --- !u!222 &222455020105889680
 CanvasRenderer:
   m_ObjectHideFlags: 1

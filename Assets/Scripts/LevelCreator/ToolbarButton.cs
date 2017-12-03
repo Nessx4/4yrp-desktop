@@ -13,6 +13,12 @@ public class ToolbarButton : MonoBehaviour
 	[SerializeField]
 	private ToolType tool;
 
+	[SerializeField]
+	private Color showColor;
+
+	[SerializeField]
+	private Color hideColor;
+
 	private Image image;
 
 	private void Start()
@@ -58,5 +64,15 @@ public class ToolbarButton : MonoBehaviour
 	public ToolType GetTool()
 	{
 		return tool;
+	}
+
+	public void Show()
+	{
+		image.color = showColor;
+	}
+
+	public void Hide()
+	{
+		image.color = hideColor;
 	}
 }

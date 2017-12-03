@@ -13,6 +13,10 @@ public class LevelEditor : MonoBehaviour
 	[SerializeField] 
 	private LevelName nameField;
 
+	// Ask the user if they want to overwrite an existing level.
+	[SerializeField]
+	private OverwriteDialog overwriteDialog;
+
 	// The root Transform all placed tiles are parented to.
 	[SerializeField]
 	private Transform tileRoot;
@@ -53,9 +57,9 @@ public class LevelEditor : MonoBehaviour
 
 		if(!overwrite && File.Exists(fileName))
 		{
-			Debug.LogError("Later, this will need to bring up a prompt asking to overwrite.");
+			overwriteDialog.gameObject.SetActive(true);
 		}
-		//else
+		else
 		{
 			LevelSaveData data = new LevelSaveData("", DateTime.Now);
 			data.name = nameField.GetName();
