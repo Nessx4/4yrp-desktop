@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(BrowserButton))]
 public class LevelPreviewBox : MonoBehaviour
 {
 	private long timestamp;
@@ -42,6 +43,8 @@ public class LevelPreviewBox : MonoBehaviour
 		}
 
 		this.timestamp = timestamp;
+
+		GetComponent<BrowserButton>().SetLevel(name.Replace(" ", "_").ToLower());
 	}
 
 	public long GetTimestamp()

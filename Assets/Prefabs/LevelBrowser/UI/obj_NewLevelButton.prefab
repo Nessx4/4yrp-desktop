@@ -58,6 +58,7 @@ GameObject:
   - component: {fileID: 114028413758540398}
   - component: {fileID: 222835110404660304}
   - component: {fileID: 114784538510634608}
+  - component: {fileID: 114071844186795990}
   m_Layer: 5
   m_Name: obj_NewLevelButton
   m_TagString: Untagged
@@ -103,9 +104,31 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 114808817903118794}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 114071844186795990}
+        m_MethodName: NewLevel
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114071844186795990
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1916311536397528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51d205cda2733e54ba22da3a4e8724a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114215686228357214
 MonoBehaviour:
   m_ObjectHideFlags: 1

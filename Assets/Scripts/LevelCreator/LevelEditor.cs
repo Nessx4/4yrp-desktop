@@ -31,6 +31,9 @@ public class LevelEditor : MonoBehaviour
 	private void Start()
 	{
 		editor = this;
+
+		if(LevelLoader.loader != null)
+			Load(LevelLoader.loader.GetLevel());
 	}
 
 	public void Save()
@@ -67,8 +70,9 @@ public class LevelEditor : MonoBehaviour
 		}
 	}
 
-	public void Load()
+	public void Load(string levelName)
 	{
+		/*
 		string levelName = nameField.GetName().Replace(" ", "_").ToLower();
 
 		if (levelName == "")
@@ -76,6 +80,7 @@ public class LevelEditor : MonoBehaviour
 			warning.SetMessage(true, "Level does not exist!");
 			return;
 		}
+		*/
 
 		string fileName = Application.persistentDataPath + "/levels/" + levelName + ".dat";
 

@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Image))]
+[RequireComponent(typeof(TooltipSource))]
 public class SelectableTile : MonoBehaviour
 {
 	[SerializeField]
@@ -21,6 +22,11 @@ public class SelectableTile : MonoBehaviour
 	private void Awake()
 	{
 		img = GetComponent<Image>();
+	}
+
+	private void Start()
+	{
+		GetComponent<TooltipSource>().SetTooltipText(linkedItem.tileName);
 	}
 
 	public void SetLinkedItem(TileData linkedItem, TileMenu menu)

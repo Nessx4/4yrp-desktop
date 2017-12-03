@@ -40,11 +40,6 @@ public class ToolbarButton : MonoBehaviour
 		LevelEditor.editor.Save();
 	}
 
-	public void LoadTEMP()
-	{
-		LevelEditor.editor.Load();
-	}
-
 	public void SetTool()
 	{
 		toolbar.SetTool(this);
