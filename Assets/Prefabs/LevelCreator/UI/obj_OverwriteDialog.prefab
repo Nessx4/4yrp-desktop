@@ -79,7 +79,6 @@ GameObject:
   - component: {fileID: 225910167878249510}
   - component: {fileID: 114514774549780124}
   - component: {fileID: 114868967645474846}
-  - component: {fileID: 114563675172588420}
   - component: {fileID: 114668096330927826}
   m_Layer: 5
   m_Name: obj_OverwriteDialog
@@ -320,17 +319,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114563675172588420
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1655127453514950}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 172652e032cc8ba4db7c05ff1ae5a1fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114583356040973430
 MonoBehaviour:
   m_ObjectHideFlags: 1

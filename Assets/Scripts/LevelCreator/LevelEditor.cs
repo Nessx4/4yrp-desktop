@@ -59,6 +59,8 @@ public class LevelEditor : MonoBehaviour
 			return;
 		}
 
+		long timestamp = DateTime.Now.Ticks;
+
 		string fileName = Application.persistentDataPath + "/levels/" + levelName + ".dat";
 
 		// Ensure the Level save folder exists before trying to save a level.
@@ -67,6 +69,7 @@ public class LevelEditor : MonoBehaviour
 		if(!overwrite && File.Exists(fileName))
 		{
 			overwriteDialog.gameObject.SetActive(true);
+			overwriteDialog.SetLevelName(nameField.GetName());
 		}
 		else
 		{

@@ -35,6 +35,9 @@ public class TilePlacement : MonoBehaviour
 	[SerializeField]
 	private ToolbarButton rectHollowButton;
 
+	// A visible version of the Block you have selected at the mouse position.
+	private Block previewBlock;
+
 	// Currently selected tile.
 	private TileData activeTile;
 
@@ -63,6 +66,18 @@ public class TilePlacement : MonoBehaviour
 		CheckUndoRedo();
 	}
 
+	// Change the active tool.
+	public void SetActiveTool(ToolType tool)
+	{
+		activeTool = tool;
+
+		if (previewBlock != null)
+			Destroy(previewBlock.gameObject);
+
+		if (activeTool == ToolType.PENCIL)
+			previewBlock = Instantiate(activeTile.tilePrefab);
+	}
+
 	public void SetActiveTile(TileData tile)
 	{
 		activeTile = tile;
@@ -79,6 +94,18 @@ public class TilePlacement : MonoBehaviour
 			rectFilledButton.Hide();
 			rectHollowButton.Hide();
 		}
+
+		if (previewBlock != null)
+			Destroy(previewBlock.gameObject);
+
+		if (activeTool == ToolType.PENCIL)
+			CreatePreview();
+	}
+
+	private void CreatePreview()
+	{
+		previewBlock = Instantiate(activeTile.tilePrefab);
+		Destroy(previewBlock.GetComponent<Rigidbody2D>());
 	}
 
 	public void DeleteUndoHistory()
@@ -101,12 +128,19 @@ public class TilePlacement : MonoBehaviour
 			else if(activeTool == ToolType.ERASER)
 				StartCoroutine(PlaceTiles(null, 0));
 		}
-	}
 
-	// Change the active tool.
-	public void SetTool(ToolType tool)
-	{
-		activeTool = tool;
+		if(previewBlock != null)
+		{
+			Vector3 mousePos = new Vector3(Input.mousePosition.x, 
+				Input.mousePosition.y, 10.0f);
+			Vector3 pos = mainCam.ScreenToWorldPoint(mousePos);
+
+			pos.x = Mathf.RoundToInt(pos.x);
+			pos.y = Mathf.RoundToInt(pos.y);
+			pos.z = -5.0f;
+
+			previewBlock.transform.position = pos;
+		}
 	}
 
 	// While still holding down the placement button, continually place or
