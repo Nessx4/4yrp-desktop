@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 50956372219248262}
   - component: {fileID: 61214720456294090}
   - component: {fileID: 212637802670199922}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: obj_Bush_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39,7 +39,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4682241472929714}
   - component: {fileID: 212263239886833256}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Bush02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -129,6 +129,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b37a9a3c3db940af97dc92dbba7aba9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tileType: 4
 --- !u!212 &212263239886833256
 SpriteRenderer:
   m_ObjectHideFlags: 1

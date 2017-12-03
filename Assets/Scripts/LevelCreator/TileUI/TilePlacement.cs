@@ -155,9 +155,7 @@ public class TilePlacement : MonoBehaviour
 					// Don't replace air with air.
 					bool bothAir = (existingTile == null && newTilePre == null);
 
-					bool permanent = (existingTile != null && existingTile.GetBlockType() == BlockType.PERMANENT);
-
-					if(!sameTile && !bothAir && !permanent)
+					if(!sameTile && !bothAir)
 						operations.Add(new TileOperation(newTilePre, existingTile, pos));
 				}
 			}
@@ -176,6 +174,11 @@ public class TilePlacement : MonoBehaviour
 	public void AddBlock(Block block)
 	{
 		blocks.Add(block);
+	}
+
+	public List<Block> GetBlocks()
+	{
+		return blocks;
 	}
 
 	public void Undo()

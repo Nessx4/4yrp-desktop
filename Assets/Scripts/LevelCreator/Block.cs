@@ -7,7 +7,8 @@ public class Block : MonoBehaviour
 {
 	private Block tilePrefab;
 
-	private BlockType type = BlockType.NORMAL;
+	[SerializeField]
+	private TileType tileType;
 
 	public Block GetTilePrefab()
 	{
@@ -19,18 +20,8 @@ public class Block : MonoBehaviour
 		this.tilePrefab = tilePrefab;
 	}
 
-	public BlockType GetBlockType()
+	public TileType GetTileType()
 	{
-		return type;
+		return tileType;
 	}
-
-	public void SetBlockType(BlockType type)
-	{
-		this.type = type;
-	}
-}
-
-public enum BlockType
-{
-	NORMAL, PERMANENT
 }

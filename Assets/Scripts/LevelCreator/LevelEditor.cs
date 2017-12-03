@@ -18,10 +18,10 @@ public class LevelEditor : MonoBehaviour
 	private Transform tileRoot;
 
 	[SerializeField]
-	private GameObject solid;
+	private Block solid;
 
 	[SerializeField]
-	private GameObject semisolid;
+	private Block semisolid;
 
 	[SerializeField] 
 	private WarningMessage warning;
@@ -36,7 +36,7 @@ public class LevelEditor : MonoBehaviour
 			Load(LevelLoader.loader.GetLevel());
 	}
 
-	public void Save()
+	public void Save(bool overwrite)
 	{
 		string levelName = nameField.GetName().Replace(" ", "_").ToLower();
 
@@ -51,17 +51,20 @@ public class LevelEditor : MonoBehaviour
 		// Ensure the Level save folder exists before trying to save a level.
 		Directory.CreateDirectory(Application.persistentDataPath + "/levels/");
 
-		if(File.Exists(fileName))
+		if(!overwrite && File.Exists(fileName))
 		{
 			Debug.LogError("Later, this will need to bring up a prompt asking to overwrite.");
 		}
-		else
+		//else
 		{
 			LevelSaveData data = new LevelSaveData("", DateTime.Now);
 			data.name = nameField.GetName();
 
-			foreach (Transform tile in tileRoot)
-				data.tiles.Add(new TileSaveData(TileType.SOLID, tile.position));
+			foreach (Block block in TilePlacement.placement.GetBlocks())
+			{
+				if(block.gameObject.activeSelf)
+					data.tiles.Add(new TileSaveData(block.GetTileType(), block.transform.position));
+			}
 
 			BinaryFormatter bf = new BinaryFormatter();
 			FileStream file = File.Create(fileName);
@@ -72,16 +75,6 @@ public class LevelEditor : MonoBehaviour
 
 	public void Load(string levelName)
 	{
-		/*
-		string levelName = nameField.GetName().Replace(" ", "_").ToLower();
-
-		if (levelName == "")
-		{
-			warning.SetMessage(true, "Level does not exist!");
-			return;
-		}
-		*/
-
 		string fileName = Application.persistentDataPath + "/levels/" + levelName + ".dat";
 
 		if(File.Exists(fileName))
@@ -96,13 +89,42 @@ public class LevelEditor : MonoBehaviour
 			LevelSaveData data = (LevelSaveData)bf.Deserialize(file);
 			file.Close();
 
+			nameField.SetName(data.name);
+
 			foreach(TileSaveData tile in data.tiles)
 			{
 				Vector3 position = new Vector3(tile.positionX, tile.positionY, tile.positionZ);
-				if (tile.type == TileType.SOLID)
-					Instantiate(solid, position, Quaternion.identity, tileRoot);
-				else
-					Instantiate(semisolid, position, Quaternion.identity, tileRoot);
+
+				Block prefab = null;
+
+				switch (tile.type)
+				{
+					case TileType.SOLID:
+						prefab = solid;
+						break;
+					case TileType.SEMISOLID:
+						prefab = semisolid;
+						break;
+					case TileType.UFO:
+						break;
+					case TileType.BUSH01:
+						break;
+					case TileType.BUSH02:
+						break;
+					case TileType.CLOUD01:
+						break;
+					case TileType.CLOUD02:
+						break;
+					case TileType.MOUNTAIN:
+						break;
+				}
+
+				if(prefab != null)
+				{
+					Block newBlock = Instantiate(prefab, position, Quaternion.identity, tileRoot);
+					newBlock.SetTilePrefab(prefab);
+					TilePlacement.placement.AddBlock(newBlock);
+				}
 			}
 		}
 		else
@@ -148,5 +170,5 @@ public class TileSaveData
 
 public enum TileType
 {
-	SOLID, SEMISOLID, UFO
+	SOLID, SEMISOLID, UFO, BUSH01, BUSH02, CLOUD01, CLOUD02, MOUNTAIN
 }

@@ -16,7 +16,9 @@ public class LevelName : MonoBehaviour
 	// The level name when this level was loaded.
 	private string levelLoaded;
 
+	[SerializeField]
 	private InputField input;
+
 	private Regex validate = new Regex("[^a-zA-Z0-9 ]");
 
 	// Counts how many characters you have remaining.
@@ -25,7 +27,6 @@ public class LevelName : MonoBehaviour
 
 	private void Start()
 	{
-		input = GetComponent<InputField>();
 		input.characterLimit = charLimit;
 	}
 
@@ -46,5 +47,10 @@ public class LevelName : MonoBehaviour
 	public string GetName()
 	{
 		return input.text;
+	}
+
+	public void SetName(string name)
+	{
+		input.text = name;
 	}
 }

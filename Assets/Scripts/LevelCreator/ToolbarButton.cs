@@ -37,7 +37,7 @@ public class ToolbarButton : MonoBehaviour
 
 	public void Save()
 	{
-		LevelEditor.editor.Save();
+		LevelEditor.editor.Save(false);
 	}
 
 	public void SetTool()
