@@ -30,6 +30,9 @@ public class Prototype : MonoBehaviour
 
     private static Prototype proto;
 
+    [SerializeField]
+    private List<TileData> tiles;
+
 	// Begin a new thread to start listening on a socket.
     private void Start()
     {
@@ -139,46 +142,48 @@ public class Prototype : MonoBehaviour
                     Debug.Log("redo");
                     break;
                 case "pencil":
-                    Debug.Log("Pencil selected");
+                    TilePlacement.placement.SetActiveToolMobile(ToolType.PENCIL);
+                    TilePlacement.placement.StartMobileDraw();
                     break;
                 case "pencil_end":
-                    Debug.Log("Pencil deselected");
+                    TilePlacement.placement.StopMobileDraw();
                     break;
                 case "eraser":
-                    Debug.Log("Eraser selected");
+                    TilePlacement.placement.SetActiveToolMobile(ToolType.ERASER);
+                    TilePlacement.placement.StartMobileDraw();
                     break;
                 case "eraser_end":
-                    Debug.Log("Eraser deselected");
+                    TilePlacement.placement.StopMobileDraw();
                     break;
                 case "tile 0":
-                    Debug.Log("Tile 0 selected");
+                    TilePlacement.placement.SetActiveTileMobile(tiles[0]);
                     break;
                 case "tile 1":
-                    Debug.Log("Tile 1 selected");
+                    TilePlacement.placement.SetActiveTileMobile(tiles[1]);
                     break;
                 case "tile 2":
-                    Debug.Log("Tile 2 selected");
+                    TilePlacement.placement.SetActiveTileMobile(tiles[2]);
                     break;
                 case "tile 3":
-                    Debug.Log("Tile 3 selected");
+                    TilePlacement.placement.SetActiveTileMobile(tiles[3]);
                     break;
                 case "tile 4":
-                    Debug.Log("Tile 4 selected");
+                    TilePlacement.placement.SetActiveTileMobile(tiles[4]);
                     break;
                 case "tile 5":
-                    Debug.Log("Tile 5 selected");
+                    TilePlacement.placement.SetActiveTileMobile(tiles[5]);
                     break;
                 case "tile 6":
-                    Debug.Log("Tile 6 selected");
+                    TilePlacement.placement.SetActiveTileMobile(tiles[6]);
                     break;
                 case "tile 7":
-                    Debug.Log("Tile 7 selected");
+                    TilePlacement.placement.SetActiveTileMobile(tiles[7]);
                     break;
                 case "tile 8":
-                    Debug.Log("Tile 8 selected");
+                    TilePlacement.placement.SetActiveTileMobile(tiles[8]);
                     break;
                 case "tile 9":
-                    Debug.Log("Tile 9 selected");
+                    TilePlacement.placement.SetActiveTileMobile(tiles[9]);
                     break;
                 default:
 					string[] floats = cmd.Split(',');

@@ -32,6 +32,7 @@ public class PointerController : MonoBehaviour
 
         if (desktopPointer == null)
         {
+            Debug.Log("making new paaasasasaointer");
             desktopPointer = Instantiate(pointerPrefab, pointerRoot.transform);
             desktopPointer.SetPointerType(PointerType.DESKTOP, 0);
         }
@@ -59,4 +60,9 @@ public class PointerController : MonoBehaviour
 	{
 		mobilePointers[id].Move(move);
 	}
+
+    public Vector2 GetPointerPos(int id)
+    {
+        return mobilePointers[id].transform.position;
+    }
 }

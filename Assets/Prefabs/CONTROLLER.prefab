@@ -35,7 +35,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1026644308798560}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.5246325, y: 18.698853, z: 50.632355}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -52,9 +52,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65dddf6b36639774abcc8063dc807bd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  ufo: {fileID: 0}
-  pointer: {fileID: 114886331629859416, guid: 92bfd3423dd182c4996f241ddf2c1c75, type: 2}
+  tiles:
+  - {fileID: 11400000, guid: 9be0b6e66e3094243bda30b93623341e, type: 2}
+  - {fileID: 11400000, guid: 12e8e8e6273982a40a20d12ac5cd2e56, type: 2}
+  - {fileID: 11400000, guid: cbed97abad83e6a4bb045764715d84ec, type: 2}
+  - {fileID: 11400000, guid: 030347654b9890545a0919d6af3e60aa, type: 2}
+  - {fileID: 11400000, guid: 3439da05cb2f00a47afce60a254181a5, type: 2}
+  - {fileID: 11400000, guid: 460830cf8e6a04149af3d9284ee361fb, type: 2}
+  - {fileID: 11400000, guid: 08c8a64a33926f746b825d9548931c92, type: 2}
+  - {fileID: 11400000, guid: d6e5e8d74ab296b45a996eb660da79e7, type: 2}
+  - {fileID: 11400000, guid: 7f453a57062445c45ba4c07b3efcbb8f, type: 2}
 --- !u!114 &114783838135583374
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -38,8 +38,12 @@ public class TilePlacement : MonoBehaviour
 	// A visible version of the Block you have selected at the mouse position.
 	private Block previewBlock;
 
+    private Block previewBlockMob;
+
 	// Currently selected tile.
 	private TileData activeTile;
+
+    private TileData activeTileMob;
 
 	// The undo/redo system relies on stacks.
 	private Stack<List<TileOperation>> undoStack;
@@ -47,7 +51,13 @@ public class TilePlacement : MonoBehaviour
 
 	private ToolType activeTool = ToolType.PENCIL;
 
+    private ToolType activeToolMob = ToolType.PENCIL;
+
 	private Camera mainCam;
+
+    private Coroutine mobileDraw;
+
+    private Vector3 mobilePos;
 
 	public static TilePlacement placement;
 
@@ -102,11 +112,40 @@ public class TilePlacement : MonoBehaviour
 			CreatePreview();
 	}
 
-	private void CreatePreview()
+    // Change the active tool.
+    public void SetActiveToolMobile(ToolType tool)
+    {
+        activeToolMob = tool;
+
+        if (previewBlockMob != null)
+            Destroy(previewBlockMob.gameObject);
+
+        if (activeToolMob == ToolType.PENCIL)
+            previewBlockMob = Instantiate(activeTileMob.tilePrefab);
+    }
+
+    public void SetActiveTileMobile(TileData tile)
+    {
+        activeTileMob = tile;
+
+        if (previewBlockMob != null)
+            Destroy(previewBlock.gameObject);
+
+        if (activeToolMob == ToolType.PENCIL)
+            CreatePreviewMobile();
+    }
+
+    private void CreatePreview()
 	{
 		previewBlock = Instantiate(activeTile.tilePrefab);
 		Destroy(previewBlock.GetComponent<Rigidbody2D>());
 	}
+
+    private void CreatePreviewMobile()
+    {
+        previewBlockMob = Instantiate(activeTileMob.tilePrefab);
+        Destroy(previewBlockMob.GetComponent<Rigidbody2D>());
+    }
 
 	public void DeleteUndoHistory()
 	{
@@ -142,6 +181,23 @@ public class TilePlacement : MonoBehaviour
 			previewBlock.transform.position = pos;
 		}
 	}
+
+    public void StartMobileDraw()
+    {
+        if (mobileDraw != null)
+            StopCoroutine(mobileDraw);
+
+        if (activeToolMob == ToolType.PENCIL)
+            mobileDraw = StartCoroutine(PlaceMobileTiles(activeTileMob.tilePrefab));
+        else if (activeToolMob == ToolType.ERASER)
+            mobileDraw = StartCoroutine(PlaceMobileTiles(null));
+
+    }
+
+    public void StopMobileDraw()
+    {
+        StopCoroutine(mobileDraw);
+    }
 
 	// While still holding down the placement button, continually place or
 	// remove tiles.
@@ -211,8 +267,75 @@ public class TilePlacement : MonoBehaviour
 		}
 	}
 
-	// Add a Block to the list of blocks being tracked.
-	public void AddBlock(Block block)
+    // While still holding down the placement button, continually place or
+    // remove tiles.
+    private IEnumerator PlaceMobileTiles(Block newTilePre)
+    {
+        WaitForEndOfFrame wait = new WaitForEndOfFrame();
+        List<TilePosition> tilePositions = new List<TilePosition>();
+
+        //List<TileOperation> operations = new List<TileOperation>();
+
+        while (true)
+        {
+            // Do not place tiles when mouse is on top of the UI elements.
+            //if (!EventSystem.current.IsPointerOverGameObject())
+            //{
+                //Vector3 mousePos = new Vector3(Input.mousePosition.x,
+                    //Input.mousePosition.y, 10.0f);
+                Vector3 pos = PointerController.control.GetPointerPos(0);
+
+                TilePosition tp = new TilePosition(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y));
+
+                bool hasPlacedHere = false;
+
+                foreach (TilePosition tilePosition in tilePositions)
+                {
+                    if (tilePosition == tp)
+                    {
+                        hasPlacedHere = true;
+                        continue;
+                    }
+                }
+
+                if (!hasPlacedHere)
+                {
+                    pos.x = tp.x;
+                    pos.y = tp.y;
+                    pos.z = 0.0f;
+
+                    tilePositions.Add(tp);
+
+                    RaycastHit2D hitObj = Physics2D.Raycast(pos, Vector3.up, 0.25f, mask);
+                    Block existingTile = null;
+
+                    if (hitObj.transform != null)
+                        existingTile = hitObj.transform.GetComponent<Block>();
+
+                    // Don't place tiles if the result would be the same.
+                    bool sameTile = (existingTile != null && existingTile.GetTilePrefab() == newTilePre);
+                    // Don't replace air with air.
+                    bool bothAir = (existingTile == null && newTilePre == null);
+
+                    if (!sameTile && !bothAir)
+                    {
+                        if(newTilePre != null)
+                            Instantiate(newTilePre, pos, Quaternion.identity, placement.GetRoot());
+
+                        if (existingTile != null)
+                            existingTile.gameObject.SetActive(false);
+                    }
+             
+                }
+            //}
+
+            yield return wait;
+        }
+    }
+
+
+    // Add a Block to the list of blocks being tracked.
+    public void AddBlock(Block block)
 	{
 		blocks.Add(block);
 	}
