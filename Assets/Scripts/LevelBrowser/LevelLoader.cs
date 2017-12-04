@@ -20,12 +20,7 @@ public class LevelLoader : MonoBehaviour
 
 	public string GetLevel()
 	{
-		Invoke("DestroyObj", Time.deltaTime);
+		Destroy(gameObject, Time.deltaTime);
 		return levelName;
-	}
-
-	private void DestroyObj()
-	{
-		Destroy(gameObject);
 	}
 }

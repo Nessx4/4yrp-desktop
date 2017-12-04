@@ -126,10 +126,12 @@ public class LevelEditor : MonoBehaviour
 
 		if(File.Exists(fileName))
 		{
+			/*
 			foreach (Transform tile in tileRoot)
 				Destroy(tile.gameObject);
 
 			TilePlacement.placement.DeleteUndoHistory();
+			*/
 
 			BinaryFormatter bf = new BinaryFormatter();
 			FileStream file = File.Open(fileName, FileMode.Open);
