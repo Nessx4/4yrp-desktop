@@ -135,7 +135,7 @@ public class Prototype : MonoBehaviour
 						actualFloats[i] = float.Parse(floats[i], CultureInfo.InvariantCulture);
 
                     Debug.Log(actualFloats[0] + ", " + actualFloats[1]);
-                    cursor.Move(actualFloats[0], actualFloats[1]);
+                    cursor.Move(new Vector2(actualFloats[0], actualFloats[1]));
 					break;
     		}
     	}
