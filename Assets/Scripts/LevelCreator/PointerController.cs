@@ -22,13 +22,22 @@ public class PointerController : MonoBehaviour
 	private void Start()
 	{
         control = this;
-		pointerRoot = new GameObject("PointerRoot");
-        DontDestroyOnLoad(pointerRoot);
+        if (pointerRoot == null)
+        {
+            Debug.Log("making new pointer");
+            pointerRoot = new GameObject("PointerRoot");
+        }
+        DontDestroyOnLoad(pointerRoot.gameObject);
         mobilePointers = new List<Pointer>();
 
-		desktopPointer = Instantiate(pointerPrefab, pointerRoot.transform);
-		desktopPointer.SetPointerType(PointerType.DESKTOP, 0);
-	}
+        if (desktopPointer == null)
+        {
+            desktopPointer = Instantiate(pointerPrefab, pointerRoot.transform);
+            desktopPointer.SetPointerType(PointerType.DESKTOP, 0);
+        }
+            DontDestroyOnLoad(desktopPointer.gameObject);
+
+        }
 
 	// Move the desktop Pointer to mouse position.
 	private void Update()
