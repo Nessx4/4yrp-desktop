@@ -15,12 +15,9 @@ using System.Globalization;
 
 public class Prototype : MonoBehaviour
 {
-	[SerializeField]
-	private Player player;
-    [SerializeField]
-    private UFO ufo;
-    [SerializeField]
     private Pointer pointer;
+
+    private int mobileID;
 
     // Network communication.
     private Thread listenThread;
@@ -31,10 +28,18 @@ public class Prototype : MonoBehaviour
 
 	private ConcurrentQueue<string> commandQueue;
 
+    private static Prototype proto;
+
 	// Begin a new thread to start listening on a socket.
     private void Start()
     {
-    	PreSetup();
+        if (proto == null)
+        {
+            proto = this;
+            DontDestroyOnLoad(gameObject);
+            PreSetup();
+        }
+        else Destroy(gameObject);
     }
 
     private void PreSetup()
@@ -58,6 +63,8 @@ public class Prototype : MonoBehaviour
 
 		Debug.Log("Awaiting connection on port " + port);
         soc = listener.AcceptSocket();
+
+        commandQueue.Enqueue("new_pointer");
 
 		Debug.Log("Received connection. Will begin to listen for messages");
 		Listen();
@@ -113,21 +120,67 @@ public class Prototype : MonoBehaviour
     	string cmd;
     	while(commandQueue.TryDequeue(out cmd))
     	{
-    		//player.Jump();
 
     		switch(cmd)
     		{
-    			case "Jump":
-				case "jump":
-    				player.Jump();
-    				break;
+                case "new_pointer":
+                    mobileID = PointerController.control.CreateMobilePointer();
+                    break;
     			case "Close":
 				case "close":
     				Debug.Log("Closing safely, restarting resources.");
     				Close();
     				//PreSetup();
     				break;
-				default:
+                case "undo":
+                    Debug.Log("undo");
+                    break;
+                case "redo":
+                    Debug.Log("redo");
+                    break;
+                case "pencil":
+                    Debug.Log("Pencil selected");
+                    break;
+                case "pencil_end":
+                    Debug.Log("Pencil deselected");
+                    break;
+                case "eraser":
+                    Debug.Log("Eraser selected");
+                    break;
+                case "eraser_end":
+                    Debug.Log("Eraser deselected");
+                    break;
+                case "tile 0":
+                    Debug.Log("Tile 0 selected");
+                    break;
+                case "tile 1":
+                    Debug.Log("Tile 1 selected");
+                    break;
+                case "tile 2":
+                    Debug.Log("Tile 2 selected");
+                    break;
+                case "tile 3":
+                    Debug.Log("Tile 3 selected");
+                    break;
+                case "tile 4":
+                    Debug.Log("Tile 4 selected");
+                    break;
+                case "tile 5":
+                    Debug.Log("Tile 5 selected");
+                    break;
+                case "tile 6":
+                    Debug.Log("Tile 6 selected");
+                    break;
+                case "tile 7":
+                    Debug.Log("Tile 7 selected");
+                    break;
+                case "tile 8":
+                    Debug.Log("Tile 8 selected");
+                    break;
+                case "tile 9":
+                    Debug.Log("Tile 9 selected");
+                    break;
+                default:
 					string[] floats = cmd.Split(',');
 					float[] actualFloats = new float[floats.Length];
 
@@ -135,7 +188,7 @@ public class Prototype : MonoBehaviour
 						actualFloats[i] = float.Parse(floats[i], CultureInfo.InvariantCulture);
 
                     Debug.Log(actualFloats[0] + ", " + actualFloats[1]);
-                    pointer.Move(new Vector2(actualFloats[0], actualFloats[1]));
+                    PointerController.control.MovePointer(mobileID, new Vector2(actualFloats[0], actualFloats[1]));
 					break;
     		}
     	}
