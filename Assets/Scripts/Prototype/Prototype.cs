@@ -20,7 +20,7 @@ public class Prototype : MonoBehaviour
     [SerializeField]
     private UFO ufo;
     [SerializeField]
-    private Cursor cursor;
+    private Pointer pointer;
 
     // Network communication.
     private Thread listenThread;
@@ -135,7 +135,7 @@ public class Prototype : MonoBehaviour
 						actualFloats[i] = float.Parse(floats[i], CultureInfo.InvariantCulture);
 
                     Debug.Log(actualFloats[0] + ", " + actualFloats[1]);
-                    cursor.Move(new Vector2(actualFloats[0], actualFloats[1]));
+                    pointer.Move(new Vector2(actualFloats[0], actualFloats[1]));
 					break;
     		}
     	}
