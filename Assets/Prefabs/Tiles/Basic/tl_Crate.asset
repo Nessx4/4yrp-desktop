@@ -9,11 +9,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d3e05167f473eb34fa18363b6502c6aa, type: 3}
-  m_Name: tl_UFO
+  m_Name: tl_Crate
   m_EditorClassIdentifier: 
-  tileName: UFO
-  tileSprite: {fileID: 21300000, guid: 9b8d26d3ebeeedf41bb9a6001cc16fe6, type: 3}
-  tilePrefab: {fileID: 114230580593211786, guid: 240791f1e47671249b144f5f4d483a2a,
+  tileName: Crate
+  tileSprite: {fileID: 21300000, guid: 2e239c232210e4b4a8456064b0b33061, type: 3}
+  tilePrefab: {fileID: 114230580593211786, guid: 273bb5a529fe7c94cbe773b012fefc99,
     type: 2}
   sizeX: 1
   sizeY: 1
