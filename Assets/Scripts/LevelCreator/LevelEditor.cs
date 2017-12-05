@@ -80,6 +80,11 @@ public class LevelEditor : MonoBehaviour
 			Load(LevelLoader.loader.GetLevel());
 	}
 
+	public string GetLevelName()
+	{
+		return nameField.GetName().Replace(" ", "_").ToLower();
+	}
+
 	public void Save(bool overwrite)
 	{
 		string levelName = nameField.GetName().Replace(" ", "_").ToLower();

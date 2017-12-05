@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Image))]
 [RequireComponent(typeof(Animator))]
@@ -19,6 +20,9 @@ public class ToolbarButton : MonoBehaviour
 
 	[SerializeField]
 	private Color hideColor;
+
+	[SerializeField]
+	private LevelLoader loader;
 
 	private bool isShown = true;
 
@@ -65,6 +69,17 @@ public class ToolbarButton : MonoBehaviour
 	public void Menu()
 	{
 		LevelSettings.settings.ToggleVisible();
+	}
+
+	public void Play()
+	{
+		LevelEditor.editor.Save(true);
+
+		LevelLoader loaderObj = Instantiate(loader, null);
+		DontDestroyOnLoad(loaderObj.gameObject);
+		loaderObj.SetLevel(LevelEditor.editor.GetLevelName());
+
+		SceneManager.LoadScene("sc_LevelRuntime");
 	}
 
 	public ToolType GetTool()

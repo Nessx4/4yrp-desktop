@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4144717816669698}
   - component: {fileID: 212010562550585136}
   - component: {fileID: 61673860314299524}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: obj_SolidBlock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -64,7 +64,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.0001, y: 0.0001}
+  m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
 --- !u!212 &212010562550585136
 SpriteRenderer:
