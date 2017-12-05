@@ -196,7 +196,8 @@ public class TilePlacement : MonoBehaviour
 
     public void StopMobileDraw()
     {
-        StopCoroutine(mobileDraw);
+		if(mobileDraw != null)
+			StopCoroutine(mobileDraw);
     }
 
 	// While still holding down the placement button, continually place or

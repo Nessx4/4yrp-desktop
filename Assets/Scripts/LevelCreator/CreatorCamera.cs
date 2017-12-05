@@ -17,8 +17,12 @@ public class CreatorCamera : MonoBehaviour
 
 	private Camera cam;
 
+	public static CreatorCamera creatorCam;
+
 	private void Start()
 	{
+		creatorCam = this;
+
 		cam = GetComponent<Camera>();
 	}
 

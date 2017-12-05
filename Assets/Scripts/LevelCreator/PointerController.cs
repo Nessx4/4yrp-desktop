@@ -71,6 +71,11 @@ public class PointerController : MonoBehaviour
 
     public Vector2 GetPointerPos(int id)
     {
+		if(CreatorCamera.creatorCam != null)
+		{
+			return mobilePointers[id].transform.position - cam.transform.position + CreatorCamera.creatorCam.transform.position;
+		}
+
         return mobilePointers[id].transform.position;
     }
 }
