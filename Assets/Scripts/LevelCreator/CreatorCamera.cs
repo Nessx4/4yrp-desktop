@@ -27,7 +27,7 @@ public class CreatorCamera : MonoBehaviour
 		Vector2 move = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 		transform.Translate(move * moveSpeed * Time.deltaTime);
 
-		//BoundPosition();
+		BoundPosition();
 	}
 
 	// Don't let the camera go too far off the edges of the editable world.

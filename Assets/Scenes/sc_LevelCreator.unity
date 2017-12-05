@@ -1703,7 +1703,7 @@ Prefab:
     - target: {fileID: 224150702233139012, guid: 5201776a100188940878d54ef05b762e,
         type: 2}
       propertyPath: m_AnchoredPosition.x
-      value: 425.00012
+      value: 425.00024
       objectReference: {fileID: 0}
     - target: {fileID: 224150702233139012, guid: 5201776a100188940878d54ef05b762e,
         type: 2}
@@ -3328,7 +3328,7 @@ Prefab:
     - target: {fileID: 224159769980233766, guid: f293c814cc86544e1847366fd2edde60,
         type: 2}
       propertyPath: m_AnchoredPosition.x
-      value: 294.99988
+      value: 295
       objectReference: {fileID: 0}
     - target: {fileID: 224159769980233766, guid: f293c814cc86544e1847366fd2edde60,
         type: 2}
@@ -3428,7 +3428,7 @@ Prefab:
     - target: {fileID: 224522678971587308, guid: 5fb1e5d54ebf44cefb8e0d5efc316d18,
         type: 2}
       propertyPath: m_AnchoredPosition.x
-      value: 404.99988
+      value: 405
       objectReference: {fileID: 0}
     - target: {fileID: 224522678971587308, guid: 5fb1e5d54ebf44cefb8e0d5efc316d18,
         type: 2}
@@ -4030,7 +4030,7 @@ Prefab:
     - target: {fileID: 224608757447754352, guid: a0fde2f4b9af9b64e9469e0ab73fa7c5,
         type: 2}
       propertyPath: m_LocalPosition.x
-      value: 182.38007
+      value: 187.5
       objectReference: {fileID: 0}
     - target: {fileID: 114705958221878574, guid: a0fde2f4b9af9b64e9469e0ab73fa7c5,
         type: 2}
@@ -4771,7 +4771,6 @@ GameObject:
   - component: {fileID: 1935632125}
   - component: {fileID: 1935632122}
   - component: {fileID: 1935632124}
-  - component: {fileID: 1935632126}
   m_Layer: 0
   m_Name: obj_CONTROL
   m_TagString: Untagged
@@ -4831,6 +4830,17 @@ MonoBehaviour:
   solid: {fileID: 114352042795515952, guid: f9214c29aab6ee94aaf5968ed8b259c1, type: 2}
   semisolid: {fileID: 114230580593211786, guid: 7952dbf736643204db57dac0c5d82745,
     type: 2}
+  ufo: {fileID: 114230580593211786, guid: 240791f1e47671249b144f5f4d483a2a, type: 2}
+  bush01: {fileID: 114599668389572290, guid: 700ccf3a0e3f5d54baf843153730eb32, type: 2}
+  bush02: {fileID: 114867621034498822, guid: dd1e9c09e3f82c546aa15295cdc3fc0a, type: 2}
+  cloud01: {fileID: 114894587557329966, guid: 6de80c636ca53c345b5cdda6cf70fd21, type: 2}
+  cloud02: {fileID: 114263591744150912, guid: 495992c7fda6a59478207314c57a0d54, type: 2}
+  mountain: {fileID: 114780448219617286, guid: 514753264b00ea848b972ba743959956, type: 2}
+  crate: {fileID: 114230580593211786, guid: 273bb5a529fe7c94cbe773b012fefc99, type: 2}
+  ladder: {fileID: 114230580593211786, guid: 1d5d2c43182364d41a193d5c4414650b, type: 2}
+  doughnut: {fileID: 114230580593211786, guid: 965aa9d446318fe408f79beb0a995c6b, type: 2}
+  startPoint: {fileID: 114672578876808246, guid: a813229e806e3d843996d9eb31de1ebf,
+    type: 2}
   warning: {fileID: 884454199}
   mainCamera: {fileID: 1854636799}
 --- !u!20 &1935632125
@@ -4868,19 +4878,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!114 &1935632126
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1935632121}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd96b0aea24814aa0ae93400c5a32270, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  pointerPrefab: {fileID: 114886331629859416, guid: 92bfd3423dd182c4996f241ddf2c1c75,
-    type: 2}
 --- !u!114 &1976919253 stripped
 MonoBehaviour:
   m_PrefabParentObject: {fileID: 114213451518527874, guid: ffee1366c0fc14d649cb0393b4e6576a,

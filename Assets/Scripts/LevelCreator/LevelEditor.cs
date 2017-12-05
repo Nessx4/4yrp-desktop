@@ -22,11 +22,42 @@ public class LevelEditor : MonoBehaviour
 	[SerializeField]
 	private Transform tileRoot;
 
+	// All tile prefabs.
 	[SerializeField]
 	private Block solid;
 
 	[SerializeField]
 	private Block semisolid;
+
+	[SerializeField]
+	private Block ufo;
+
+	[SerializeField]
+	private Block bush01;
+
+	[SerializeField]
+	private Block bush02;
+
+	[SerializeField]
+	private Block cloud01;
+
+	[SerializeField]
+	private Block cloud02;
+
+	[SerializeField]
+	private Block mountain;
+
+	[SerializeField]
+	private Block crate;
+
+	[SerializeField]
+	private Block ladder;
+
+	[SerializeField]
+	private Block doughnut;
+
+	[SerializeField]
+	private Block startPoint;
 
 	[SerializeField] 
 	private WarningMessage warning;
@@ -126,13 +157,6 @@ public class LevelEditor : MonoBehaviour
 
 		if(File.Exists(fileName))
 		{
-			/*
-			foreach (Transform tile in tileRoot)
-				Destroy(tile.gameObject);
-
-			TilePlacement.placement.DeleteUndoHistory();
-			*/
-
 			BinaryFormatter bf = new BinaryFormatter();
 			FileStream file = File.Open(fileName, FileMode.Open);
 			LevelSaveData data = (LevelSaveData)bf.Deserialize(file);
@@ -155,16 +179,34 @@ public class LevelEditor : MonoBehaviour
 						prefab = semisolid;
 						break;
 					case TileType.UFO:
+						prefab = ufo;
 						break;
 					case TileType.BUSH01:
+						prefab = bush01;
 						break;
 					case TileType.BUSH02:
+						prefab = bush02;
 						break;
 					case TileType.CLOUD01:
+						prefab = cloud01;
 						break;
 					case TileType.CLOUD02:
+						prefab = cloud02;
 						break;
 					case TileType.MOUNTAIN:
+						prefab = mountain;
+						break;
+					case TileType.CRATE:
+						prefab = crate;
+						break;
+					case TileType.LADDER:
+						prefab = ladder;
+						break;
+					case TileType.DOUGHNUT:
+						prefab = doughnut;
+						break;
+					case TileType.START_POINT:
+						prefab = startPoint;
 						break;
 				}
 

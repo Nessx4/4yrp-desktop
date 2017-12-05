@@ -20,7 +20,6 @@ public class Pointer : MonoBehaviour
 
 	private PointerType type;
 
-	public Camera cam;
     private float speed = 15.0f;
 
 	private new SpriteRenderer renderer;
@@ -28,7 +27,6 @@ public class Pointer : MonoBehaviour
 	private void Start()
 	{
 		renderer = GetComponent<SpriteRenderer>();
-		cam = Camera.main;
 	}
 
 	public void SetPointerType(PointerType type, int id)
@@ -75,12 +73,12 @@ public class Pointer : MonoBehaviour
 		transform.position = new Vector3(pos.x, pos.y, 0.0f);
 	}
 
-	private void LateUpdate()
+	public void BoundPosition(Camera cam)
 	{
-		Vector3 pos = Camera.main.WorldToScreenPoint(transform.position);
-        pos.x = Mathf.Clamp(pos.x, 0, Screen.width);
-        pos.y = Mathf.Clamp(pos.y, 0, Screen.height);
-        transform.position = Camera.main.ScreenToWorldPoint(pos);
+		Vector3 pos = cam.WorldToScreenPoint(transform.position);
+		pos.x = Mathf.Clamp(pos.x, 0, Screen.width);
+		pos.y = Mathf.Clamp(pos.y, 0, Screen.height);
+		transform.position = cam.ScreenToWorldPoint(pos);
 	}
 }
 

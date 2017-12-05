@@ -17,34 +17,42 @@ public class PointerController : MonoBehaviour
 
 	private List<Pointer> mobilePointers;
 
+	private Camera cam;
+
     public static PointerController control;
 
 	private void Start()
 	{
         control = this;
+
+		cam = GetComponent<Camera>();
+
         if (pointerRoot == null)
-        {
-            Debug.Log("making new pointer");
             pointerRoot = new GameObject("PointerRoot");
-        }
+
         DontDestroyOnLoad(pointerRoot.gameObject);
         mobilePointers = new List<Pointer>();
 
         if (desktopPointer == null)
         {
-            Debug.Log("making new paaasasasaointer");
             desktopPointer = Instantiate(pointerPrefab, pointerRoot.transform);
             desktopPointer.SetPointerType(PointerType.DESKTOP, 0);
         }
-            DontDestroyOnLoad(desktopPointer.gameObject);
-
-        }
+    }
 
 	// Move the desktop Pointer to mouse position.
 	private void Update()
 	{
-		Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		Vector3 mousePos = Input.mousePosition;
+		mousePos.z = 10.0f;
+		Vector3 pos = cam.ScreenToWorldPoint(mousePos);
 		desktopPointer.SetPosition(pos);
+	}
+
+	private void LateUpdate()
+	{
+		foreach (Pointer mobilePointer in mobilePointers)
+			mobilePointer.BoundPosition(cam);
 	}
 
 	public int CreateMobilePointer()
