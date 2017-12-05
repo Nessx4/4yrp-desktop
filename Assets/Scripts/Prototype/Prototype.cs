@@ -136,9 +136,11 @@ public class Prototype : MonoBehaviour
     				//PreSetup();
     				break;
                 case "undo":
+					TilePlacement.placement.UndoMobile();
                     Debug.Log("undo");
                     break;
                 case "redo":
+					TilePlacement.placement.RedoMobile();
                     Debug.Log("redo");
                     break;
                 case "pencil":

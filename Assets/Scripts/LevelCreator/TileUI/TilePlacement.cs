@@ -49,6 +49,9 @@ public class TilePlacement : MonoBehaviour
 	private Stack<List<TileOperation>> undoStack;
 	private Stack<List<TileOperation>> redoStack;
 
+	private Stack<List<TileOperation>> undoStackMob;
+	private Stack<List<TileOperation>> redoStackMob;
+
 	private ToolType activeTool = ToolType.PENCIL;
 
     private ToolType activeToolMob = ToolType.PENCIL;
@@ -56,6 +59,7 @@ public class TilePlacement : MonoBehaviour
 	private Camera mainCam;
 
     private Coroutine mobileDraw;
+	private bool stopDrawing = false;
 
     private Vector3 mobilePos;
 
@@ -70,6 +74,9 @@ public class TilePlacement : MonoBehaviour
 
 		undoStack = new Stack<List<TileOperation>>();
 		redoStack = new Stack<List<TileOperation>>();
+
+		undoStackMob = new Stack<List<TileOperation>>();
+		redoStackMob = new Stack<List<TileOperation>>();
 
 		blocks = new List<Block>();
 
@@ -187,6 +194,8 @@ public class TilePlacement : MonoBehaviour
         if (mobileDraw != null)
             StopCoroutine(mobileDraw);
 
+		stopDrawing = false;
+
         if (activeToolMob == ToolType.PENCIL)
             mobileDraw = StartCoroutine(PlaceMobileTiles(activeTileMob.tilePrefab));
         else if (activeToolMob == ToolType.ERASER)
@@ -196,8 +205,7 @@ public class TilePlacement : MonoBehaviour
 
     public void StopMobileDraw()
     {
-		if(mobileDraw != null)
-			StopCoroutine(mobileDraw);
+		stopDrawing = true;
     }
 
 	// While still holding down the placement button, continually place or
@@ -275,9 +283,9 @@ public class TilePlacement : MonoBehaviour
         WaitForEndOfFrame wait = new WaitForEndOfFrame();
         List<TilePosition> tilePositions = new List<TilePosition>();
 
-        //List<TileOperation> operations = new List<TileOperation>();
+        List<TileOperation> operations = new List<TileOperation>();
 
-        while (true)
+        while (!stopDrawing)
         {
             // Do not place tiles when mouse is on top of the UI elements.
             //if (!EventSystem.current.IsPointerOverGameObject())
@@ -321,18 +329,24 @@ public class TilePlacement : MonoBehaviour
                     if (!sameTile && !bothAir)
                     {
                         if(newTilePre != null)
-                            Instantiate(newTilePre, pos, Quaternion.identity, placement.GetRoot());
-
-                        if (existingTile != null)
-                            existingTile.gameObject.SetActive(false);
-                    }
+							operations.Add(new TileOperation(newTilePre, existingTile, pos));
+				}
              
                 }
             //}
 
             yield return wait;
         }
-    }
+
+		// Add the drawn tiles to the undo history.
+		if (operations.Count > 0)
+		{
+			undoStackMob.Push(operations);
+			redoStackMob.Clear();
+
+			CheckUndoRedo();
+		}
+	}
 
 
     // Add a Block to the list of blocks being tracked.
@@ -376,6 +390,34 @@ public class TilePlacement : MonoBehaviour
 			undoStack.Push(ops);
 
 			CheckUndoRedo();
+		}
+	}
+
+	// Revert the state of the level back to before an operation.
+	public void UndoMobile()
+	{
+		if (undoStackMob.Count > 0)
+		{
+			List<TileOperation> ops = undoStackMob.Pop();
+
+			foreach (TileOperation op in ops)
+				op.Undo();
+
+			redoStackMob.Push(ops);
+		}
+	}
+
+	// Reapply the last change that was undone.
+	public void RedoMobile()
+	{
+		if (redoStackMob.Count > 0)
+		{
+			List<TileOperation> ops = redoStackMob.Pop();
+
+			foreach (TileOperation op in ops)
+				op.Redo();
+
+			undoStackMob.Push(ops);
 		}
 	}
 
