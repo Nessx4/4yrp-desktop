@@ -128,7 +128,7 @@ public class TilePlacement : MonoBehaviour
             Destroy(previewBlockMob.gameObject);
 
         if (activeToolMob == ToolType.PENCIL)
-            previewBlockMob = Instantiate(activeTileMob.tilePrefab);
+            CreatePreviewMobile();
     }
 
     public void SetActiveTileMobile(TileData tile)
@@ -136,7 +136,7 @@ public class TilePlacement : MonoBehaviour
         activeTileMob = tile;
 
         if (previewBlockMob != null)
-            Destroy(previewBlock.gameObject);
+            Destroy(previewBlockMob.gameObject);
 
         if (activeToolMob == ToolType.PENCIL)
             CreatePreviewMobile();
@@ -144,12 +144,18 @@ public class TilePlacement : MonoBehaviour
 
     private void CreatePreview()
 	{
-		previewBlock = Instantiate(activeTile.tilePrefab);
+        if (previewBlock != null)
+            Destroy(previewBlock.gameObject);
+
+        previewBlock = Instantiate(activeTile.tilePrefab);
 		Destroy(previewBlock.GetComponent<Rigidbody2D>());
 	}
 
     private void CreatePreviewMobile()
     {
+        if (previewBlockMob != null)
+            Destroy(previewBlockMob.gameObject);
+
         previewBlockMob = Instantiate(activeTileMob.tilePrefab);
         Destroy(previewBlockMob.GetComponent<Rigidbody2D>());
     }
@@ -158,7 +164,10 @@ public class TilePlacement : MonoBehaviour
 	{
 		undoStack = new Stack<List<TileOperation>>();
 		redoStack = new Stack<List<TileOperation>>();
-	}
+
+        undoStackMob = new Stack<List<TileOperation>>();
+        redoStackMob = new Stack<List<TileOperation>>();
+    }
 
 	public Transform GetRoot()
 	{
@@ -187,7 +196,18 @@ public class TilePlacement : MonoBehaviour
 
 			previewBlock.transform.position = pos;
 		}
-	}
+
+        if (previewBlockMob != null)
+        {
+            Vector3 pos = PointerController.control.GetPointerPos(0);
+
+            pos.x = Mathf.RoundToInt(pos.x);
+            pos.y = Mathf.RoundToInt(pos.y);
+            pos.z = -5.0f;
+
+            previewBlockMob.transform.position = pos;
+        }
+    }
 
     public void StartMobileDraw()
     {
@@ -200,7 +220,6 @@ public class TilePlacement : MonoBehaviour
             mobileDraw = StartCoroutine(PlaceMobileTiles(activeTileMob.tilePrefab));
         else if (activeToolMob == ToolType.ERASER)
             mobileDraw = StartCoroutine(PlaceMobileTiles(null));
-
     }
 
     public void StopMobileDraw()

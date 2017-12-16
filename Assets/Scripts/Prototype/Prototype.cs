@@ -123,7 +123,6 @@ public class Prototype : MonoBehaviour
     	string cmd;
     	while(commandQueue.TryDequeue(out cmd))
     	{
-
     		switch(cmd)
     		{
                 case "new_pointer":
@@ -157,35 +156,41 @@ public class Prototype : MonoBehaviour
                 case "eraser_end":
                     TilePlacement.placement.StopMobileDraw();
                     break;
-                case "tile 0":
+                case "basic 0":
                     TilePlacement.placement.SetActiveTileMobile(tiles[0]);
                     break;
-                case "tile 1":
+                case "basic 1":
                     TilePlacement.placement.SetActiveTileMobile(tiles[1]);
                     break;
-                case "tile 2":
+                case "basic 2":
                     TilePlacement.placement.SetActiveTileMobile(tiles[2]);
                     break;
-                case "tile 3":
+                case "basic 3":
                     TilePlacement.placement.SetActiveTileMobile(tiles[3]);
                     break;
-                case "tile 4":
+                case "bg 0":
                     TilePlacement.placement.SetActiveTileMobile(tiles[4]);
                     break;
-                case "tile 5":
+                case "bg 1":
                     TilePlacement.placement.SetActiveTileMobile(tiles[5]);
                     break;
-                case "tile 6":
+                case "bg 2":
                     TilePlacement.placement.SetActiveTileMobile(tiles[6]);
                     break;
-                case "tile 7":
+                case "bg 3":
                     TilePlacement.placement.SetActiveTileMobile(tiles[7]);
                     break;
-                case "tile 8":
+                case "bg 4":
                     TilePlacement.placement.SetActiveTileMobile(tiles[8]);
                     break;
-                case "tile 9":
+                case "tech 0":
                     TilePlacement.placement.SetActiveTileMobile(tiles[9]);
+                    break;
+                case "misc 0":
+                    TilePlacement.placement.SetActiveTileMobile(tiles[10]);
+                    break;
+                case "misc 1":
+                    TilePlacement.placement.SetActiveTileMobile(tiles[11]);
                     break;
                 default:
 					string[] floats = cmd.Split(',');
