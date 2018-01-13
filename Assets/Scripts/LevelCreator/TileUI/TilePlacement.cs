@@ -134,6 +134,7 @@ public class TilePlacement : MonoBehaviour
     public void SetActiveTileMobile(TileData tile)
     {
         activeTileMob = tile;
+		Debug.LogWarning(tile);
 
         if (previewBlockMob != null)
             Destroy(previewBlockMob.gameObject);
@@ -156,7 +157,10 @@ public class TilePlacement : MonoBehaviour
         if (previewBlockMob != null)
             Destroy(previewBlockMob.gameObject);
 
-        previewBlockMob = Instantiate(activeTileMob.tilePrefab);
+		Debug.Log(activeTileMob);
+		Debug.Log(activeTileMob.tilePrefab);
+
+		previewBlockMob = Instantiate(activeTileMob.tilePrefab);
         Destroy(previewBlockMob.GetComponent<Rigidbody2D>());
     }
 

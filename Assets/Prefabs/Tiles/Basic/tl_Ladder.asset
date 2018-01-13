@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3e05167f473eb34fa18363b6502c6aa, type: 3}
   m_Name: tl_Ladder
   m_EditorClassIdentifier: 
-  tileName: Crate
+  tileName: Ladder
   tileSprite: {fileID: 21300000, guid: 4f722558d0672b5408466e8eb401ea6e, type: 3}
   tilePrefab: {fileID: 114230580593211786, guid: 1d5d2c43182364d41a193d5c4414650b,
     type: 2}
