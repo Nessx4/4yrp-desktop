@@ -241,6 +241,9 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 12e8e8e6273982a40a20d12ac5cd2e56, type: 2}
     - {fileID: 11400000, guid: 16abf9e6a746fe2438d73d3f357b7f02, type: 2}
     - {fileID: 11400000, guid: 0ecd4c1b9507b6e44be8783396e4d268, type: 2}
+  - name: Mandatory
+    tiles:
+    - {fileID: 11400000, guid: 7f453a57062445c45ba4c07b3efcbb8f, type: 2}
   - name: Background
     tiles:
     - {fileID: 11400000, guid: 030347654b9890545a0919d6af3e60aa, type: 2}
@@ -248,12 +251,15 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 460830cf8e6a04149af3d9284ee361fb, type: 2}
     - {fileID: 11400000, guid: 08c8a64a33926f746b825d9548931c92, type: 2}
     - {fileID: 11400000, guid: d6e5e8d74ab296b45a996eb660da79e7, type: 2}
-  - name: Technical
-    tiles:
-    - {fileID: 11400000, guid: 7f453a57062445c45ba4c07b3efcbb8f, type: 2}
-  - name: Misc
+  - name: Collectible
     tiles:
     - {fileID: 11400000, guid: 12752d88c583c004d98d3c934c3b8b2d, type: 2}
+    - {fileID: 11400000, guid: 66e6402b27b3ac345aeeccda51aae106, type: 2}
+    - {fileID: 11400000, guid: 3cf4b08c353f3a148aa8da6a0155813d, type: 2}
+    - {fileID: 11400000, guid: 74397ad332b710644975d5b086dce45a, type: 2}
+    - {fileID: 11400000, guid: c021bf230202ff544a93c54dc4ac555c, type: 2}
+  - name: Enemies
+    tiles:
     - {fileID: 11400000, guid: cbed97abad83e6a4bb045764715d84ec, type: 2}
   tilesetName: {fileID: 114260832405572028}
   tileSelectPrefab: {fileID: 114370078447563970, guid: bf1ea557bb81d1d44930372b2f90b4e3,
