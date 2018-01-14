@@ -15,10 +15,10 @@ public class TilePlacement : MonoBehaviour
 
 	[SerializeField]
 	private Transform tileRoot;
-	private List<Block> blocks;
+	private List<CreatorTile> blocks;
 
 	[SerializeField]
-	private Block startTiles;
+	private CreatorTile startTiles;
 
 	[SerializeField]
 	private ToolbarButton undoButton;
@@ -36,9 +36,9 @@ public class TilePlacement : MonoBehaviour
 	private ToolbarButton rectHollowButton;
 
 	// A visible version of the Block you have selected at the mouse position.
-	private Block previewBlock;
+	private CreatorTile previewBlock;
 
-    private Block previewBlockMob;
+    private CreatorTile previewBlockMob;
 
 	// Currently selected tile.
 	private TileData activeTile;
@@ -78,7 +78,7 @@ public class TilePlacement : MonoBehaviour
 		undoStackMob = new Stack<List<TileOperation>>();
 		redoStackMob = new Stack<List<TileOperation>>();
 
-		blocks = new List<Block>();
+		blocks = new List<CreatorTile>();
 
 		CheckUndoRedo();
 	}
@@ -92,7 +92,7 @@ public class TilePlacement : MonoBehaviour
 			Destroy(previewBlock.gameObject);
 
 		if (activeTool == ToolType.PENCIL)
-			previewBlock = Instantiate(activeTile.tilePrefab);
+			previewBlock = Instantiate(activeTile.creatorPrefab);
 	}
 
 	public void SetActiveTile(TileData tile)
@@ -148,7 +148,7 @@ public class TilePlacement : MonoBehaviour
         if (previewBlock != null)
             Destroy(previewBlock.gameObject);
 
-        previewBlock = Instantiate(activeTile.tilePrefab);
+        previewBlock = Instantiate(activeTile.creatorPrefab);
 		Destroy(previewBlock.GetComponent<Rigidbody2D>());
 	}
 
@@ -158,9 +158,9 @@ public class TilePlacement : MonoBehaviour
             Destroy(previewBlockMob.gameObject);
 
 		Debug.Log(activeTileMob);
-		Debug.Log(activeTileMob.tilePrefab);
+		Debug.Log(activeTileMob.creatorPrefab);
 
-		previewBlockMob = Instantiate(activeTileMob.tilePrefab);
+		previewBlockMob = Instantiate(activeTileMob.creatorPrefab);
         Destroy(previewBlockMob.GetComponent<Rigidbody2D>());
     }
 
@@ -183,7 +183,7 @@ public class TilePlacement : MonoBehaviour
 		if (Input.GetMouseButtonDown(0))
 		{
 			if(activeTool == ToolType.PENCIL)
-				StartCoroutine(PlaceTiles(activeTile.tilePrefab, 0));
+				StartCoroutine(PlaceTiles(activeTile.creatorPrefab, 0));
 			else if(activeTool == ToolType.ERASER)
 				StartCoroutine(PlaceTiles(null, 0));
 		}
@@ -221,7 +221,7 @@ public class TilePlacement : MonoBehaviour
 		stopDrawing = false;
 
         if (activeToolMob == ToolType.PENCIL)
-            mobileDraw = StartCoroutine(PlaceMobileTiles(activeTileMob.tilePrefab));
+            mobileDraw = StartCoroutine(PlaceMobileTiles(activeTileMob.creatorPrefab));
         else if (activeToolMob == ToolType.ERASER)
             mobileDraw = StartCoroutine(PlaceMobileTiles(null));
     }
@@ -233,7 +233,7 @@ public class TilePlacement : MonoBehaviour
 
 	// While still holding down the placement button, continually place or
 	// remove tiles.
-	private IEnumerator PlaceTiles(Block newTilePre, int mouseButton)
+	private IEnumerator PlaceTiles(CreatorTile newTilePre, int mouseButton)
 	{
 		WaitForEndOfFrame wait = new WaitForEndOfFrame();
 		List<TilePosition> tilePositions = new List<TilePosition>();
@@ -271,10 +271,10 @@ public class TilePlacement : MonoBehaviour
 					tilePositions.Add(tp);
 
 					RaycastHit2D hitObj = Physics2D.Raycast(pos, Vector3.up, 0.25f, mask);
-					Block existingTile = null;
+					CreatorTile existingTile = null;
 
 					if(hitObj.transform != null)
-						existingTile = hitObj.transform.GetComponent<Block>();
+						existingTile = hitObj.transform.GetComponent<CreatorTile>();
 
 					// Don't place tiles if the result would be the same.
 					bool sameTile = (existingTile != null && existingTile.GetTilePrefab() == newTilePre);
@@ -301,7 +301,7 @@ public class TilePlacement : MonoBehaviour
 
     // While still holding down the placement button, continually place or
     // remove tiles.
-    private IEnumerator PlaceMobileTiles(Block newTilePre)
+    private IEnumerator PlaceMobileTiles(CreatorTile newTilePre)
     {
         WaitForEndOfFrame wait = new WaitForEndOfFrame();
         List<TilePosition> tilePositions = new List<TilePosition>();
@@ -339,10 +339,10 @@ public class TilePlacement : MonoBehaviour
                     tilePositions.Add(tp);
 
                     RaycastHit2D hitObj = Physics2D.Raycast(pos, Vector3.up, 0.25f, mask);
-                    Block existingTile = null;
+                    CreatorTile existingTile = null;
 
                     if (hitObj.transform != null)
-                        existingTile = hitObj.transform.GetComponent<Block>();
+                        existingTile = hitObj.transform.GetComponent<CreatorTile>();
 
                     // Don't place tiles if the result would be the same.
                     bool sameTile = (existingTile != null && existingTile.GetTilePrefab() == newTilePre);
@@ -373,13 +373,13 @@ public class TilePlacement : MonoBehaviour
 
 
     // Add a Block to the list of blocks being tracked.
-    public void AddBlock(Block block)
+    public void AddBlock(CreatorTile block)
 	{
 		blocks.Add(block);
 	}
 
 	// Get the whole list of Block objects in the level.
-	public List<Block> GetBlocks()
+	public List<CreatorTile> GetBlocks()
 	{
 		return blocks;
 	}
@@ -462,7 +462,7 @@ public class TilePlacement : MonoBehaviour
 	{
 		List<TileOperation> operations = new List<TileOperation>();
 
-		foreach (Block block in blocks)
+		foreach (CreatorTile block in blocks)
 			operations.Add(new TileOperation(null, block, block.transform.position));
 
 		undoStack.Push(operations);
@@ -475,22 +475,22 @@ public class TilePlacement : MonoBehaviour
 	private struct TileOperation
 	{
 		// An instance of the added tile.
-		public Block newTileInst;
+		public CreatorTile newTileInst;
 
 		// The prefab of the added tile.
-		public Block newTilePre;
+		public CreatorTile newTilePre;
 
 		// The instance of the replaced tile.
-		public Block oldTileInst;
+		public CreatorTile oldTileInst;
 
 		// The prefab of the replaced tile.
-		public Block oldTilePre;
+		public CreatorTile oldTilePre;
 
 		// Transform properties.
 		public Vector3 position;
 
 		// Create a new block and remove an old one.
-		public TileOperation(Block newTilePre, Block oldTileInst, Vector3 position)
+		public TileOperation(CreatorTile newTilePre, CreatorTile oldTileInst, Vector3 position)
 		{
 			this.newTilePre = newTilePre;
 			this.position = position;
@@ -561,9 +561,9 @@ public class TilePlacement : MonoBehaviour
 	private struct TileContents
 	{
 		public TilePosition pos;
-		public Block block;
+		public CreatorTile block;
 
-		public TileContents(TilePosition pos, Block block)
+		public TileContents(TilePosition pos, CreatorTile block)
 		{
 			this.pos = pos;
 			this.block = block;

@@ -258,6 +258,10 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 3cf4b08c353f3a148aa8da6a0155813d, type: 2}
     - {fileID: 11400000, guid: 74397ad332b710644975d5b086dce45a, type: 2}
     - {fileID: 11400000, guid: c021bf230202ff544a93c54dc4ac555c, type: 2}
+    - {fileID: 11400000, guid: 11ad7fe7ca2d63d4bafc9e9e26220fc4, type: 2}
+    - {fileID: 11400000, guid: d9ef1ce7db2e8c4418a39f26a4f7565c, type: 2}
+    - {fileID: 11400000, guid: 9fce16b9f0e4edf4f853d76457135687, type: 2}
+    - {fileID: 11400000, guid: 69303b6bf8e94784693916c510fb5919, type: 2}
   - name: Enemies
     tiles:
     - {fileID: 11400000, guid: cbed97abad83e6a4bb045764715d84ec, type: 2}

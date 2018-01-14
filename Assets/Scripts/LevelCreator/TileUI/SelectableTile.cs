@@ -17,7 +17,7 @@ public class SelectableTile : MonoBehaviour
 
 	private Image img;
 	private TileData linkedItem;
-	private TileMenu menu;
+	private Palette menu;
 
 	private void Awake()
 	{
@@ -26,16 +26,16 @@ public class SelectableTile : MonoBehaviour
 
 	private void Start()
 	{
-		GetComponent<TooltipSource>().SetTooltipText(linkedItem.tileName);
+		GetComponent<TooltipSource>().SetTooltipText(linkedItem.name);
 	}
 
-	public void SetLinkedItem(TileData linkedItem, TileMenu menu)
+	public void SetLinkedItem(TileData linkedItem, Palette menu)
 	{
 		this.linkedItem = linkedItem;
 		this.menu = menu;
 
 		// Also set the sprite for this image to the tile's sprite.
-		img.sprite = linkedItem.tileSprite;
+		img.sprite = linkedItem.uiSprite;
 	}
 
 	public void OnPress()

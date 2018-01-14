@@ -24,40 +24,40 @@ public class LevelEditor : MonoBehaviour
 
 	// All tile prefabs.
 	[SerializeField]
-	private Block solid;
+	private CreatorTile solid;
 
 	[SerializeField]
-	private Block semisolid;
+	private CreatorTile semisolid;
 
 	[SerializeField]
-	private Block ufo;
+	private CreatorTile ufo;
 
 	[SerializeField]
-	private Block bush01;
+	private CreatorTile bush01;
 
 	[SerializeField]
-	private Block bush02;
+	private CreatorTile bush02;
 
 	[SerializeField]
-	private Block cloud01;
+	private CreatorTile cloud01;
 
 	[SerializeField]
-	private Block cloud02;
+	private CreatorTile cloud02;
 
 	[SerializeField]
-	private Block mountain;
+	private CreatorTile mountain;
 
 	[SerializeField]
-	private Block crate;
+	private CreatorTile crate;
 
 	[SerializeField]
-	private Block ladder;
+	private CreatorTile ladder;
 
 	[SerializeField]
-	private Block doughnut;
+	private CreatorTile doughnut;
 
 	[SerializeField]
-	private Block startPoint;
+	private CreatorTile startPoint;
 
 	[SerializeField] 
 	private WarningMessage warning;
@@ -112,7 +112,7 @@ public class LevelEditor : MonoBehaviour
 			LevelSaveData data = new LevelSaveData(nameField.GetName(), TakeScreenshot(), DateTime.Now);
 			data.name = nameField.GetName();
 
-			foreach (Block block in TilePlacement.placement.GetBlocks())
+			foreach (CreatorTile block in TilePlacement.placement.GetBlocks())
 			{
 				if(block.gameObject.activeSelf)
 					data.tiles.Add(new TileSaveData(block.GetTileType(), block.transform.position));
@@ -173,7 +173,7 @@ public class LevelEditor : MonoBehaviour
 			{
 				Vector3 position = new Vector3(tile.positionX, tile.positionY, tile.positionZ);
 
-				Block prefab = null;
+				CreatorTile prefab = null;
 
 				switch (tile.type)
 				{
@@ -217,7 +217,7 @@ public class LevelEditor : MonoBehaviour
 
 				if(prefab != null)
 				{
-					Block newBlock = Instantiate(prefab, position, Quaternion.identity, tileRoot);
+					CreatorTile newBlock = Instantiate(prefab, position, Quaternion.identity, tileRoot);
 					newBlock.SetTilePrefab(prefab);
 					TilePlacement.placement.AddBlock(newBlock);
 				}
@@ -273,5 +273,5 @@ public enum TileType
 	BUSH01, BUSH02, CLOUD01, CLOUD02, MOUNTAIN,
 	START_POINT, CHECK_POINT, WIN_POINT,
     CRATE, LADDER,
-	DOUGHNUT, CUPCAKE, CANDY_CANE, TOFFEE, LOLLIPOP
+	DOUGHNUT, CUPCAKE, CANDY_CANE, TOFFEE, LOLLIPOP, STRAWBERRY, ICE_CREAM, CANDY_FLOSS, BROWNIE
 }
