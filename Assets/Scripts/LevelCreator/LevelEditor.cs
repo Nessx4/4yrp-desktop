@@ -112,7 +112,7 @@ public class LevelEditor : MonoBehaviour
 			LevelSaveData data = new LevelSaveData(nameField.GetName(), TakeScreenshot(), DateTime.Now);
 			data.name = nameField.GetName();
 
-			foreach (CreatorTile block in TilePlacement.placement.GetBlocks())
+			foreach (CreatorTile block in TileDraw.placement.GetBlocks())
 			{
 				if(block.gameObject.activeSelf)
 					data.tiles.Add(new TileSaveData(block.GetTileType(), block.transform.position));
@@ -219,7 +219,7 @@ public class LevelEditor : MonoBehaviour
 				{
 					CreatorTile newBlock = Instantiate(prefab, position, Quaternion.identity, tileRoot);
 					newBlock.SetTilePrefab(prefab);
-					TilePlacement.placement.AddBlock(newBlock);
+					TileDraw.placement.AddBlock(newBlock);
 				}
 			}
 		}
@@ -269,9 +269,16 @@ public class TileSaveData
 
 public enum TileType
 {
-	SOLID, SEMISOLID, UFO,
-	BUSH01, BUSH02, CLOUD01, CLOUD02, MOUNTAIN,
+	SOLID, SEMISOLID, LADDER,
+
 	START_POINT, CHECK_POINT, WIN_POINT,
-    CRATE, LADDER,
-	DOUGHNUT, CUPCAKE, CANDY_CANE, TOFFEE, LOLLIPOP, STRAWBERRY, ICE_CREAM, CANDY_FLOSS, BROWNIE
+
+	BUSH01, BUSH02, CLOUD01, CLOUD02, MOUNTAIN,
+
+	CRATE,
+
+	DOUGHNUT, CUPCAKE, CANDY_CANE, TOFFEE, LOLLIPOP, STRAWBERRY, ICE_CREAM,
+	CHOCOLATE, CANDY_FLOSS, BROWNIE,
+
+	UFO
 }

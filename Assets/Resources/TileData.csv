@@ -10,6 +10,7 @@ Toffee,obj_Toffee,tx_Tile_Toffee,1,1,Food
 Lollipop,obj_Lollipop,tx_Tile_Lollipop,1,1,Food
 Strawberry,obj_Strawberry,tx_Tile_Strawberry,1,1,Food
 Ice Cream,obj_IceCream,tx_Tile_IceCream,1,1,Food
+Chocolate Bar,obj_Chocolate,tx_Tile_Chocolate,1,1,Food
 Candy Floss,obj_CandyFloss,tx_Tile_CandyFloss,1,1,Food
 Brownie,obj_Brownie,tx_Tile_Brownie,1,1,Food
 Bush (1),obj_Bush01,tx_Tile_Bush01,6,4,Decorative

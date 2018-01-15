@@ -135,62 +135,62 @@ public class Prototype : MonoBehaviour
     				//PreSetup();
     				break;
                 case "undo":
-					TilePlacement.placement.UndoMobile();
+					TileDraw.placement.UndoMobile();
                     Debug.Log("undo");
                     break;
                 case "redo":
-					TilePlacement.placement.RedoMobile();
+					TileDraw.placement.RedoMobile();
                     Debug.Log("redo");
                     break;
                 case "pencil":
-                    TilePlacement.placement.SetActiveToolMobile(ToolType.PENCIL);
-                    TilePlacement.placement.StartMobileDraw();
+                    TileDraw.placement.SetActiveToolMobile(ToolType.PENCIL);
+                    TileDraw.placement.StartMobileDraw();
                     break;
                 case "pencil_end":
-                    TilePlacement.placement.StopMobileDraw();
+                    TileDraw.placement.StopMobileDraw();
                     break;
                 case "eraser":
-                    TilePlacement.placement.SetActiveToolMobile(ToolType.ERASER);
-                    TilePlacement.placement.StartMobileDraw();
+                    TileDraw.placement.SetActiveToolMobile(ToolType.ERASER);
+                    TileDraw.placement.StartMobileDraw();
                     break;
                 case "eraser_end":
-                    TilePlacement.placement.StopMobileDraw();
+                    TileDraw.placement.StopMobileDraw();
                     break;
                 case "basic 0":
-                    TilePlacement.placement.SetActiveTileMobile(tiles[0]);
+                    TileDraw.placement.SetActiveTileMobile(tiles[0]);
                     break;
                 case "basic 1":
-                    TilePlacement.placement.SetActiveTileMobile(tiles[1]);
+                    TileDraw.placement.SetActiveTileMobile(tiles[1]);
                     break;
                 case "basic 2":
-                    TilePlacement.placement.SetActiveTileMobile(tiles[2]);
+                    TileDraw.placement.SetActiveTileMobile(tiles[2]);
                     break;
                 case "basic 3":
-                    TilePlacement.placement.SetActiveTileMobile(tiles[3]);
+                    TileDraw.placement.SetActiveTileMobile(tiles[3]);
                     break;
                 case "bg 0":
-                    TilePlacement.placement.SetActiveTileMobile(tiles[4]);
+                    TileDraw.placement.SetActiveTileMobile(tiles[4]);
                     break;
                 case "bg 1":
-                    TilePlacement.placement.SetActiveTileMobile(tiles[5]);
+                    TileDraw.placement.SetActiveTileMobile(tiles[5]);
                     break;
                 case "bg 2":
-                    TilePlacement.placement.SetActiveTileMobile(tiles[6]);
+                    TileDraw.placement.SetActiveTileMobile(tiles[6]);
                     break;
                 case "bg 3":
-                    TilePlacement.placement.SetActiveTileMobile(tiles[7]);
+                    TileDraw.placement.SetActiveTileMobile(tiles[7]);
                     break;
                 case "bg 4":
-                    TilePlacement.placement.SetActiveTileMobile(tiles[8]);
+                    TileDraw.placement.SetActiveTileMobile(tiles[8]);
                     break;
                 case "tech 0":
-                    TilePlacement.placement.SetActiveTileMobile(tiles[9]);
+                    TileDraw.placement.SetActiveTileMobile(tiles[9]);
                     break;
                 case "misc 0":
-                    TilePlacement.placement.SetActiveTileMobile(tiles[10]);
+                    TileDraw.placement.SetActiveTileMobile(tiles[10]);
                     break;
                 case "misc 1":
-                    TilePlacement.placement.SetActiveTileMobile(tiles[11]);
+                    TileDraw.placement.SetActiveTileMobile(tiles[11]);
                     break;
                 default:
 					string[] floats = cmd.Split(',');
