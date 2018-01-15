@@ -9,20 +9,10 @@ using UnityEngine;
 
 public class TileHistory : MonoBehaviour
 {
-	// The undo/redo system relies on stacks.
-	private Stack<List<TileOperation>> undoStack;
-	private Stack<List<TileOperation>> redoStack;
-
-	private Stack<List<TileOperation>> undoStackMob;
-	private Stack<List<TileOperation>> redoStackMob;
-
 	private void Start()
 	{
 		undoStack = new Stack<List<TileOperation>>();
 		redoStack = new Stack<List<TileOperation>>();
-
-		undoStackMob = new Stack<List<TileOperation>>();
-		redoStackMob = new Stack<List<TileOperation>>();
 
 		CheckUndoRedo();
 	}
@@ -47,9 +37,6 @@ public class TileHistory : MonoBehaviour
 	{
 		undoStack = new Stack<List<TileOperation>>();
 		redoStack = new Stack<List<TileOperation>>();
-
-		undoStackMob = new Stack<List<TileOperation>>();
-		redoStackMob = new Stack<List<TileOperation>>();
 	}
 
 	// Revert the state of the level back to before an operation.
@@ -95,20 +82,6 @@ public class TileHistory : MonoBehaviour
 				op.Undo();
 
 			redoStackMob.Push(ops);
-		}
-	}
-
-	// Reapply the last change that was undone.
-	public void RedoMobile()
-	{
-		if (redoStackMob.Count > 0)
-		{
-			List<TileOperation> ops = redoStackMob.Pop();
-
-			foreach (TileOperation op in ops)
-				op.Redo();
-
-			undoStackMob.Push(ops);
 		}
 	}
 

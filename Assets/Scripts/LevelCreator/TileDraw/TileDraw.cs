@@ -7,44 +7,99 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-[RequireComponent(typeof(TileHistory))]
-public class TileDraw : MonoBehaviour 
+public abstract class TileDraw : MonoBehaviour 
 {
 	// The tile placement raycast only looks at certain layers.
-	private LayerMask mask;
+	protected LayerMask mask;
 
-	private Transform spawnParent;
-	private List<CreatorTile> blocks;
+	// Root transform for all spawned tiles.
+	protected Transform spawnRoot;
 
 	// A preview version of the block you're holding.
-	private CreatorTile previewBlock;
+	protected CreatorTile previewBlock;
 
-	// Currently selected tile.
-	private TileData activeTile;
+	// Currently selected tile and tool.
+	protected TileData activeTile;
+	protected ToolType activeTool = ToolType.PENCIL;
 
-	private ToolType activeTool = ToolType.PENCIL;
+	// The undo/redo system relies on stacks.
+	protected Stack<List<TileOperation>> undoStack;
+	protected Stack<List<TileOperation>> redoStack;
 
-	private Camera mainCam;
+    protected Coroutine drawingRoutine;
+	protected bool stopDrawing = false;
 
-    private Coroutine drawingRoutine;
-	private bool stopDrawing = false;
+	protected TileDrawWrapper wrapper;
+	protected int id;
 
-	private TileHistory history;
-
-	private void Start()
+	protected void Start()
 	{
 		// Camera.main is slow so cache it.
 		mainCam = Camera.main;
 
-		blocks = new List<CreatorTile>();
+		undoStack = new Stack<List<TileOperation>>();
+		redoStack = new Stack<List<TileOperation>>();
 
-		history = GetComponent<TileHistory>();
+		CheckHistory();
 	}
 
-	// Set the parent Transform for any spawned tiles.
-	public void SetSpawnParent(Transform spawnParent)
+	public void SetParameters(TileDrawWrapper wrapper, int id, 
+		Transform spawnRoot, LayerMask mask)
 	{
-		this.spawnParent = spawnParent;
+		this.wrapper = wrapper;
+		this.id = id;
+		this.spawnRoot = spawnRoot;
+		this.mask = mask;
+	}
+
+	// Add a set of operations to the undo history and erase the redo stack.
+	protected void AddUndoHistory(List<TileOperation> operations)
+	{
+		undoStack.Push(operations);
+		redoStack.Clear();
+
+		CheckHistory();
+	}
+
+	// Revert the state of the level back to before an operation.
+	public void Undo()
+	{
+		if (undoStack.Count > 0)
+		{
+			List<TileOperation> ops = undoStack.Pop();
+
+			foreach (TileOperation op in ops)
+				op.Undo();
+
+			redoStack.Push(ops);
+
+			CheckHistory();
+		}
+	}
+
+	// Reapply the last change that was undone.
+	public void Redo()
+	{
+		if (redoStack.Count > 0)
+		{
+			List<TileOperation> ops = redoStack.Pop();
+
+			foreach (TileOperation op in ops)
+				op.Redo();
+
+			undoStack.Push(ops);
+
+			CheckHistory();
+		}
+	}
+
+	public abstract void CheckHistory();
+
+	// Remove the entire history stacks.
+	public void DeleteUndoHistory()
+	{
+		undoStack = new Stack<List<TileOperation>>();
+		redoStack = new Stack<List<TileOperation>>();
 	}
 
 	// Change the active tool.
@@ -203,7 +258,7 @@ public class TileDraw : MonoBehaviour
 
 		// Add the drawn tiles to the undo history.
 		if (operations.Count > 0)
-			history.AddOperations(operations);
+			AddOperations(operations);
 
 		stopDrawing = false;
 	}
@@ -272,7 +327,7 @@ public class TileDraw : MonoBehaviour
 
 		// Add the drawn tiles to the undo history.
 		if (operations.Count > 0)
-			history.AddOperations(operations);
+			AddOperations(operations);
 	}
 
 
@@ -295,70 +350,70 @@ public class TileDraw : MonoBehaviour
 		foreach (CreatorTile block in blocks)
 			operations.Add(new TileOperation(null, block, block.transform.position));
 
-		history.Clear(operations);
+		AddOperations(operations);
 	}
-}
 
-[System.Serializable]
-public struct TileOperation
-{
-	// An instance of the added tile.
-	public CreatorTile newTileInst;
-
-	// The prefab of the added tile.
-	public CreatorTile newTilePre;
-
-	// The instance of the replaced tile.
-	public CreatorTile oldTileInst;
-
-	// The prefab of the replaced tile.
-	public CreatorTile oldTilePre;
-
-	// Transform properties.
-	public Vector3 position;
-
-	// Create a new block and remove an old one.
-	public TileOperation(CreatorTile newTilePre, CreatorTile oldTileInst, Vector3 position)
+	[System.Serializable]
+	protected struct TileOperation
 	{
-		this.newTilePre = newTilePre;
-		this.position = position;
-		this.oldTileInst = oldTileInst;
+		// An instance of the added tile.
+		public CreatorTile newTileInst;
 
-		oldTilePre = null;
-		newTileInst = null;
+		// The prefab of the added tile.
+		public CreatorTile newTilePre;
 
-		if (oldTileInst != null)
+		// The instance of the replaced tile.
+		public CreatorTile oldTileInst;
+
+		// The prefab of the replaced tile.
+		public CreatorTile oldTilePre;
+
+		// Transform properties.
+		public Vector3 position;
+
+		// Create a new block and remove an old one.
+		public TileOperation(CreatorTile newTilePre, CreatorTile oldTileInst, Vector3 position)
 		{
-			oldTilePre = oldTileInst.GetTilePrefab();
-			oldTileInst.gameObject.SetActive(false);
+			this.newTilePre = newTilePre;
+			this.position = position;
+			this.oldTileInst = oldTileInst;
+
+			oldTilePre = null;
+			newTileInst = null;
+
+			if (oldTileInst != null)
+			{
+				oldTilePre = oldTileInst.GetTilePrefab();
+				oldTileInst.gameObject.SetActive(false);
+			}
+
+			if (newTilePre != null)
+			{
+				newTileInst = Instantiate(newTilePre, position, Quaternion.identity, placement.GetRoot());
+				newTileInst.SetTilePrefab(newTilePre);
+				placement.AddBlock(newTileInst);
+			}
 		}
 
-		if (newTilePre != null)
+		// Replace the new block with the old one.
+		public void Undo()
 		{
-			newTileInst = Instantiate(newTilePre, position, Quaternion.identity, placement.GetRoot());
-			newTileInst.SetTilePrefab(newTilePre);
-			placement.AddBlock(newTileInst);
+			if (newTileInst != null)
+				newTileInst.gameObject.SetActive(false);
+
+			if (oldTilePre != null)
+				oldTileInst.gameObject.SetActive(true);
 		}
-	}
 
-	// Replace the new block with the old one.
-	public void Undo()
-	{
-		if (newTileInst != null)
-			newTileInst.gameObject.SetActive(false);
+		// Replace the old block with the new one.
+		public void Redo()
+		{
+			if (oldTileInst != null)
+				oldTileInst.gameObject.SetActive(false);
 
-		if (oldTilePre != null)
-			oldTileInst.gameObject.SetActive(true);
-	}
-
-	// Replace the old block with the new one.
-	public void Redo()
-	{
-		if (oldTileInst != null)
-			oldTileInst.gameObject.SetActive(false);
-
-		if (newTileInst != null)
-			newTileInst.gameObject.SetActive(true);
+			if (newTileInst != null)
+				newTileInst.gameObject.SetActive(true);
+		}
 	}
 }
 

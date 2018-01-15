@@ -1,5 +1,7 @@
 ﻿/*	A wrapper for the TileDraw class that will read inputs and events from the
  *	desktop player and upto four mobiles and draw tiles accordingly.
+ *
+ *	An ID of 0 is the desktop player, IDs 1-4 are mobile players.
  */
 
 using System.Collections;
@@ -13,29 +15,41 @@ public class TileDrawWrapper : MonoBehaviour
 	[SerializeField]
 	private LayerMask mask;
 
-	[SerializeField]
-	private ToolbarButton undoButton;
+	// List of all blocks placed in the level so far.
+	private List<CreatorTile> blocks;
 
-	[SerializeField]
-	private ToolbarButton redoButton;
-
-	[SerializeField]
-	private ToolbarButton fillButton;
-
-	[SerializeField]
-	private ToolbarButton rectFilledButton;
-
-	[SerializeField]
-	private ToolbarButton rectHollowButton;
-
+	// Objects that encapsulate tile drawing functions.
 	private List<TileDraw> tileDraws;
+
+	[SerializeField] 
+	private TileDraw tileDrawDesktop;
+
+	[SerializeField] 
+	private TileDraw tileDrawMobile;
+
+	private Transform spawnRoot;
 
 	private void Start()
 	{
-		/*	To do in Start:
-		 *		-> Send mask to TileDraw.
-		 *		-> Create and set spawn parent on TileDraw.
-		 */
+		spawnRoot = new GameObject().transform;
+
+		tileDraws = new List<TileDraw>():
+		blocks = new List<CreatorTile>();
+
+		RegisterController(false);
+	}
+
+	public void RegisterController(bool mobile)
+	{
+		TileDraw newTileDraw = 
+			Instantiate((mobile ? tileDrawMobile : tileDrawDesktop), 
+				Vector3.zero, Quaternion.identity) as TileDraw;
+
+
+		tileDraws.Add(newTileDraw);
+
+		// Set the wrapper object, ID and spawned tile root transform;
+		newTileDraw.SetParameters(this, tileDraws.Count - 1, spawnRoot, mask);
 	}
 
 	private void Update()
@@ -48,9 +62,15 @@ public class TileDrawWrapper : MonoBehaviour
 		 */
 	}
 
+	public void SetUndoRedo(int id)
+	{
+
+	}
+
 	public void SetActiveTile(int id, TileData tile)
 	{
-		if(tileDraws[id].SetActiveTile(tile))
+		bool show = tileDraws[id].SetActiveTile(tile);
+		if(id == 0)
 		{
 			fillButton.SetVisible(true);
 			rectFilledButton.SetVisible(true);
