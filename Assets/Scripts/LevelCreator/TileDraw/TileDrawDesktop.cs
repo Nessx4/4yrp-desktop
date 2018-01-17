@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class TileDrawDesktop : TileDraw 
 {
@@ -23,22 +24,138 @@ public class TileDrawDesktop : TileDraw
 
 	private Camera mainCam;
 
-	private override void Start()
+	protected override void Start()
 	{
 		base.Start();
+
+		// Camera.main is slow so cache it.
+		mainCam = Camera.main;
 	}
 
 	// Check if the Undo and Redo buttons need to be greyed out.
 	public override void CheckHistory()
 	{
-		if (undoStack.Count > 0)
-			undoButton.Show();
-		else
-			undoButton.Hide();
+		undoButton.SetVisible(undoStack.Count > 0);
+		redoButton.SetVisible(redoStack.Count > 0);
+	}
 
-		if (redoStack.Count > 0)
-			redoButton.Show();
+	// While still holding down the placement button, continually place or
+	// remove tiles.
+	protected override IEnumerator PencilDraw(CreatorTile newTilePre)
+	{
+		WaitForEndOfFrame wait = new WaitForEndOfFrame();
+		List<TilePosition> tilePositions = new List<TilePosition>();
+
+		List<TileOperation> operations = new List<TileOperation>();
+
+		while(!stopDrawing)
+		{
+			// Do not place tiles when mouse is on top of the UI elements.
+			if(!EventSystem.current.IsPointerOverGameObject())
+			{
+				Vector3 mousePos = new Vector3(Input.mousePosition.x, 
+					Input.mousePosition.y, 10.0f);
+				Vector3 pos = mainCam.ScreenToWorldPoint(mousePos);
+
+				TilePosition tp = new TilePosition(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y));
+
+				bool hasPlacedHere = false;
+
+				foreach (TilePosition tilePosition in tilePositions)
+				{
+					if (tilePosition == tp)
+					{
+						hasPlacedHere = true;
+						continue;
+					}
+				}
+
+				if(!hasPlacedHere)
+				{
+					pos.x = tp.x;
+					pos.y = tp.y;
+					pos.z = 0.0f;
+
+					tilePositions.Add(tp);
+
+					RaycastHit2D hitObj = Physics2D.Raycast(pos, Vector3.up, 0.25f, mask);
+					CreatorTile existingTile = null;
+
+					if(hitObj.transform != null)
+						existingTile = hitObj.transform.GetComponent<CreatorTile>();
+
+					// Don't place tiles if the result would be the same.
+					bool sameTile = (existingTile != null && existingTile.GetTilePrefab() == newTilePre);
+					// Don't replace air with air.
+					bool bothAir = (existingTile == null && newTilePre == null);
+
+					if(!sameTile && !bothAir)
+						operations.Add(new TileOperation(newTilePre, existingTile, pos));
+				}
+			}
+
+			yield return wait;
+		}
+
+		// Add the drawn tiles to the undo history.
+		if (operations.Count > 0)
+			AddUndoHistory(operations);
+
+		stopDrawing = false;
+	}
+
+	protected override IEnumerator Erase()
+	{
+		yield return null;
+
+		throw new System.NotImplementedException();
+	}
+
+	protected override void FloodFill()
+	{
+		throw new System.NotImplementedException();
+	}
+
+	protected override void DrawHollowRect()
+	{
+		throw new System.NotImplementedException();
+	}
+
+	protected override void DrawFullRect()
+	{
+		throw new System.NotImplementedException();
+	}
+
+	public override void ClearAll()
+	{
+		List<TileOperation> operations = new List<TileOperation>();
+
+		List<CreatorTile> tiles = TileDrawWrapper.Get().GetTiles();
+
+		foreach (CreatorTile tile in tiles)
+			operations.Add(new TileOperation(null, tile, tile.transform.position));
+
+		Debug.LogError("ClearAll() must grey out the Clear button.");
+
+		AddUndoHistory(operations);
+	}
+
+	// Grey out undo/redo buttons on desktop UI.
+	public override void SetActiveTile(TileData tile)
+	{
+		base.SetActiveTile(tile);
+
+		if(tile.IsUnitSize())
+		{
+			fillButton.SetVisible(true);
+			rectFilledButton.SetVisible(true);
+			rectHollowButton.SetVisible(true);
+		}
 		else
-			redoButton.Hide();
+		{
+			fillButton.SetVisible(false);
+			rectFilledButton.SetVisible(false);
+			rectHollowButton.SetVisible(false);
+		}
 	}
 }

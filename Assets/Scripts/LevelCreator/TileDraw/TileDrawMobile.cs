@@ -6,12 +6,105 @@ using UnityEngine;
 public class TileDrawMobile : TileDraw 
 {
 	// Check if the Undo and Redo buttons need to be greyed out.
-	public override void CheckUndoRedo()
+	public override void CheckHistory()
 	{
 		/*	In the future, this function will send a message back to the
 		 *	mobile represented by ths object and tell it to grey out its
 		 *	undo/redo buttons if necessary.
 		 */
+		throw new System.NotImplementedException();
+	}
+
+	// While still holding down the placement button, continually place or
+    // remove tiles.
+    protected override IEnumerator PencilDraw(CreatorTile newTilePre)
+    {
+        WaitForEndOfFrame wait = new WaitForEndOfFrame();
+        List<TilePosition> tilePositions = new List<TilePosition>();
+
+        List<TileOperation> operations = new List<TileOperation>();
+
+        while (!stopDrawing)
+        {
+            // Do not place tiles when mouse is on top of the UI elements.
+            //if (!EventSystem.current.IsPointerOverGameObject())
+            //{
+                //Vector3 mousePos = new Vector3(Input.mousePosition.x,
+                    //Input.mousePosition.y, 10.0f);
+                Vector3 pos = PointerController.control.GetPointerPos(0);
+
+                TilePosition tp = new TilePosition(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y));
+
+                bool hasPlacedHere = false;
+
+                foreach (TilePosition tilePosition in tilePositions)
+                {
+                    if (tilePosition == tp)
+                    {
+                        hasPlacedHere = true;
+                        continue;
+                    }
+                }
+
+                if (!hasPlacedHere)
+                {
+                    pos.x = tp.x;
+                    pos.y = tp.y;
+                    pos.z = 0.0f;
+
+                    tilePositions.Add(tp);
+
+                    RaycastHit2D hitObj = Physics2D.Raycast(pos, Vector3.up, 0.25f, mask);
+                    CreatorTile existingTile = null;
+
+                    if (hitObj.transform != null)
+                        existingTile = hitObj.transform.GetComponent<CreatorTile>();
+
+                    // Don't place tiles if the result would be the same.
+                    bool sameTile = (existingTile != null && existingTile.GetTilePrefab() == newTilePre);
+                    // Don't replace air with air.
+                    bool bothAir = (existingTile == null && newTilePre == null);
+
+                    if (!sameTile && !bothAir)
+                    {
+                        if(newTilePre != null)
+							operations.Add(new TileOperation(newTilePre, existingTile, pos));
+				}
+             
+                }
+            //}
+
+            yield return wait;
+        }
+
+		// Add the drawn tiles to the undo history.
+		if (operations.Count > 0)
+			AddUndoHistory(operations);
+	}
+
+	protected override IEnumerator Erase()
+	{
+		yield return null;
+
+		throw new System.NotImplementedException();
+	}
+
+	protected override void FloodFill()
+	{
+		throw new System.NotImplementedException();
+	}
+
+	protected override void DrawHollowRect()
+	{
+		throw new System.NotImplementedException();
+	}
+
+	protected override void DrawFullRect()
+	{
+		throw new System.NotImplementedException();
+	}
+	public override void ClearAll()
+	{
 		throw new System.NotImplementedException();
 	}
 }

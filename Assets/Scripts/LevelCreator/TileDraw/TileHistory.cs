@@ -9,6 +9,7 @@ using UnityEngine;
 
 public class TileHistory : MonoBehaviour
 {
+	/*
 	private void Start()
 	{
 		undoStack = new Stack<List<TileOperation>>();
@@ -98,4 +99,5 @@ public class TileHistory : MonoBehaviour
 		else
 			redoButton.Hide();
 	}
+	*/
 }

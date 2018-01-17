@@ -5,7 +5,6 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public abstract class TileDraw : MonoBehaviour 
 {
@@ -32,11 +31,8 @@ public abstract class TileDraw : MonoBehaviour
 	protected TileDrawWrapper wrapper;
 	protected int id;
 
-	protected void Start()
+	protected virtual void Start()
 	{
-		// Camera.main is slow so cache it.
-		mainCam = Camera.main;
-
 		undoStack = new Stack<List<TileOperation>>();
 		redoStack = new Stack<List<TileOperation>>();
 
@@ -115,7 +111,7 @@ public abstract class TileDraw : MonoBehaviour
 	}
 
 	// Set the tile to be drawn.
-	public bool SetActiveTile(TileData tile)
+	public virtual void SetActiveTile(TileData tile)
 	{
 		activeTile = tile;
 
@@ -128,8 +124,6 @@ public abstract class TileDraw : MonoBehaviour
 
 		if (activeTool == ToolType.PENCIL)
 			CreatePreview();
-
-		return tile.IsUnitSize();
 	}
 
     private void CreatePreview()
@@ -140,11 +134,6 @@ public abstract class TileDraw : MonoBehaviour
         previewBlock = Instantiate(activeTile.creatorPrefab);
 		Destroy(previewBlock.GetComponent<Rigidbody2D>());
 		Destroy(previewBlock.GetComponent<CreatorTile>());
-	}
-
-	public Transform GetRoot()
-	{
-		return spawnParent;
 	}
 
 	// Immediately set the position of the cursor.
@@ -166,10 +155,10 @@ public abstract class TileDraw : MonoBehaviour
 		switch (activeTool)
 		{
 			case ToolType.PENCIL:
-				drawingRoutine = StartCoroutine(DrawTiles(activeTile.creatorPrefab));
+				drawingRoutine = StartCoroutine(PencilDraw(activeTile.creatorPrefab));
 				break;
 			case ToolType.ERASER:
-				drawingRoutine = StartCoroutine(EraseTiles());
+				drawingRoutine = StartCoroutine(Erase());
 				break;
 		}
 	}
@@ -182,175 +171,22 @@ public abstract class TileDraw : MonoBehaviour
 		stopDrawing = true;
 	}
 
-	private IEnumerator DrawTiles(CreatorTile newTilePre)
-	{
-		yield return null;
-	}
+	protected abstract IEnumerator PencilDraw(CreatorTile newTilePre);
 
-	private IEnumerator EraseTiles()
-	{
-		yield return null;
-	}
+	protected abstract IEnumerator Erase();
+
+	protected abstract void FloodFill();
+
+	protected abstract void DrawHollowRect();
+
+	protected abstract void DrawFullRect();
+
+	public abstract void ClearAll();
 
 	private void SetPreviewPosition(Vector3 pos)
 	{
 		if (previewBlock != null)
 			previewBlock.transform.position = pos;
-	}
-
-	// While still holding down the placement button, continually place or
-	// remove tiles.
-	private IEnumerator PlaceTiles(CreatorTile newTilePre, int mouseButton)
-	{
-		WaitForEndOfFrame wait = new WaitForEndOfFrame();
-		List<TilePosition> tilePositions = new List<TilePosition>();
-
-		List<TileOperation> operations = new List<TileOperation>();
-
-		while(!stopDrawing)
-		{
-			// Do not place tiles when mouse is on top of the UI elements.
-			if(!EventSystem.current.IsPointerOverGameObject())
-			{
-				Vector3 mousePos = new Vector3(Input.mousePosition.x, 
-					Input.mousePosition.y, 10.0f);
-				Vector3 pos = mainCam.ScreenToWorldPoint(mousePos);
-
-				TilePosition tp = new TilePosition(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y));
-
-				bool hasPlacedHere = false;
-
-				foreach (TilePosition tilePosition in tilePositions)
-				{
-					if (tilePosition == tp)
-					{
-						hasPlacedHere = true;
-						continue;
-					}
-				}
-
-				if(!hasPlacedHere)
-				{
-					pos.x = tp.x;
-					pos.y = tp.y;
-					pos.z = 0.0f;
-
-					tilePositions.Add(tp);
-
-					RaycastHit2D hitObj = Physics2D.Raycast(pos, Vector3.up, 0.25f, mask);
-					CreatorTile existingTile = null;
-
-					if(hitObj.transform != null)
-						existingTile = hitObj.transform.GetComponent<CreatorTile>();
-
-					// Don't place tiles if the result would be the same.
-					bool sameTile = (existingTile != null && existingTile.GetTilePrefab() == newTilePre);
-					// Don't replace air with air.
-					bool bothAir = (existingTile == null && newTilePre == null);
-
-					if(!sameTile && !bothAir)
-						operations.Add(new TileOperation(newTilePre, existingTile, pos));
-				}
-			}
-
-			yield return wait;
-		}
-
-		// Add the drawn tiles to the undo history.
-		if (operations.Count > 0)
-			AddOperations(operations);
-
-		stopDrawing = false;
-	}
-
-    // While still holding down the placement button, continually place or
-    // remove tiles.
-    private IEnumerator PlaceMobileTiles(CreatorTile newTilePre)
-    {
-        WaitForEndOfFrame wait = new WaitForEndOfFrame();
-        List<TilePosition> tilePositions = new List<TilePosition>();
-
-        List<TileOperation> operations = new List<TileOperation>();
-
-        while (!stopDrawing)
-        {
-            // Do not place tiles when mouse is on top of the UI elements.
-            //if (!EventSystem.current.IsPointerOverGameObject())
-            //{
-                //Vector3 mousePos = new Vector3(Input.mousePosition.x,
-                    //Input.mousePosition.y, 10.0f);
-                Vector3 pos = PointerController.control.GetPointerPos(0);
-
-                TilePosition tp = new TilePosition(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y));
-
-                bool hasPlacedHere = false;
-
-                foreach (TilePosition tilePosition in tilePositions)
-                {
-                    if (tilePosition == tp)
-                    {
-                        hasPlacedHere = true;
-                        continue;
-                    }
-                }
-
-                if (!hasPlacedHere)
-                {
-                    pos.x = tp.x;
-                    pos.y = tp.y;
-                    pos.z = 0.0f;
-
-                    tilePositions.Add(tp);
-
-                    RaycastHit2D hitObj = Physics2D.Raycast(pos, Vector3.up, 0.25f, mask);
-                    CreatorTile existingTile = null;
-
-                    if (hitObj.transform != null)
-                        existingTile = hitObj.transform.GetComponent<CreatorTile>();
-
-                    // Don't place tiles if the result would be the same.
-                    bool sameTile = (existingTile != null && existingTile.GetTilePrefab() == newTilePre);
-                    // Don't replace air with air.
-                    bool bothAir = (existingTile == null && newTilePre == null);
-
-                    if (!sameTile && !bothAir)
-                    {
-                        if(newTilePre != null)
-							operations.Add(new TileOperation(newTilePre, existingTile, pos));
-				}
-             
-                }
-            //}
-
-            yield return wait;
-        }
-
-		// Add the drawn tiles to the undo history.
-		if (operations.Count > 0)
-			AddOperations(operations);
-	}
-
-
-    // Add a Block to the list of blocks being tracked.
-    public void AddBlock(CreatorTile block)
-	{
-		blocks.Add(block);
-	}
-
-	// Get the whole list of Block objects in the level.
-	public List<CreatorTile> GetBlocks()
-	{
-		return blocks;
-	}
-
-	public void Clear()
-	{
-		List<TileOperation> operations = new List<TileOperation>();
-
-		foreach (CreatorTile block in blocks)
-			operations.Add(new TileOperation(null, block, block.transform.position));
-
-		AddOperations(operations);
 	}
 
 	[System.Serializable]
@@ -389,9 +225,9 @@ public abstract class TileDraw : MonoBehaviour
 
 			if (newTilePre != null)
 			{
-				newTileInst = Instantiate(newTilePre, position, Quaternion.identity, placement.GetRoot());
+				newTileInst = Instantiate(newTilePre, position, 
+					Quaternion.identity, TileDrawWrapper.Get().GetRoot());
 				newTileInst.SetTilePrefab(newTilePre);
-				placement.AddBlock(newTileInst);
 			}
 		}
 

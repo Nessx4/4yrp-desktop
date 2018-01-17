@@ -135,62 +135,66 @@ public class Prototype : MonoBehaviour
     				//PreSetup();
     				break;
                 case "undo":
-					TileDraw.placement.UndoMobile();
+					TileDrawWrapper.Get().Undo(1);
                     Debug.Log("undo");
                     break;
                 case "redo":
-					TileDraw.placement.RedoMobile();
+					TileDrawWrapper.Get().Redo(1);
                     Debug.Log("redo");
                     break;
                 case "pencil":
-                    TileDraw.placement.SetActiveToolMobile(ToolType.PENCIL);
-                    TileDraw.placement.StartMobileDraw();
-                    break;
+                    TileDrawWrapper.Get().SetActiveTool(1, ToolType.PENCIL);
+                    throw new System.NotImplementedException("Start mobile draw.");
+                    //TileDraw.placement.StartMobileDraw();
+                    //break;
                 case "pencil_end":
-                    TileDraw.placement.StopMobileDraw();
-                    break;
+                    throw new System.NotImplementedException("Stop mobile draw.");
+                    //TileDraw.placement.StopMobileDraw();
+                    //break;
                 case "eraser":
-                    TileDraw.placement.SetActiveToolMobile(ToolType.ERASER);
-                    TileDraw.placement.StartMobileDraw();
-                    break;
+                    TileDrawWrapper.Get().SetActiveTool(1, ToolType.ERASER);
+                    throw new System.NotImplementedException("Start mobile erase.");
+                    //TileDraw.placement.StartMobileDraw();
+                    //break;
                 case "eraser_end":
-                    TileDraw.placement.StopMobileDraw();
-                    break;
+                    throw new System.NotImplementedException("Stop mobile erase.");
+                    //TileDraw.placement.StopMobileDraw();
+                    //break;
                 case "basic 0":
-                    TileDraw.placement.SetActiveTileMobile(tiles[0]);
+                    TileDrawWrapper.Get().SetActiveTile(1, tiles[0]);
                     break;
                 case "basic 1":
-                    TileDraw.placement.SetActiveTileMobile(tiles[1]);
+                    TileDrawWrapper.Get().SetActiveTile(1, tiles[1]);
                     break;
                 case "basic 2":
-                    TileDraw.placement.SetActiveTileMobile(tiles[2]);
+                    TileDrawWrapper.Get().SetActiveTile(1, tiles[2]);
                     break;
                 case "basic 3":
-                    TileDraw.placement.SetActiveTileMobile(tiles[3]);
+                    TileDrawWrapper.Get().SetActiveTile(1, tiles[3]);
                     break;
                 case "bg 0":
-                    TileDraw.placement.SetActiveTileMobile(tiles[4]);
+                    TileDrawWrapper.Get().SetActiveTile(1, tiles[4]);
                     break;
                 case "bg 1":
-                    TileDraw.placement.SetActiveTileMobile(tiles[5]);
+                    TileDrawWrapper.Get().SetActiveTile(1, tiles[5]);
                     break;
                 case "bg 2":
-                    TileDraw.placement.SetActiveTileMobile(tiles[6]);
+                    TileDrawWrapper.Get().SetActiveTile(1, tiles[6]);
                     break;
                 case "bg 3":
-                    TileDraw.placement.SetActiveTileMobile(tiles[7]);
+                    TileDrawWrapper.Get().SetActiveTile(1, tiles[7]);
                     break;
                 case "bg 4":
-                    TileDraw.placement.SetActiveTileMobile(tiles[8]);
+                    TileDrawWrapper.Get().SetActiveTile(1, tiles[8]);
                     break;
                 case "tech 0":
-                    TileDraw.placement.SetActiveTileMobile(tiles[9]);
+                    TileDrawWrapper.Get().SetActiveTile(1, tiles[9]);
                     break;
                 case "misc 0":
-                    TileDraw.placement.SetActiveTileMobile(tiles[10]);
+                    TileDrawWrapper.Get().SetActiveTile(1, tiles[10]);
                     break;
                 case "misc 1":
-                    TileDraw.placement.SetActiveTileMobile(tiles[11]);
+                    TileDrawWrapper.Get().SetActiveTile(1, tiles[11]);
                     break;
                 default:
 					string[] floats = cmd.Split(',');
@@ -205,4 +209,65 @@ public class Prototype : MonoBehaviour
     		}
     	}
     }
+
+    // Strange esoteric C# event stuff.
+
+    /*
+    private MobileEvent _lastEvent;
+
+    public MobileEvent LastEvent
+    {
+        get {return _lastEvent; }
+        set
+        {
+            if(_lastEvent != value)
+            {
+                _lastEvent = value;
+                Notify();
+            }
+        }
+    }
+
+    private void Notify()
+    {
+        if(_onChange != null)
+            _onChange(_lastEvent);
+    }
+
+    private event MobileEventHandler _onChange;
+
+    public event MobileEventHandler OnMobileEvent
+    {
+        add
+        {
+            _onChange += value;
+        }
+        remove
+        {
+            _onChange -= value;
+        }
+    }
+    */
+}
+
+//public delegate void MobileEventHandler(MobileEvent mEvent);
+
+public class MobileEvent
+{
+
+}
+
+public class CursorMoveEvent : MobileEvent
+{
+    Vector2 move;
+
+    public CursorMoveEvent(Vector2 move)
+    {
+        this.move = move;
+    }
+}
+
+public class ButtonEvent : MobileEvent
+{
+    
 }

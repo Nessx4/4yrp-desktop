@@ -15,36 +15,42 @@ public class TileDrawWrapper : MonoBehaviour
 	[SerializeField]
 	private LayerMask mask;
 
-	// List of all blocks placed in the level so far.
-	private List<CreatorTile> blocks;
+	// List of all tiles placed in the level so far.
+	private List<CreatorTile> tiles;
 
 	// Objects that encapsulate tile drawing functions.
+	[SerializeField]
 	private List<TileDraw> tileDraws;
 
 	[SerializeField] 
-	private TileDraw tileDrawDesktop;
-
-	[SerializeField] 
-	private TileDraw tileDrawMobile;
+	private TileDraw mobileDrawPre;
 
 	private Transform spawnRoot;
 
-	private void Start()
+	private static TileDrawWrapper wrapper;
+
+	public static TileDrawWrapper Get()
 	{
-		spawnRoot = new GameObject().transform;
-
-		tileDraws = new List<TileDraw>():
-		blocks = new List<CreatorTile>();
-
-		RegisterController(false);
+		return wrapper;
 	}
 
-	public void RegisterController(bool mobile)
+	private void Start()
 	{
-		TileDraw newTileDraw = 
-			Instantiate((mobile ? tileDrawMobile : tileDrawDesktop), 
-				Vector3.zero, Quaternion.identity) as TileDraw;
+		wrapper = this;
+		spawnRoot = new GameObject().transform;
 
+		tiles = new List<CreatorTile>();
+
+		if(tileDraws.Count != 1)
+			Debug.LogError("Tile draw object for desktop must be in scene at start.");
+
+		tileDraws[0].SetParameters(this, 0, spawnRoot, mask);
+	}
+
+	public void RegisterMobile()
+	{
+		TileDraw newTileDraw = Instantiate(mobileDrawPre, Vector3.zero, 
+			Quaternion.identity) as TileDraw;
 
 		tileDraws.Add(newTileDraw);
 
@@ -62,6 +68,24 @@ public class TileDrawWrapper : MonoBehaviour
 		 */
 	}
 
+	// Add a tile to the list of tiles.
+	public void AddTile(CreatorTile tile)
+	{
+		tiles.Add(tile);
+	}
+
+	// Return a list of all tiles added to the level.
+	public List<CreatorTile> GetTiles()
+	{
+		return tiles;
+	}
+
+	// Get the Transform that all spawned tiles are parented to.
+	public Transform GetRoot()
+	{
+		return spawnRoot;
+	}
+
 	public void SetUndoRedo(int id)
 	{
 
@@ -69,19 +93,18 @@ public class TileDrawWrapper : MonoBehaviour
 
 	public void SetActiveTile(int id, TileData tile)
 	{
-		bool show = tileDraws[id].SetActiveTile(tile);
-		if(id == 0)
-		{
-			fillButton.SetVisible(true);
-			rectFilledButton.SetVisible(true);
-			rectHollowButton.SetVisible(true);
-		}
-		else
-		{
-			fillButton.SetVisible(false);
-			rectFilledButton.SetVisible(false);
-			rectHollowButton.SetVisible(false);
-		}
+		tileDraws[id].SetActiveTile(tile);
+	}
+
+	public void SetActiveTool(int id, ToolType tool)
+	{
+		tileDraws[id].SetActiveTool(tool);
+	}
+
+	// Please implement this by Sunday.
+	public void ReceiveMessagesFromWhateverHughsStuffDoes()
+	{
+
 	}
 
 	public void Undo(int id)
@@ -92,5 +115,10 @@ public class TileDrawWrapper : MonoBehaviour
 	public void Redo(int id)
 	{
 
+	}
+
+	public void Clear(int id)
+	{
+		
 	}
 }

@@ -112,10 +112,10 @@ public class LevelEditor : MonoBehaviour
 			LevelSaveData data = new LevelSaveData(nameField.GetName(), TakeScreenshot(), DateTime.Now);
 			data.name = nameField.GetName();
 
-			foreach (CreatorTile block in TileDraw.placement.GetBlocks())
+			foreach (CreatorTile tile in TileDrawWrapper.Get().GetTiles())
 			{
-				if(block.gameObject.activeSelf)
-					data.tiles.Add(new TileSaveData(block.GetTileType(), block.transform.position));
+				if(tile.gameObject.activeSelf)
+					data.tiles.Add(new TileSaveData(tile.GetTileType(), tile.transform.position));
 			}
 
 			BinaryFormatter bf = new BinaryFormatter();
@@ -217,9 +217,9 @@ public class LevelEditor : MonoBehaviour
 
 				if(prefab != null)
 				{
-					CreatorTile newBlock = Instantiate(prefab, position, Quaternion.identity, tileRoot);
-					newBlock.SetTilePrefab(prefab);
-					TileDraw.placement.AddBlock(newBlock);
+					CreatorTile newTile = Instantiate(prefab, position, Quaternion.identity, tileRoot);
+					newTile.SetTilePrefab(prefab);
+					TileDrawWrapper.Get().AddTile(newTile);
 				}
 			}
 		}

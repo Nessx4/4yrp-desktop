@@ -24,6 +24,6 @@ public class Toolbar : MonoBehaviour
 		activeTool = newTool;
 		activeTool.SetColor(activeColor);
 
-		TileDraw.placement.SetActiveTool(activeTool.GetTool());
+		TileDrawWrapper.Get().SetActiveTool(0, activeTool.GetTool());
 	}
 }
