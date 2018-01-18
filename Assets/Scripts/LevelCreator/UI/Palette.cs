@@ -113,7 +113,7 @@ public class Palette : MonoBehaviour
 
 	public void SetActiveTile(TileData data, SelectableTile tile)
 	{
-		TileDrawWrapper.Get().SetActiveTile(0, data);
+		CreatorPlayerWrapper.Get().SetActiveTile(0, data);
 
 		if(activeTile != null)
 			activeTile.Deactivate();

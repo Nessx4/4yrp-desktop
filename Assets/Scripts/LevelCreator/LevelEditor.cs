@@ -112,7 +112,7 @@ public class LevelEditor : MonoBehaviour
 			LevelSaveData data = new LevelSaveData(nameField.GetName(), TakeScreenshot(), DateTime.Now);
 			data.name = nameField.GetName();
 
-			foreach (CreatorTile tile in TileDrawWrapper.Get().GetTiles())
+			foreach (CreatorTile tile in CreatorPlayerWrapper.Get().GetTiles())
 			{
 				if(tile.gameObject.activeSelf)
 					data.tiles.Add(new TileSaveData(tile.GetTileType(), tile.transform.position));
@@ -219,7 +219,7 @@ public class LevelEditor : MonoBehaviour
 				{
 					CreatorTile newTile = Instantiate(prefab, position, Quaternion.identity, tileRoot);
 					newTile.SetTilePrefab(prefab);
-					TileDrawWrapper.Get().AddTile(newTile);
+					CreatorPlayerWrapper.Get().AddTile(newTile);
 				}
 			}
 		}

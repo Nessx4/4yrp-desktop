@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class TileDrawDesktop : TileDraw 
+public class CreatorPlayerDesktop : CreatorPlayer 
 {
 	// Buttons can be greyed out due to tool selection or undo/redo stack size.
 	[SerializeField]
@@ -32,6 +32,34 @@ public class TileDrawDesktop : TileDraw
 		mainCam = Camera.main;
 	}
 
+	protected override void Update()
+	{
+		base.Update();
+
+		if(Input.GetMouseButtonDown(0))
+			StartDraw();
+
+		if(Input.GetMouseButtonUp(0))
+			StopDraw();
+	}
+
+	// Position the preview block at mouse position.
+	protected override void UpdatePreviewPos()
+	{
+		if(previewBlock != null)
+		{
+			Vector3 mousePos = new Vector3(Input.mousePosition.x, 
+				Input.mousePosition.y, 10.0f);
+			
+			Vector3 pos = mainCam.ScreenToWorldPoint(mousePos);
+
+			pos.x = Mathf.RoundToInt(pos.x);
+			pos.y = Mathf.RoundToInt(pos.y);
+			pos.z = -5.0f;
+			previewBlock.transform.position = pos;
+		}
+	}
+
 	// Check if the Undo and Redo buttons need to be greyed out.
 	public override void CheckHistory()
 	{
@@ -43,10 +71,13 @@ public class TileDrawDesktop : TileDraw
 	// remove tiles.
 	protected override IEnumerator PencilDraw(CreatorTile newTilePre)
 	{
+		Debug.Log("HI");
 		WaitForEndOfFrame wait = new WaitForEndOfFrame();
 		List<TilePosition> tilePositions = new List<TilePosition>();
 
 		List<TileOperation> operations = new List<TileOperation>();
+
+		stopDrawing = false;
 
 		while(!stopDrawing)
 		{
@@ -130,7 +161,7 @@ public class TileDrawDesktop : TileDraw
 	{
 		List<TileOperation> operations = new List<TileOperation>();
 
-		List<CreatorTile> tiles = TileDrawWrapper.Get().GetTiles();
+		List<CreatorTile> tiles = CreatorPlayerWrapper.Get().GetTiles();
 
 		foreach (CreatorTile tile in tiles)
 			operations.Add(new TileOperation(null, tile, tile.transform.position));

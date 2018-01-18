@@ -131,6 +131,7 @@ MonoBehaviour:
   mask:
     serializedVersion: 2
     m_Bits: 512
-  tileDraws:
+  players:
   - {fileID: 0}
-  mobileDrawPre: {fileID: 0}
+  mobilePlayerPre: {fileID: 114983089524131748, guid: 320a4a86742244ad8b687cb29c816246,
+    type: 2}

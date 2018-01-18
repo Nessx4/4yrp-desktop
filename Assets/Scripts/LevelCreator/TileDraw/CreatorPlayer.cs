@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-public abstract class TileDraw : MonoBehaviour 
+public abstract class CreatorPlayer : MonoBehaviour 
 {
 	// The tile placement raycast only looks at certain layers.
 	protected LayerMask mask;
@@ -28,7 +28,7 @@ public abstract class TileDraw : MonoBehaviour
     protected Coroutine drawingRoutine;
 	protected bool stopDrawing = false;
 
-	protected TileDrawWrapper wrapper;
+	protected CreatorPlayerWrapper wrapper;
 	protected int id;
 
 	protected virtual void Start()
@@ -39,7 +39,7 @@ public abstract class TileDraw : MonoBehaviour
 		CheckHistory();
 	}
 
-	public void SetParameters(TileDrawWrapper wrapper, int id, 
+	public void SetParameters(CreatorPlayerWrapper wrapper, int id, 
 		Transform spawnRoot, LayerMask mask)
 	{
 		this.wrapper = wrapper;
@@ -107,7 +107,7 @@ public abstract class TileDraw : MonoBehaviour
 			Destroy(previewBlock.gameObject);
 
 		if (activeTool != ToolType.ERASER)
-			previewBlock = Instantiate(activeTile.creatorPrefab);
+			CreatePreview();
 	}
 
 	// Set the tile to be drawn.
@@ -133,21 +133,16 @@ public abstract class TileDraw : MonoBehaviour
 
         previewBlock = Instantiate(activeTile.creatorPrefab);
 		Destroy(previewBlock.GetComponent<Rigidbody2D>());
-		Destroy(previewBlock.GetComponent<CreatorTile>());
 	}
 
-	// Immediately set the position of the cursor.
-	public void SetPosition(Vector3 position)
+	protected virtual void Update()
 	{
-		transform.position = position;
+		UpdatePreviewPos();
 	}
 
-	public void Move(Vector2 moveAmount)
-	{
-		transform.Translate(moveAmount);
-	}
+	protected abstract void UpdatePreviewPos();
 
-	public void StartDraw()
+	protected void StartDraw()
 	{
 		if (drawingRoutine != null)
 			StopDraw();
@@ -226,7 +221,7 @@ public abstract class TileDraw : MonoBehaviour
 			if (newTilePre != null)
 			{
 				newTileInst = Instantiate(newTilePre, position, 
-					Quaternion.identity, TileDrawWrapper.Get().GetRoot());
+					Quaternion.identity, CreatorPlayerWrapper.Get().GetRoot());
 				newTileInst.SetTilePrefab(newTilePre);
 			}
 		}

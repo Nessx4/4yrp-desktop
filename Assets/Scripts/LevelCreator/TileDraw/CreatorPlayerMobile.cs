@@ -3,8 +3,13 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-public class TileDrawMobile : TileDraw 
+public class CreatorPlayerMobile : CreatorPlayer 
 {
+    protected override void UpdatePreviewPos()
+    {
+        throw new System.NotImplementedException();
+    }
+
 	// Check if the Undo and Redo buttons need to be greyed out.
 	public override void CheckHistory()
 	{

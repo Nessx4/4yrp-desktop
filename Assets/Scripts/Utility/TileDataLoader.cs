@@ -30,7 +30,6 @@ public class TileDataLoader : MonoBehaviour
 	private void LoadTileData()
 	{
 		TextAsset tileDataCSV = Resources.Load("TileData") as TextAsset;
-		Debug.Log(tileDataCSV);
 		tileData = new Dictionary<string, TileData>();
 
 		string data = tileDataCSV.text;
@@ -63,8 +62,6 @@ public class TileDataLoader : MonoBehaviour
 			TileData newTile = new TileData(name, uiSprite, creatorPrefab, 
 				runtimePrefab, new Vector2(sizeX, sizeY), category);
 
-			Debug.Log(name + "1 " + uiSprite + "2 " + creatorPrefab + "3 " + runtimePrefab + "4 " + new Vector2(sizeX, sizeY) + "5 " + category);
-
 			tileData.Add(name, newTile);
 		}
 	}
@@ -82,8 +79,6 @@ public class TileDataLoader : MonoBehaviour
 	// Get a full list of all TileData.
 	public List<TileData> GetAllData()
 	{
-		Debug.Log(tileData.Values);
-		Debug.Log(tileData.Values.Count);
 		return new List<TileData>(tileData.Values);
 	}
 }

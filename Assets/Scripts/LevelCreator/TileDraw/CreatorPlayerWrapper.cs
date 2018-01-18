@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-public class TileDrawWrapper : MonoBehaviour
+public class CreatorPlayerWrapper : MonoBehaviour
 {
 	// The tile placement raycast only looks at certain layers.
 	[SerializeField]
@@ -20,16 +20,19 @@ public class TileDrawWrapper : MonoBehaviour
 
 	// Objects that encapsulate tile drawing functions.
 	[SerializeField]
-	private List<TileDraw> tileDraws;
+	private List<CreatorPlayer> players;
 
 	[SerializeField] 
-	private TileDraw mobileDrawPre;
+	private CreatorPlayerMobile mobilePlayerPre;
+
+	[SerializeField] 
+	private TileData defaultTile;
 
 	private Transform spawnRoot;
 
-	private static TileDrawWrapper wrapper;
+	private static CreatorPlayerWrapper wrapper;
 
-	public static TileDrawWrapper Get()
+	public static CreatorPlayerWrapper Get()
 	{
 		return wrapper;
 	}
@@ -41,21 +44,21 @@ public class TileDrawWrapper : MonoBehaviour
 
 		tiles = new List<CreatorTile>();
 
-		if(tileDraws.Count != 1)
+		if(players.Count != 1)
 			Debug.LogError("Tile draw object for desktop must be in scene at start.");
 
-		tileDraws[0].SetParameters(this, 0, spawnRoot, mask);
+		players[0].SetParameters(this, 0, spawnRoot, mask);
 	}
 
 	public void RegisterMobile()
 	{
-		TileDraw newTileDraw = Instantiate(mobileDrawPre, Vector3.zero, 
-			Quaternion.identity) as TileDraw;
+		CreatorPlayer newPlayer = Instantiate(mobilePlayerPre, Vector3.zero, 
+			Quaternion.identity) as CreatorPlayer;
 
-		tileDraws.Add(newTileDraw);
+		players.Add(newPlayer);
 
 		// Set the wrapper object, ID and spawned tile root transform;
-		newTileDraw.SetParameters(this, tileDraws.Count - 1, spawnRoot, mask);
+		newPlayer.SetParameters(this, players.Count - 1, spawnRoot, mask);
 	}
 
 	private void Update()
@@ -93,12 +96,12 @@ public class TileDrawWrapper : MonoBehaviour
 
 	public void SetActiveTile(int id, TileData tile)
 	{
-		tileDraws[id].SetActiveTile(tile);
+		players[id].SetActiveTile(tile);
 	}
 
 	public void SetActiveTool(int id, ToolType tool)
 	{
-		tileDraws[id].SetActiveTool(tool);
+		players[id].SetActiveTool(tool);
 	}
 
 	// Please implement this by Sunday.

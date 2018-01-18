@@ -4872,11 +4872,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 5
       objectReference: {fileID: 0}
-    - target: {fileID: 114671443724642464, guid: 41143f0c876b7433fa0169faf234d278,
-        type: 2}
-      propertyPath: tileDraws.Array.data[0]
-      value: 
-      objectReference: {fileID: 977120030}
     - target: {fileID: 114459712950116650, guid: 41143f0c876b7433fa0169faf234d278,
         type: 2}
       propertyPath: nameField
@@ -4897,6 +4892,11 @@ Prefab:
       propertyPath: mainCamera
       value: 
       objectReference: {fileID: 1854636799}
+    - target: {fileID: 114671443724642464, guid: 41143f0c876b7433fa0169faf234d278,
+        type: 2}
+      propertyPath: players.Array.data[0]
+      value: 
+      objectReference: {fileID: 977120030}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 41143f0c876b7433fa0169faf234d278, type: 2}
   m_IsPrefabParent: 0

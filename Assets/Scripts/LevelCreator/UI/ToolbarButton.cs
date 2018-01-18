@@ -42,12 +42,12 @@ public class ToolbarButton : MonoBehaviour
 	
 	public void Undo()
 	{
-		TileDrawWrapper.Get().Undo(0);
+		CreatorPlayerWrapper.Get().Undo(0);
 	}
 
 	public void Redo()
 	{
-		TileDrawWrapper.Get().Redo(0);
+		CreatorPlayerWrapper.Get().Redo(0);
 	}
 
 	public void Save()
@@ -63,7 +63,7 @@ public class ToolbarButton : MonoBehaviour
 
 	public void Clear()
 	{
-		TileDrawWrapper.Get().Clear(0);
+		CreatorPlayerWrapper.Get().Clear(0);
 	}
 
 	public void Menu()
