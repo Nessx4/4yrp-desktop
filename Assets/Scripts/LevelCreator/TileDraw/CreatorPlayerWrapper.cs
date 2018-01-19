@@ -61,16 +61,6 @@ public class CreatorPlayerWrapper : MonoBehaviour
 		newPlayer.SetParameters(this, players.Count - 1, spawnRoot, mask);
 	}
 
-	private void Update()
-	{
-		/*	To do in Update:
-		 *		-> Update tile preview positions.
-		 *		-> Poll for desktop mouse pos and click events etc.
-		 *		-> Poll for mobile events.
-		 *		-> Set movement delta for each cursor.
-		 */
-	}
-
 	// Add a tile to the list of tiles.
 	public void AddTile(CreatorTile tile)
 	{
@@ -89,11 +79,6 @@ public class CreatorPlayerWrapper : MonoBehaviour
 		return spawnRoot;
 	}
 
-	public void SetUndoRedo(int id)
-	{
-
-	}
-
 	public void SetActiveTile(int id, TileData tile)
 	{
 		players[id].SetActiveTile(tile);
@@ -104,24 +89,18 @@ public class CreatorPlayerWrapper : MonoBehaviour
 		players[id].SetActiveTool(tool);
 	}
 
-	// Please implement this by Sunday.
-	public void ReceiveMessagesFromWhateverHughsStuffDoes()
-	{
-
-	}
-
 	public void Undo(int id)
 	{
-
+		players[id].Undo();
 	}
 
 	public void Redo(int id)
 	{
-
+		players[id].Redo();
 	}
 
 	public void Clear(int id)
 	{
-		
+		players[id].ClearAll();
 	}
 }

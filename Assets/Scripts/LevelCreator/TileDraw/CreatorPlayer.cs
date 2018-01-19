@@ -22,8 +22,8 @@ public abstract class CreatorPlayer : MonoBehaviour
 	protected ToolType activeTool = ToolType.PENCIL;
 
 	// The undo/redo system relies on stacks.
-	protected Stack<List<TileOperation>> undoStack;
-	protected Stack<List<TileOperation>> redoStack;
+	protected Stack<HashSet<TileOperation>> undoStack;
+	protected Stack<HashSet<TileOperation>> redoStack;
 
     protected Coroutine drawingRoutine;
 	protected bool stopDrawing = false;
@@ -33,8 +33,8 @@ public abstract class CreatorPlayer : MonoBehaviour
 
 	protected virtual void Start()
 	{
-		undoStack = new Stack<List<TileOperation>>();
-		redoStack = new Stack<List<TileOperation>>();
+		undoStack = new Stack<HashSet<TileOperation>>();
+		redoStack = new Stack<HashSet<TileOperation>>();
 
 		CheckHistory();
 	}
@@ -49,7 +49,7 @@ public abstract class CreatorPlayer : MonoBehaviour
 	}
 
 	// Add a set of operations to the undo history and erase the redo stack.
-	protected void AddUndoHistory(List<TileOperation> operations)
+	protected void AddUndoHistory(HashSet<TileOperation> operations)
 	{
 		undoStack.Push(operations);
 		redoStack.Clear();
@@ -62,7 +62,7 @@ public abstract class CreatorPlayer : MonoBehaviour
 	{
 		if (undoStack.Count > 0)
 		{
-			List<TileOperation> ops = undoStack.Pop();
+			HashSet<TileOperation> ops = undoStack.Pop();
 
 			foreach (TileOperation op in ops)
 				op.Undo();
@@ -78,7 +78,7 @@ public abstract class CreatorPlayer : MonoBehaviour
 	{
 		if (redoStack.Count > 0)
 		{
-			List<TileOperation> ops = redoStack.Pop();
+			HashSet<TileOperation> ops = redoStack.Pop();
 
 			foreach (TileOperation op in ops)
 				op.Redo();
@@ -94,8 +94,8 @@ public abstract class CreatorPlayer : MonoBehaviour
 	// Remove the entire history stacks.
 	public void DeleteUndoHistory()
 	{
-		undoStack = new Stack<List<TileOperation>>();
-		redoStack = new Stack<List<TileOperation>>();
+		undoStack = new Stack<HashSet<TileOperation>>();
+		redoStack = new Stack<HashSet<TileOperation>>();
 	}
 
 	// Change the active tool.
@@ -142,6 +142,7 @@ public abstract class CreatorPlayer : MonoBehaviour
 
 	protected abstract void UpdatePreviewPos();
 
+	// Start a drawing operation (pencil, eraser, rectangle etc).
 	protected void StartDraw()
 	{
 		if (drawingRoutine != null)
@@ -150,31 +151,98 @@ public abstract class CreatorPlayer : MonoBehaviour
 		switch (activeTool)
 		{
 			case ToolType.PENCIL:
-				drawingRoutine = StartCoroutine(PencilDraw(activeTile.creatorPrefab));
+				drawingRoutine = StartCoroutine(PencilDraw());
 				break;
 			case ToolType.ERASER:
 				drawingRoutine = StartCoroutine(Erase());
 				break;
+			case ToolType.RECT_HOLLOW:
+				drawingRoutine = StartCoroutine(DrawRect(false));
+				break;
+			case ToolType.RECT_FILL:
+				drawingRoutine = StartCoroutine(DrawRect(true));
+				break;
 		}
 	}
 
+	// Tell the running coroutine to stop drawing.
 	public void StopDraw()
 	{
-		// Don't just stop it, because this might break things.
-		//StopCoroutine(drawingRoutine);
-
 		stopDrawing = true;
 	}
 
-	protected abstract IEnumerator PencilDraw(CreatorTile newTilePre);
+	protected abstract IEnumerator PencilDraw();
+
+	// Places a tile at a position where possible.
+	protected HashSet<TileOperation> TryPlaceTile(
+		HashSet<TileOperation> operations, CreatorTile tile, Vector2 pos)
+	{
+		RaycastHit2D hitObj = Physics2D.Raycast(pos, Vector3.up, 0.25f, mask);
+		CreatorTile existingTile = null;
+
+		if(hitObj.transform != null)
+			existingTile = hitObj.transform.GetComponent<CreatorTile>();
+
+		// Don't place tiles if the result would be the same.
+		bool sameTile = (existingTile != null && existingTile.GetTilePrefab() == tile);
+		// Don't replace air with air.
+		bool bothAir = (existingTile == null && tile == null);
+
+		if(!sameTile && !bothAir)
+			operations.Add(new TileOperation(tile, existingTile, pos));
+
+		return operations;
+	}
 
 	protected abstract IEnumerator Erase();
 
 	protected abstract void FloodFill();
 
-	protected abstract void DrawHollowRect();
+	protected abstract IEnumerator DrawRect(bool filled);
 
-	protected abstract void DrawFullRect();
+	protected HashSet<CreatorTile> RectHelper(Vector2 startPos, Vector2 endPos, 
+		bool filled, bool preview)
+	{
+		HashSet<CreatorTile> tiles = new HashSet<CreatorTile>();
+		HashSet<TileOperation> operations = new HashSet<TileOperation>();
+
+		int minX = (int)Mathf.Min(startPos.x, endPos.x);
+		int minY = (int)Mathf.Min(startPos.y, endPos.y);
+		int maxX = (int)Mathf.Max(startPos.x, endPos.x);
+		int maxY = (int)Mathf.Max(startPos.y, endPos.y);
+
+		for(int x = minX; x <= maxX; ++x)
+		{
+			for(int y = minY; y <= maxY; ++y)
+			{
+				// If a position is at the rect boundary, draw the preview here.
+				if(filled || x == minX || x == maxX || y == minY || y == maxY)
+				{
+					if(preview)
+					{
+						CreatorTile newTile = 
+							Instantiate(activeTile.creatorPrefab, 
+								new Vector2(x, y), Quaternion.identity);
+
+						Destroy(newTile.GetComponent<Rigidbody2D>());
+
+						tiles.Add(newTile);
+					}
+					else
+					{
+						operations = TryPlaceTile(operations, 
+							activeTile.creatorPrefab, new Vector2(x, y));
+					}
+				}
+			}
+		}
+
+		// Add the drawn tiles to the undo history.
+		if(!preview && operations.Count > 0)
+			AddUndoHistory(operations);
+
+		return tiles;
+	}
 
 	public abstract void ClearAll();
 
@@ -223,6 +291,7 @@ public abstract class CreatorPlayer : MonoBehaviour
 				newTileInst = Instantiate(newTilePre, position, 
 					Quaternion.identity, CreatorPlayerWrapper.Get().GetRoot());
 				newTileInst.SetTilePrefab(newTilePre);
+				CreatorPlayerWrapper.Get().AddTile(newTileInst);
 			}
 		}
 

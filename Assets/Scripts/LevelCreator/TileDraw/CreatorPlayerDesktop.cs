@@ -43,15 +43,25 @@ public class CreatorPlayerDesktop : CreatorPlayer
 			StopDraw();
 	}
 
+	private Vector3 MouseToWorldPos()
+	{
+		Vector3 mousePos = new Vector3(Input.mousePosition.x, 
+			Input.mousePosition.y, 10.0f);
+		
+		return mainCam.ScreenToWorldPoint(mousePos);
+	}
+
+	private Vector2 RoundVectorToInt(Vector2 vec)
+	{
+		return new Vector2(Mathf.RoundToInt(vec.x), Mathf.RoundToInt(vec.y));
+	}
+
 	// Position the preview block at mouse position.
 	protected override void UpdatePreviewPos()
 	{
 		if(previewBlock != null)
 		{
-			Vector3 mousePos = new Vector3(Input.mousePosition.x, 
-				Input.mousePosition.y, 10.0f);
-			
-			Vector3 pos = mainCam.ScreenToWorldPoint(mousePos);
+			Vector3 pos = MouseToWorldPos();
 
 			pos.x = Mathf.RoundToInt(pos.x);
 			pos.y = Mathf.RoundToInt(pos.y);
@@ -69,13 +79,12 @@ public class CreatorPlayerDesktop : CreatorPlayer
 
 	// While still holding down the placement button, continually place or
 	// remove tiles.
-	protected override IEnumerator PencilDraw(CreatorTile newTilePre)
+	protected override IEnumerator PencilDraw()
 	{
-		Debug.Log("HI");
 		WaitForEndOfFrame wait = new WaitForEndOfFrame();
-		List<TilePosition> tilePositions = new List<TilePosition>();
 
-		List<TileOperation> operations = new List<TileOperation>();
+		HashSet<Vector2> tilePositions = new HashSet<Vector2>();
+		HashSet<TileOperation> operations = new HashSet<TileOperation>();
 
 		stopDrawing = false;
 
@@ -84,44 +93,14 @@ public class CreatorPlayerDesktop : CreatorPlayer
 			// Do not place tiles when mouse is on top of the UI elements.
 			if(!EventSystem.current.IsPointerOverGameObject())
 			{
-				Vector3 mousePos = new Vector3(Input.mousePosition.x, 
-					Input.mousePosition.y, 10.0f);
-				Vector3 pos = mainCam.ScreenToWorldPoint(mousePos);
+				Vector2 tp = RoundVectorToInt(MouseToWorldPos());
 
-				TilePosition tp = new TilePosition(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y));
-
-				bool hasPlacedHere = false;
-
-				foreach (TilePosition tilePosition in tilePositions)
+				if(!tilePositions.Contains(tp))
 				{
-					if (tilePosition == tp)
-					{
-						hasPlacedHere = true;
-						continue;
-					}
-				}
-
-				if(!hasPlacedHere)
-				{
-					pos.x = tp.x;
-					pos.y = tp.y;
-					pos.z = 0.0f;
-
 					tilePositions.Add(tp);
 
-					RaycastHit2D hitObj = Physics2D.Raycast(pos, Vector3.up, 0.25f, mask);
-					CreatorTile existingTile = null;
-
-					if(hitObj.transform != null)
-						existingTile = hitObj.transform.GetComponent<CreatorTile>();
-
-					// Don't place tiles if the result would be the same.
-					bool sameTile = (existingTile != null && existingTile.GetTilePrefab() == newTilePre);
-					// Don't replace air with air.
-					bool bothAir = (existingTile == null && newTilePre == null);
-
-					if(!sameTile && !bothAir)
-						operations.Add(new TileOperation(newTilePre, existingTile, pos));
+					operations = TryPlaceTile(operations, 
+						activeTile.creatorPrefab, tp);
 				}
 			}
 
@@ -131,15 +110,38 @@ public class CreatorPlayerDesktop : CreatorPlayer
 		// Add the drawn tiles to the undo history.
 		if (operations.Count > 0)
 			AddUndoHistory(operations);
-
-		stopDrawing = false;
 	}
 
 	protected override IEnumerator Erase()
 	{
-		yield return null;
+		WaitForEndOfFrame wait = new WaitForEndOfFrame();
 
-		throw new System.NotImplementedException();
+		HashSet<Vector2> tilePositions = new HashSet<Vector2>();
+		HashSet<TileOperation> operations = new HashSet<TileOperation>();
+
+		stopDrawing = false;
+
+		while(!stopDrawing)
+		{
+			// Do not place tiles when mouse is on top of the UI elements.
+			if(!EventSystem.current.IsPointerOverGameObject())
+			{
+				Vector2 tp = RoundVectorToInt(MouseToWorldPos());
+
+				// Do not re-erase here if already erased here this operation.
+				if(!tilePositions.Contains(tp))
+				{
+					tilePositions.Add(tp);
+					operations = TryPlaceTile(operations, null, tp);
+				}
+			}
+
+			yield return wait;
+		}
+
+		// Add the drawn tiles to the undo history.
+		if (operations.Count > 0)
+			AddUndoHistory(operations);
 	}
 
 	protected override void FloodFill()
@@ -147,26 +149,93 @@ public class CreatorPlayerDesktop : CreatorPlayer
 		throw new System.NotImplementedException();
 	}
 
-	protected override void DrawHollowRect()
+	/*
+	protected override IEnumerator DrawHollowRect()
 	{
-		throw new System.NotImplementedException();
-	}
+		WaitForEndOfFrame wait = new WaitForEndOfFrame();
 
-	protected override void DrawFullRect()
+		Vector2 startPos = RoundVectorToInt(MouseToWorldPos());
+		Vector2 endPos = Vector2.zero;
+
+		HashSet<CreatorTile> previews = new HashSet<CreatorTile>();
+
+		stopDrawing = false;
+
+		while(!stopDrawing)
+		{
+			foreach(CreatorTile preview in previews)
+			{
+				if(preview != null)
+					Destroy(preview.gameObject);
+			}
+			previews.Clear();
+
+			endPos = RoundVectorToInt(MouseToWorldPos());
+
+			previews = RectHelper(startPos, endPos, false, true);
+
+			yield return wait;
+		}
+
+		foreach(CreatorTile preview in previews)
+		{
+			if(preview != null)
+				Destroy(preview.gameObject);
+		}
+		previews.Clear();
+
+		HashSet<CreatorTile> newTiles = RectHelper(startPos, endPos, false, false);
+	}
+	*/
+
+	protected override IEnumerator DrawRect(bool filled)
 	{
-		throw new System.NotImplementedException();
+		WaitForEndOfFrame wait = new WaitForEndOfFrame();
+
+		Vector2 startPos = RoundVectorToInt(MouseToWorldPos());
+		Vector2 endPos = Vector2.zero;
+
+		HashSet<CreatorTile> previews = new HashSet<CreatorTile>();
+
+		stopDrawing = false;
+
+		while(!stopDrawing)
+		{
+			//if(!EventSystem.current.IsPointerOverGameObject())
+			//{
+				foreach(CreatorTile preview in previews)
+				{
+					if(preview != null)
+						Destroy(preview.gameObject);
+				}
+				previews.Clear();
+
+				endPos = RoundVectorToInt(MouseToWorldPos());
+
+				previews = RectHelper(startPos, endPos, filled, true);
+			//}
+
+			yield return wait;
+		}
+
+		foreach(CreatorTile preview in previews)
+		{
+			if(preview != null)
+				Destroy(preview.gameObject);
+		}
+		previews.Clear();
+
+		HashSet<CreatorTile> newTiles = RectHelper(startPos, endPos, filled, false);
 	}
 
 	public override void ClearAll()
 	{
-		List<TileOperation> operations = new List<TileOperation>();
+		HashSet<TileOperation> operations = new HashSet<TileOperation>();
 
 		List<CreatorTile> tiles = CreatorPlayerWrapper.Get().GetTiles();
 
 		foreach (CreatorTile tile in tiles)
 			operations.Add(new TileOperation(null, tile, tile.transform.position));
-
-		Debug.LogError("ClearAll() must grey out the Clear button.");
 
 		AddUndoHistory(operations);
 	}

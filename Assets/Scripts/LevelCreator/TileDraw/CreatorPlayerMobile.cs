@@ -22,12 +22,14 @@ public class CreatorPlayerMobile : CreatorPlayer
 
 	// While still holding down the placement button, continually place or
     // remove tiles.
-    protected override IEnumerator PencilDraw(CreatorTile newTilePre)
+    protected override IEnumerator PencilDraw()
     {
         WaitForEndOfFrame wait = new WaitForEndOfFrame();
-        List<TilePosition> tilePositions = new List<TilePosition>();
 
-        List<TileOperation> operations = new List<TileOperation>();
+        CreatorTile newTilePre = activeTile.creatorPrefab;
+
+        List<TilePosition> tilePositions = new List<TilePosition>();
+        HashSet<TileOperation> operations = new HashSet<TileOperation>();
 
         while (!stopDrawing)
         {
@@ -99,15 +101,11 @@ public class CreatorPlayerMobile : CreatorPlayer
 		throw new System.NotImplementedException();
 	}
 
-	protected override void DrawHollowRect()
+	protected override IEnumerator DrawRect(bool filled)
 	{
 		throw new System.NotImplementedException();
 	}
 
-	protected override void DrawFullRect()
-	{
-		throw new System.NotImplementedException();
-	}
 	public override void ClearAll()
 	{
 		throw new System.NotImplementedException();
