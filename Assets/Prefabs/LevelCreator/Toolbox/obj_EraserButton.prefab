@@ -77,9 +77,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   toolbar: {fileID: 0}
-  tool: 1
+  tool: 4
   showColor: {r: 1, g: 1, b: 1, a: 1}
   hideColor: {r: 0.24705882, g: 0.24705882, b: 0.24705882, a: 1}
+  loader: {fileID: 0}
 --- !u!114 &114346440770008452
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -242,7 +243,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1515115806692800}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 109.992065, y: -50.000122, z: 0}
+  m_LocalPosition: {x: 109.98718, y: -50.000122, z: 0}
   m_LocalScale: {x: 1.0000815, y: 1.0000815, z: 1.0000815}
   m_Children: []
   m_Father: {fileID: 0}
@@ -250,6 +251,6 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 109.992065, y: -50.000122}
+  m_AnchoredPosition: {x: 109.98718, y: -50.000122}
   m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}

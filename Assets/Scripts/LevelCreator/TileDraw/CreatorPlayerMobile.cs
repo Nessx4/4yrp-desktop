@@ -10,16 +10,6 @@ public class CreatorPlayerMobile : CreatorPlayer
         throw new System.NotImplementedException();
     }
 
-	// Check if the Undo and Redo buttons need to be greyed out.
-	public override void CheckHistory()
-	{
-		/*	In the future, this function will send a message back to the
-		 *	mobile represented by ths object and tell it to grey out its
-		 *	undo/redo buttons if necessary.
-		 */
-		throw new System.NotImplementedException();
-	}
-
 	// While still holding down the placement button, continually place or
     // remove tiles.
     protected override IEnumerator PencilDraw()

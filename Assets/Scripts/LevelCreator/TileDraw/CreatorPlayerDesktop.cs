@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -6,22 +7,6 @@ using UnityEngine.EventSystems;
 
 public class CreatorPlayerDesktop : CreatorPlayer 
 {
-	// Buttons can be greyed out due to tool selection or undo/redo stack size.
-	[SerializeField]
-	private ToolbarButton undoButton;
-
-	[SerializeField]
-	private ToolbarButton redoButton;
-
-	[SerializeField]
-	private ToolbarButton fillButton;
-
-	[SerializeField]
-	private ToolbarButton rectFilledButton;
-
-	[SerializeField]
-	private ToolbarButton rectHollowButton;
-
 	private Camera mainCam;
 
 	protected override void Start()
@@ -32,9 +17,9 @@ public class CreatorPlayerDesktop : CreatorPlayer
 		mainCam = Camera.main;
 	}
 
-	protected override void Update()
+	private void Update()
 	{
-		base.Update();
+		UpdatePreviewPos();
 
 		if(Input.GetMouseButtonDown(0))
 			StartDraw();
@@ -68,13 +53,6 @@ public class CreatorPlayerDesktop : CreatorPlayer
 			pos.z = -5.0f;
 			previewBlock.transform.position = pos;
 		}
-	}
-
-	// Check if the Undo and Redo buttons need to be greyed out.
-	public override void CheckHistory()
-	{
-		undoButton.SetVisible(undoStack.Count > 0);
-		redoButton.SetVisible(redoStack.Count > 0);
 	}
 
 	// While still holding down the placement button, continually place or
@@ -149,45 +127,6 @@ public class CreatorPlayerDesktop : CreatorPlayer
 		throw new System.NotImplementedException();
 	}
 
-	/*
-	protected override IEnumerator DrawHollowRect()
-	{
-		WaitForEndOfFrame wait = new WaitForEndOfFrame();
-
-		Vector2 startPos = RoundVectorToInt(MouseToWorldPos());
-		Vector2 endPos = Vector2.zero;
-
-		HashSet<CreatorTile> previews = new HashSet<CreatorTile>();
-
-		stopDrawing = false;
-
-		while(!stopDrawing)
-		{
-			foreach(CreatorTile preview in previews)
-			{
-				if(preview != null)
-					Destroy(preview.gameObject);
-			}
-			previews.Clear();
-
-			endPos = RoundVectorToInt(MouseToWorldPos());
-
-			previews = RectHelper(startPos, endPos, false, true);
-
-			yield return wait;
-		}
-
-		foreach(CreatorTile preview in previews)
-		{
-			if(preview != null)
-				Destroy(preview.gameObject);
-		}
-		previews.Clear();
-
-		HashSet<CreatorTile> newTiles = RectHelper(startPos, endPos, false, false);
-	}
-	*/
-
 	protected override IEnumerator DrawRect(bool filled)
 	{
 		WaitForEndOfFrame wait = new WaitForEndOfFrame();
@@ -238,24 +177,5 @@ public class CreatorPlayerDesktop : CreatorPlayer
 			operations.Add(new TileOperation(null, tile, tile.transform.position));
 
 		AddUndoHistory(operations);
-	}
-
-	// Grey out undo/redo buttons on desktop UI.
-	public override void SetActiveTile(TileData tile)
-	{
-		base.SetActiveTile(tile);
-
-		if(tile.IsUnitSize())
-		{
-			fillButton.SetVisible(true);
-			rectFilledButton.SetVisible(true);
-			rectHollowButton.SetVisible(true);
-		}
-		else
-		{
-			fillButton.SetVisible(false);
-			rectFilledButton.SetVisible(false);
-			rectHollowButton.SetVisible(false);
-		}
 	}
 }

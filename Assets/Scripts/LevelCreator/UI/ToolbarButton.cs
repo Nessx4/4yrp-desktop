@@ -24,7 +24,21 @@ public class ToolbarButton : MonoBehaviour
 	[SerializeField]
 	private LevelLoader loader;
 
-	private bool isShown = true;
+	private bool _isShown;
+	public bool IsShown
+	{
+		get
+		{
+			return _isShown;
+		}
+		set
+		{
+			if(value)
+				image.color = showColor;
+			else
+				image.color = hideColor;
+		}
+	}
 
 	private Image image;
 	private Animator anim;
@@ -33,6 +47,33 @@ public class ToolbarButton : MonoBehaviour
 	{
 		image = GetComponent<Image>();
 		anim = GetComponent<Animator>();
+
+		CreatorPlayerWrapper.Get().GetPlayer(0).TileChanged += TileChanged;
+		CreatorPlayerWrapper.Get().GetPlayer(0).ToolChanged += ToolChanged;
+		CreatorPlayerWrapper.Get().GetPlayer(0).UndoRedo += UndoRedo;
+	}
+
+	// For certain buttons, only active if the tile is unit size.
+	private void TileChanged(object sender, TileChangedEventArgs e)
+	{
+		if(tool == ToolType.FILL || tool == ToolType.RECT_HOLLOW || 
+			tool == ToolType.RECT_FILL)
+		{
+			IsShown = (e.tile.IsUnitSize());
+		}
+	}
+
+	private void ToolChanged(object sender, ToolChangedEventArgs e)
+	{
+
+	}
+
+	private void UndoRedo(object sender, UndoRedoEventArgs e)
+	{
+		if(tool == ToolType.UNDO)
+			IsShown = (e.undoSize > 0);
+		else if(tool == ToolType.REDO)
+			IsShown = (e.redoSize > 0);
 	}
 
 	public void SetColor(Color newColor)
@@ -57,7 +98,7 @@ public class ToolbarButton : MonoBehaviour
 
 	public void SetTool()
 	{
-		if(isShown)
+		if(IsShown)
 			toolbar.SetTool(this);
 	}
 
@@ -89,20 +130,12 @@ public class ToolbarButton : MonoBehaviour
 
 	public void Press()
 	{
-		anim.SetTrigger(isShown ? "Press" : "Shake");
+		anim.SetTrigger(IsShown ? "Press" : "Shake");
 	}
+}
 
-	public void SetVisible(bool visible)
-	{
-		if(visible)
-		{
-			image.color = showColor;
-			isShown = true;
-		}
-		else
-		{
-			image.color = hideColor;
-			isShown = false;
-		}
-	}
+public enum ToolType
+{
+	SAVE, UNDO, REDO, PENCIL, ERASER, GRAB, FILL, RECT_HOLLOW, RECT_FILL, 
+	CLEAR, MENU
 }

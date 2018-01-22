@@ -50,6 +50,12 @@ public class CreatorPlayerWrapper : MonoBehaviour
 		players[0].SetParameters(this, 0, spawnRoot, mask);
 	}
 
+	// Find a player by ID.
+	public CreatorPlayer GetPlayer(int id)
+	{
+		return players[id];
+	}
+
 	public void RegisterMobile()
 	{
 		CreatorPlayer newPlayer = Instantiate(mobilePlayerPre, Vector3.zero, 

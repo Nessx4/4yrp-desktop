@@ -1,6 +1,8 @@
 ﻿/*	Controls the placement of tiles into the world and the undo/redo function.
+ *	Also controls grabbing tiles and moving them around.
  */
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -25,18 +27,65 @@ public abstract class CreatorPlayer : MonoBehaviour
 	protected Stack<HashSet<TileOperation>> undoStack;
 	protected Stack<HashSet<TileOperation>> redoStack;
 
+	// Variables for drawing routines.
     protected Coroutine drawingRoutine;
 	protected bool stopDrawing = false;
 
+	// A tile selected using the Grab tool. Null if no tile is selected.
+	protected CreatorTile grabbedTile;
+
+	// Reference to the wrapper object.
 	protected CreatorPlayerWrapper wrapper;
 	protected int id;
+
+	// Fire an event when the undo or redo stack is modified.
+	public event UndoRedoEventHandler UndoRedo;
+
+	protected virtual void OnUndoRedo(UndoRedoEventArgs e)
+	{
+		UndoRedoEventHandler handler = UndoRedo;
+
+		if(handler != null)
+			handler(this, e);
+	}
+
+	public delegate void UndoRedoEventHandler(object sender, 
+		UndoRedoEventArgs e);
+
+	// Fire an event when the desktop tile changes.
+	public event TileChangedEventHandler TileChanged;
+
+	protected virtual void OnTileChanged(TileChangedEventArgs e)
+	{
+		TileChangedEventHandler handler = TileChanged;
+
+		if(handler != null)
+			handler(this, e);
+	}
+
+	public delegate void TileChangedEventHandler(object sender, 
+		TileChangedEventArgs e);
+
+	// Fire an event when the desktop tool changes.
+	public event ToolChangedEventHandler ToolChanged;
+
+	protected virtual void OnToolChanged(ToolChangedEventArgs e)
+	{
+		ToolChangedEventHandler handler = ToolChanged;
+
+		if(handler != null)
+			handler(this, e);
+	}
+
+	public delegate void ToolChangedEventHandler(object sender, 
+		ToolChangedEventArgs e);
 
 	protected virtual void Start()
 	{
 		undoStack = new Stack<HashSet<TileOperation>>();
 		redoStack = new Stack<HashSet<TileOperation>>();
 
-		CheckHistory();
+		OnUndoRedo(new UndoRedoEventArgs(undoStack.Count, redoStack.Count));
 	}
 
 	public void SetParameters(CreatorPlayerWrapper wrapper, int id, 
@@ -54,7 +103,7 @@ public abstract class CreatorPlayer : MonoBehaviour
 		undoStack.Push(operations);
 		redoStack.Clear();
 
-		CheckHistory();
+		OnUndoRedo(new UndoRedoEventArgs(undoStack.Count, redoStack.Count));
 	}
 
 	// Revert the state of the level back to before an operation.
@@ -69,7 +118,7 @@ public abstract class CreatorPlayer : MonoBehaviour
 
 			redoStack.Push(ops);
 
-			CheckHistory();
+			OnUndoRedo(new UndoRedoEventArgs(undoStack.Count, redoStack.Count));
 		}
 	}
 
@@ -85,11 +134,9 @@ public abstract class CreatorPlayer : MonoBehaviour
 
 			undoStack.Push(ops);
 
-			CheckHistory();
+			OnUndoRedo(new UndoRedoEventArgs(undoStack.Count, redoStack.Count));
 		}
 	}
-
-	public abstract void CheckHistory();
 
 	// Remove the entire history stacks.
 	public void DeleteUndoHistory()
@@ -111,19 +158,24 @@ public abstract class CreatorPlayer : MonoBehaviour
 	}
 
 	// Set the tile to be drawn.
-	public virtual void SetActiveTile(TileData tile)
+	public void SetActiveTile(TileData tile)
 	{
-		activeTile = tile;
+		if(tile.name != activeTile.name)
+		{
+			activeTile = tile;
 
-		// Switch from eraser to pencil.
-		if(activeTool == ToolType.ERASER)
-			SetActiveTool(ToolType.PENCIL);
+			// Switch from eraser to pencil.
+			if(activeTool == ToolType.ERASER)
+				SetActiveTool(ToolType.PENCIL);
 
-		if (previewBlock != null)
-			Destroy(previewBlock.gameObject);
+			if (previewBlock != null)
+				Destroy(previewBlock.gameObject);
 
-		if (activeTool == ToolType.PENCIL)
-			CreatePreview();
+			if (activeTool == ToolType.PENCIL)
+				CreatePreview();
+
+			OnTileChanged(new TileChangedEventArgs(tile));
+		}
 	}
 
     private void CreatePreview()
@@ -133,11 +185,6 @@ public abstract class CreatorPlayer : MonoBehaviour
 
         previewBlock = Instantiate(activeTile.creatorPrefab);
 		Destroy(previewBlock.GetComponent<Rigidbody2D>());
-	}
-
-	protected virtual void Update()
-	{
-		UpdatePreviewPos();
 	}
 
 	protected abstract void UpdatePreviewPos();
@@ -353,7 +400,34 @@ public struct TileContents
 	}
 }
 
-public enum ToolType
+public class TileChangedEventArgs : EventArgs
 {
-	PENCIL, ERASER, GRAB, FILL, RECT_HOLLOW, RECT_FILL
+	public TileData tile { get; private set; }
+
+	public TileChangedEventArgs(TileData tile)
+	{
+		this.tile = tile;
+	}
+}
+
+public class ToolChangedEventArgs : EventArgs
+{
+	public ToolType tool { get; private set; }
+
+	public ToolChangedEventArgs(ToolType tool)
+	{
+		this.tool = tool;
+	}
+}
+
+public class UndoRedoEventArgs : EventArgs
+{
+	public int undoSize { get; private set; }
+	public int redoSize { get; private set; }
+
+	public UndoRedoEventArgs(int undoSize, int redoSize)
+	{
+		this.undoSize = undoSize;
+		this.redoSize = redoSize;
+	}
 }
