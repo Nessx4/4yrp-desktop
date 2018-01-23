@@ -16,10 +16,9 @@ public class TESTServer : MonoBehaviour
 
 	private void Start()
 	{
-		/*
 		unsafe
 		{
-			string address = "0.0.0.0:9000";
+			string address = "127.0.0.1:9000";
 
 			void* handle = server_start(address);
 			Debug.Log(new IntPtr(&handle).ToString());
@@ -27,6 +26,5 @@ public class TESTServer : MonoBehaviour
 			server_close(handle);
 			Debug.Log("Server has closed.");
 		}
-		*/
 	}
 }
