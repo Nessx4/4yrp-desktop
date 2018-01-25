@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4346411382327514}
   - component: {fileID: 212705557466547428}
   - component: {fileID: 61420008638114386}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38,7 +38,7 @@ GameObject:
   - component: {fileID: 4772336183947472}
   - component: {fileID: 114780448219617286}
   - component: {fileID: 50880516221883784}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: obj_Mountain
   m_TagString: Untagged
   m_Icon: {fileID: 0}

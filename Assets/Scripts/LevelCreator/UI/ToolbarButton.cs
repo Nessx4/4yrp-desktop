@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿/*	ToolbarButton denotes one button on the Toolbar.
+ */
+using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -20,11 +22,8 @@ public class ToolbarButton : MonoBehaviour
 		private set { tool = value; } 
 	}
 
-	[SerializeField]
-	private Color showColor;
-
-	[SerializeField]
-	private Color hideColor;
+	private Color showColor = Color.white;
+	private Color hideColor = new Color(0.29f, 0.24f, 0.42f, 1.0f);
 
 	[SerializeField]
 	private LevelLoader loader;
@@ -114,5 +113,5 @@ public class ToolbarButton : MonoBehaviour
 public enum ToolType
 {
 	SAVE, UNDO, REDO, PENCIL, ERASER, GRAB, FILL, RECT_HOLLOW, RECT_FILL, 
-	CLEAR, MENU
+	CLEAR, MENU, PLAY
 }

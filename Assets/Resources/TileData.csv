@@ -1,23 +1,23 @@
-TileName,PrefabName,PaletteSprite,TileX,TileY,Category
-Solid Block,obj_SolidBlock,tx_Tile_SolidBlock,1,1,Basic
-Semi-solid Block,obj_SemiSolidBlock,tx_Tile_SemiSolidBlock,1,1,Basic
-Ladder,obj_Ladder,tx_Tile_Ladder,1,1,Basic
-Crate,obj_Crate,tx_Tile_Crate,1,1,Interactive
-Doughnut,obj_Doughnut,tx_Tile_Doughnut,1,1,Food
-Cupcake,obj_Cupcake,tx_Tile_Cupcake,1,1,Food
-Candy Cane,obj_CandyCane,tx_Tile_CandyCane,1,1,Food
-Toffee,obj_Toffee,tx_Tile_Toffee,1,1,Food
-Lollipop,obj_Lollipop,tx_Tile_Lollipop,1,1,Food
-Strawberry,obj_Strawberry,tx_Tile_Strawberry,1,1,Food
-Ice Cream,obj_IceCream,tx_Tile_IceCream,1,1,Food
-Chocolate Bar,obj_Chocolate,tx_Tile_Chocolate,1,1,Food
-Candy Floss,obj_CandyFloss,tx_Tile_CandyFloss,1,1,Food
-Brownie,obj_Brownie,tx_Tile_Brownie,1,1,Food
-Bush (1),obj_Bush01,tx_Tile_Bush01,6,4,Decorative
-Bush (2),obj_Bush02,tx_Tile_Bush02,6,4,Decorative
-Cloud (1),obj_Cloud01,tx_Tile_Cloud01,6,4,Decorative
-Cloud (2),obj_Cloud02,tx_Tile_Cloud02,6,4,Decorative
-Mountain,obj_Mountain,tx_Tile_Mountain,14,13,Decorative
-Start Point,obj_StartPoint,tx_Tile_StartPoint,1,1,Required
-Goal Point,obj_EndPoint,tx_Tile_GoalPoint,1,1,Required
-UFO,obj_UFO,tx_Tile_UFO,1,1,Enemy
+TileName,PrefabName,PaletteSprite,TileX,TileY,Category,Layer
+Solid Block,obj_SolidBlock,tx_Tile_SolidBlock,1,1,Basic,FG
+Semi-solid Block,obj_SemiSolidBlock,tx_Tile_SemiSolidBlock,1,1,Basic,FG
+Ladder,obj_Ladder,tx_Tile_Ladder,1,1,Basic,FG
+Crate,obj_Crate,tx_Tile_Crate,1,1,Interactive,FG
+Doughnut,obj_Doughnut,tx_Tile_Doughnut,1,1,Food,FG
+Cupcake,obj_Cupcake,tx_Tile_Cupcake,1,1,Food,FG
+Candy Cane,obj_CandyCane,tx_Tile_CandyCane,1,1,Food,FG
+Toffee,obj_Toffee,tx_Tile_Toffee,1,1,Food,FG
+Lollipop,obj_Lollipop,tx_Tile_Lollipop,1,1,Food,FG
+Strawberry,obj_Strawberry,tx_Tile_Strawberry,1,1,Food,FG
+Ice Cream,obj_IceCream,tx_Tile_IceCream,1,1,Food,FG
+Chocolate Bar,obj_Chocolate,tx_Tile_Chocolate,1,1,Food,FG
+Candy Floss,obj_CandyFloss,tx_Tile_CandyFloss,1,1,Food,FG
+Brownie,obj_Brownie,tx_Tile_Brownie,1,1,Food,FG
+Bush (1),obj_Bush01,tx_Tile_Bush01,6,4,Decorative,FG
+Bush (2),obj_Bush02,tx_Tile_Bush02,6,4,Decorative,FG
+Cloud (1),obj_Cloud01,tx_Tile_Cloud01,6,4,Decorative,BG
+Cloud (2),obj_Cloud02,tx_Tile_Cloud02,6,4,Decorative,BG
+Mountain,obj_Mountain,tx_Tile_Mountain,14,13,Decorative,BG
+Start Point,obj_StartPoint,tx_Tile_StartPoint,1,1,Required,FG
+Goal Point,obj_EndPoint,tx_Tile_GoalPoint,1,1,Required,FG
+UFO,obj_UFO,tx_Tile_UFO,1,1,Enemy,FG

@@ -11,9 +11,15 @@ using UnityEngine;
 
 public class CreatorPlayerWrapper : MonoBehaviour
 {
-	// The tile placement raycast only looks at certain layers.
+	// The tile placement raycast only looks at certain layers depending on
+	// whether the foreground or background is active.
 	[SerializeField]
-	private LayerMask mask;
+	private LayerMask fgMask;
+	[SerializeField] 
+	private LayerMask bgMask;
+
+	public LayerMask FGMask { get { return fgMask; }}
+	public LayerMask BGMask { get { return bgMask; }}
 
 	// List of all tiles placed in the level so far.
 	private List<CreatorTile> tiles;
@@ -44,7 +50,7 @@ public class CreatorPlayerWrapper : MonoBehaviour
 		if(players.Count != 1)
 			Debug.LogError("Desktop tile draw object must exist at start.");
 
-		players[0].SetParameters(this, 0, LevelEditor.editor.tileRoot, mask);
+		players[0].SetParameters(this, 0, LevelEditor.editor.tileRoot);
 	}
 
 	// Find a player by ID.
@@ -62,7 +68,7 @@ public class CreatorPlayerWrapper : MonoBehaviour
 
 		// Set the wrapper object, ID and spawned tile root transform;
 		newPlayer.SetParameters(this, players.Count - 1, 
-			LevelEditor.editor.tileRoot, mask);
+			LevelEditor.editor.tileRoot);
 	}
 
 	// Add a tile to the list of tiles.

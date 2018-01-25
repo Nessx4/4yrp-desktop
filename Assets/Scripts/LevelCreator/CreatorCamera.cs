@@ -17,11 +17,14 @@ public class CreatorCamera : MonoBehaviour
 
 	private Camera cam;
 
-	public static CreatorCamera creatorCam;
+	private new Rigidbody rigidbody;
+
+	public static CreatorCamera creatorCam { get; private set; }
 
 	private void Start()
 	{
 		creatorCam = this;
+		rigidbody = GetComponent<Rigidbody>();
 
 		cam = GetComponent<Camera>();
 	}
@@ -30,6 +33,7 @@ public class CreatorCamera : MonoBehaviour
 	{
 		Vector2 move = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 		transform.Translate(move * moveSpeed * Time.deltaTime);
+		//rigidbody.velocity = move * moveSpeed;
 
 		BoundPosition();
 	}

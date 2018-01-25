@@ -38,6 +38,9 @@ public abstract class CreatorPlayer : MonoBehaviour
 	protected CreatorPlayerWrapper wrapper;
 	protected int id;
 
+	// The layer being edited.
+	protected EditLayer editLayer;
+
 	// Fire an event when the undo or redo stack is modified.
 	public event UndoRedoEventHandler UndoRedo;
 
@@ -89,12 +92,11 @@ public abstract class CreatorPlayer : MonoBehaviour
 	}
 
 	public void SetParameters(CreatorPlayerWrapper wrapper, int id, 
-		Transform spawnRoot, LayerMask mask)
+		Transform spawnRoot)
 	{
 		this.wrapper = wrapper;
 		this.id = id;
 		this.spawnRoot = spawnRoot;
-		this.mask = mask;
 	}
 
 	// Add a set of operations to the undo history and erase the redo stack.
@@ -173,6 +175,9 @@ public abstract class CreatorPlayer : MonoBehaviour
 				CreatePreview();
 
 			OnTileChanged(new TileChangedEventArgs(tile));
+
+			mask = (tile.layer == EditLayer.FG) ? wrapper.FGMask : 
+				wrapper.BGMask;
 		}
 	}
 

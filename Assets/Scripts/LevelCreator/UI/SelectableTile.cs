@@ -12,17 +12,17 @@ using UnityEngine.UI;
 [RequireComponent(typeof(TooltipSource))]
 public class SelectableTile : MonoBehaviour
 {
-	[SerializeField]
-	private Color activeColor;
-
 	private Image img;
 	private TileData linkedItem;
 	private Palette menu;
 
+	private Color activeColor = new Color(0.85f, 0.55f, 0.77f, 1.0f);
+	private Color inactiveColor = new Color(0.75f, 0.75f, 0.75f, 1.0f);
+
 	private void Awake()
 	{
 		img = GetComponent<Image>();
-		img.color = Color.grey;
+		img.color = Color.white;
 	}
 
 	private void Start()
@@ -46,11 +46,11 @@ public class SelectableTile : MonoBehaviour
 
 	public void Activate()
 	{
-		img.color = Color.white;
+		img.color = activeColor;
 	}
 
 	public void Deactivate()
 	{
-		img.color = Color.grey;
+		img.color = Color.white;
 	}
 }

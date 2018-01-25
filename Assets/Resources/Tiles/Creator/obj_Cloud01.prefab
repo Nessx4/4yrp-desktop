@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4324351192259738}
   - component: {fileID: 212087254324072808}
   - component: {fileID: 61712172196663658}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38,7 +38,7 @@ GameObject:
   - component: {fileID: 4963826952126076}
   - component: {fileID: 114894587557329966}
   - component: {fileID: 50814761290441870}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: obj_Cloud01
   m_TagString: Untagged
   m_Icon: {fileID: 0}

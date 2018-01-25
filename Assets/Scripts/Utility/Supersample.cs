@@ -8,7 +8,7 @@ public class Supersample : MonoBehaviour
 	[SerializeField] 
 	private List<Camera> cameras;
 
-	private const int factor = 2;
+	private const int factor = 1;
 
 	private RenderTexture supersampleRT;
 

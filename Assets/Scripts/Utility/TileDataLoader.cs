@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -55,12 +56,17 @@ public class TileDataLoader : MonoBehaviour
 
 			string category = lineData[5].Trim();
 
+			EditLayer layer;
+
+			if(!Enum.TryParse(lineData[6].Trim(), false, out layer))
+				Debug.Log("AAAAHHHH");
+
 			CreatorTile creatorPrefab = Resources.Load<CreatorTile>("Tiles/Creator/" + prefabName);
 			GameObject runtimePrefab = Resources.Load("Tiles/Runtime/" + prefabName) as GameObject;
 			Sprite uiSprite = Resources.Load<Sprite>("Tiles/Palette/" + spriteName);
 
 			TileData newTile = new TileData(name, uiSprite, creatorPrefab, 
-				runtimePrefab, new Vector2(sizeX, sizeY), category);
+				runtimePrefab, new Vector2(sizeX, sizeY), category, layer);
 
 			tileData.Add(name, newTile);
 		}
@@ -91,9 +97,11 @@ public struct TileData
 	public GameObject runtimePrefab;
 	public Vector2 size;
 	public string category;
+	public EditLayer layer;
 
 	public TileData(string name, Sprite uiSprite, CreatorTile creatorPrefab, 
-		GameObject runtimePrefab, Vector2 size, string category)
+		GameObject runtimePrefab, Vector2 size, string category, 
+		EditLayer layer)
 	{
 		this.name = name;
 		this.uiSprite = uiSprite;
@@ -101,12 +109,18 @@ public struct TileData
 		this.runtimePrefab = runtimePrefab;
 		this.size = size;
 		this.category = category;
+		this.layer = layer;
 	}
 
 	public bool IsUnitSize()
 	{
 		return size.x == 1 && size.y == 1;
 	}
+}
+
+public enum EditLayer
+{
+	BG, FG
 }
 
 public enum TileType

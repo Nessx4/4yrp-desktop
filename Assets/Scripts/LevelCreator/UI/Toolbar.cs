@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿/*	Toolbar governs the bar at the top of the Level Editor UI that contains
+ *	the basic drawing tools, save and undo/redo.
+ */
+using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -7,9 +10,6 @@ using UnityEngine.UI;
 public class Toolbar : MonoBehaviour 
 {
 	[SerializeField]
-	private Color activeColor;
-
-	[SerializeField]
 	private ToolbarButton activeTool;
 
 	[SerializeField] 
@@ -17,12 +17,18 @@ public class Toolbar : MonoBehaviour
 	private Dictionary<ToolType, ToolbarButton> toolButtons = 
 		new Dictionary<ToolType, ToolbarButton>();
 
+	private Color activeColor = new Color(0.85f, 0.55f, 0.77f, 1.0f);
+
 	private void Start()
 	{
 		activeTool.SetColor(activeColor);
 
 		foreach(var button in buttons)
 			toolButtons.Add(button.Tool, button);
+
+		// By default, neither undo nor redo buttons are shown.
+		toolButtons[ToolType.UNDO].IsShown = false;
+		toolButtons[ToolType.REDO].IsShown = false;
 
 		CreatorPlayerWrapper.Get().GetPlayer(0).TileChanged += TileChanged;
 		//CreatorPlayerWrapper.Get().GetPlayer(0).ToolChanged += ToolChanged;
