@@ -22,6 +22,7 @@ public class SelectableTile : MonoBehaviour
 	private void Awake()
 	{
 		img = GetComponent<Image>();
+		img.color = Color.grey;
 	}
 
 	private void Start()
@@ -45,11 +46,11 @@ public class SelectableTile : MonoBehaviour
 
 	public void Activate()
 	{
-		img.color = activeColor;
+		img.color = Color.white;
 	}
 
 	public void Deactivate()
 	{
-		img.color = Color.white;
+		img.color = Color.grey;
 	}
 }

@@ -14,6 +14,11 @@ public class ToolbarButton : MonoBehaviour
 
 	[SerializeField]
 	private ToolType tool;
+	public ToolType Tool 
+	{ 
+		get { return tool; }
+		private set { tool = value; } 
+	}
 
 	[SerializeField]
 	private Color showColor;
@@ -24,7 +29,7 @@ public class ToolbarButton : MonoBehaviour
 	[SerializeField]
 	private LevelLoader loader;
 
-	private bool _isShown;
+	private bool _isShown = true;
 	public bool IsShown
 	{
 		get
@@ -47,33 +52,6 @@ public class ToolbarButton : MonoBehaviour
 	{
 		image = GetComponent<Image>();
 		anim = GetComponent<Animator>();
-
-		CreatorPlayerWrapper.Get().GetPlayer(0).TileChanged += TileChanged;
-		CreatorPlayerWrapper.Get().GetPlayer(0).ToolChanged += ToolChanged;
-		CreatorPlayerWrapper.Get().GetPlayer(0).UndoRedo += UndoRedo;
-	}
-
-	// For certain buttons, only active if the tile is unit size.
-	private void TileChanged(object sender, TileChangedEventArgs e)
-	{
-		if(tool == ToolType.FILL || tool == ToolType.RECT_HOLLOW || 
-			tool == ToolType.RECT_FILL)
-		{
-			IsShown = (e.tile.IsUnitSize());
-		}
-	}
-
-	private void ToolChanged(object sender, ToolChangedEventArgs e)
-	{
-
-	}
-
-	private void UndoRedo(object sender, UndoRedoEventArgs e)
-	{
-		if(tool == ToolType.UNDO)
-			IsShown = (e.undoSize > 0);
-		else if(tool == ToolType.REDO)
-			IsShown = (e.redoSize > 0);
 	}
 
 	public void SetColor(Color newColor)
@@ -121,11 +99,6 @@ public class ToolbarButton : MonoBehaviour
 		loaderObj.SetLevel(LevelEditor.editor.GetLevelName());
 
 		SceneManager.LoadScene("sc_LevelRuntime");
-	}
-
-	public ToolType GetTool()
-	{
-		return tool;
 	}
 
 	public void Press()
