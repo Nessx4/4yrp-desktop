@@ -155,6 +155,8 @@ public abstract class CreatorPlayer : MonoBehaviour
 
 		if (activeTool != ToolType.ERASER)
 			CreatePreview();
+
+		//OnToolChanged(new ToolChangedEventArgs(tool));
 	}
 
 	// Set the tile to be drawn.
@@ -163,10 +165,6 @@ public abstract class CreatorPlayer : MonoBehaviour
 		if(tile.name != activeTile.name)
 		{
 			activeTile = tile;
-
-			// Switch from eraser to pencil.
-			if(activeTool == ToolType.ERASER)
-				SetActiveTool(ToolType.PENCIL);
 
 			if (previewBlock != null)
 				Destroy(previewBlock.gameObject);
@@ -314,15 +312,21 @@ public abstract class CreatorPlayer : MonoBehaviour
 		// The prefab of the replaced tile.
 		public CreatorTile oldTilePre;
 
+		public bool oldState;
+
 		// Transform properties.
 		public Vector3 position;
 
 		// Create a new block and remove an old one.
-		public TileOperation(CreatorTile newTilePre, CreatorTile oldTileInst, Vector3 position)
+		public TileOperation(CreatorTile newTilePre, CreatorTile oldTileInst, 
+			Vector3 position)
 		{
 			this.newTilePre = newTilePre;
 			this.position = position;
 			this.oldTileInst = oldTileInst;
+
+			oldState = (oldTileInst != null) ? 
+				oldTileInst.gameObject.activeSelf : false;
 
 			oldTilePre = null;
 			newTileInst = null;
@@ -336,7 +340,7 @@ public abstract class CreatorPlayer : MonoBehaviour
 			if (newTilePre != null)
 			{
 				newTileInst = Instantiate(newTilePre, position, 
-					Quaternion.identity, CreatorPlayerWrapper.Get().GetRoot());
+					Quaternion.identity, LevelEditor.editor.tileRoot);
 				newTileInst.SetTilePrefab(newTilePre);
 				CreatorPlayerWrapper.Get().AddTile(newTileInst);
 			}
@@ -349,7 +353,7 @@ public abstract class CreatorPlayer : MonoBehaviour
 				newTileInst.gameObject.SetActive(false);
 
 			if (oldTilePre != null)
-				oldTileInst.gameObject.SetActive(true);
+				oldTileInst.gameObject.SetActive(oldState);
 		}
 
 		// Replace the old block with the new one.

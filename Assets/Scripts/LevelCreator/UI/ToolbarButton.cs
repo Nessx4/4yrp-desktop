@@ -38,8 +38,12 @@ public class ToolbarButton : MonoBehaviour
 		}
 		set
 		{
+			_isShown = value;
 			if(value)
-				image.color = showColor;
+			{
+				if(image.color == hideColor)
+					image.color = showColor;
+			}
 			else
 				image.color = hideColor;
 		}
@@ -77,7 +81,7 @@ public class ToolbarButton : MonoBehaviour
 	public void SetTool()
 	{
 		if(IsShown)
-			toolbar.SetTool(this);
+			toolbar.SetTool(this, true);
 	}
 
 	public void Clear()

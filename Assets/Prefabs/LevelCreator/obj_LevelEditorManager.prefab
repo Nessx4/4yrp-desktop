@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 114180372914292262}
   - component: {fileID: 114671443724642464}
   m_Layer: 0
-  m_Name: obj_LevelCreatorController
+  m_Name: obj_LevelEditorManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -102,21 +102,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nameField: {fileID: 0}
   overwriteDialog: {fileID: 0}
-  tileRoot: {fileID: 0}
-  solid: {fileID: 0}
-  semisolid: {fileID: 0}
-  ufo: {fileID: 0}
-  bush01: {fileID: 0}
-  bush02: {fileID: 0}
-  cloud01: {fileID: 0}
-  cloud02: {fileID: 0}
-  mountain: {fileID: 0}
-  crate: {fileID: 0}
-  ladder: {fileID: 0}
-  doughnut: {fileID: 0}
-  startPoint: {fileID: 0}
   warning: {fileID: 0}
-  mainCamera: {fileID: 0}
+  mainCam: {fileID: 0}
+  previewCamPrefab: {fileID: 0}
 --- !u!114 &114671443724642464
 MonoBehaviour:
   m_ObjectHideFlags: 1

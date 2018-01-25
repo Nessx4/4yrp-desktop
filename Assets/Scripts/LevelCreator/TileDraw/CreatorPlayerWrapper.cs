@@ -28,8 +28,6 @@ public class CreatorPlayerWrapper : MonoBehaviour
 	[SerializeField] 
 	private TileData defaultTile;
 
-	private Transform spawnRoot;
-
 	private static CreatorPlayerWrapper wrapper;
 
 	public static CreatorPlayerWrapper Get()
@@ -40,14 +38,13 @@ public class CreatorPlayerWrapper : MonoBehaviour
 	private void Start()
 	{
 		wrapper = this;
-		spawnRoot = new GameObject().transform;
 
 		tiles = new List<CreatorTile>();
 
 		if(players.Count != 1)
-			Debug.LogError("Tile draw object for desktop must be in scene at start.");
+			Debug.LogError("Desktop tile draw object must exist at start.");
 
-		players[0].SetParameters(this, 0, spawnRoot, mask);
+		players[0].SetParameters(this, 0, LevelEditor.editor.tileRoot, mask);
 	}
 
 	// Find a player by ID.
@@ -64,7 +61,8 @@ public class CreatorPlayerWrapper : MonoBehaviour
 		players.Add(newPlayer);
 
 		// Set the wrapper object, ID and spawned tile root transform;
-		newPlayer.SetParameters(this, players.Count - 1, spawnRoot, mask);
+		newPlayer.SetParameters(this, players.Count - 1, 
+			LevelEditor.editor.tileRoot, mask);
 	}
 
 	// Add a tile to the list of tiles.
@@ -77,12 +75,6 @@ public class CreatorPlayerWrapper : MonoBehaviour
 	public List<CreatorTile> GetTiles()
 	{
 		return tiles;
-	}
-
-	// Get the Transform that all spawned tiles are parented to.
-	public Transform GetRoot()
-	{
-		return spawnRoot;
 	}
 
 	public void SetActiveTile(int id, TileData tile)

@@ -19,65 +19,35 @@ public class LevelEditor : MonoBehaviour
 	private OverwriteDialog overwriteDialog;
 
 	// The root Transform all placed tiles are parented to.
-	[SerializeField]
-	private Transform tileRoot;
-
-	// All tile prefabs.
-	[SerializeField]
-	private CreatorTile solid;
-
-	[SerializeField]
-	private CreatorTile semisolid;
-
-	[SerializeField]
-	private CreatorTile ufo;
-
-	[SerializeField]
-	private CreatorTile bush01;
-
-	[SerializeField]
-	private CreatorTile bush02;
-
-	[SerializeField]
-	private CreatorTile cloud01;
-
-	[SerializeField]
-	private CreatorTile cloud02;
-
-	[SerializeField]
-	private CreatorTile mountain;
-
-	[SerializeField]
-	private CreatorTile crate;
-
-	[SerializeField]
-	private CreatorTile ladder;
-
-	[SerializeField]
-	private CreatorTile doughnut;
-
-	[SerializeField]
-	private CreatorTile startPoint;
+	public Transform tileRoot { get; private set; }
 
 	[SerializeField] 
 	private WarningMessage warning;
 
 	[SerializeField]
-	private Camera mainCamera;
+	private Camera mainCam;
 
-	private Camera previewCamera;
+	[SerializeField] 
+	private PreviewCamera previewCamPrefab;
 
-	public static LevelEditor editor;
+	public static LevelEditor editor { get; private set; }
 
 	private void Start()
 	{
-		editor = this;
+		if(editor == null)
+		{
+			editor = this;
 
-		previewCamera = GetComponent<Camera>();
-		previewCamera.enabled = false;
+			tileRoot = new GameObject("TILE_SPAWN_PARENT").transform;
 
-		if (LevelLoader.loader != null)
-			Load(LevelLoader.loader.GetLevel());
+			if (LevelLoader.loader != null)
+				Load(LevelLoader.loader.GetLevel());
+
+			// Ensure a snapshot object exists for when we save.
+			Instantiate(previewCamPrefab);
+		}
+		else
+			Destroy(gameObject);
 	}
 
 	public string GetLevelName()
@@ -109,13 +79,17 @@ public class LevelEditor : MonoBehaviour
 		}
 		else
 		{
-			LevelSaveData data = new LevelSaveData(nameField.GetName(), TakeScreenshot(), DateTime.Now);
+			byte[] screenshot = PreviewCamera.cam.TakeScreenshot(mainCam);
+			LevelSaveData data = new LevelSaveData(nameField.GetName(), 
+				screenshot, DateTime.Now);
+
 			data.name = nameField.GetName();
 
 			foreach (CreatorTile tile in CreatorPlayerWrapper.Get().GetTiles())
 			{
 				if(tile.gameObject.activeSelf)
-					data.tiles.Add(new TileSaveData(tile.GetTileType(), tile.transform.position));
+					data.tiles.Add(new TileSaveData(tile.GetTileType(), 
+						tile.transform.position));
 			}
 
 			BinaryFormatter bf = new BinaryFormatter();
@@ -123,37 +97,6 @@ public class LevelEditor : MonoBehaviour
 			bf.Serialize(file, data);
 			file.Close();
 		}
-	}
-
-	private byte[] TakeScreenshot()
-	{
-		RenderTexture activeTexture = RenderTexture.active;
-		RenderTexture tempTexture = new RenderTexture(800, 200, 24);
-		//previewCamera.enabled = true;
-		previewCamera.targetTexture = tempTexture;
-		previewCamera.orthographicSize = 2.5f * mainCamera.aspect;
-		previewCamera.aspect = 4.0f;
-
-		// Move the preview camera where it needs to be.
-		transform.position = mainCamera.transform.position + new Vector3(0.0f,
-			previewCamera.orthographicSize - mainCamera.orthographicSize, 0.0f);
-
-		RenderTexture.active = previewCamera.targetTexture;
-		previewCamera.Render();
-
-		Texture2D previewImage = new Texture2D(tempTexture.width, tempTexture.height, 
-			TextureFormat.RGB24, false);
-
-		previewImage.ReadPixels(new Rect(0, 0, tempTexture.width, tempTexture.height), 
-			0, 0);
-		previewImage.Apply();
-
-		RenderTexture.active = activeTexture;
-		previewCamera.targetTexture = null;
-		Destroy(tempTexture);
-
-		byte[] bytes = previewImage.EncodeToPNG();
-		return bytes;
 	}
 
 	public void Load(string levelName)
@@ -175,6 +118,7 @@ public class LevelEditor : MonoBehaviour
 
 				CreatorTile prefab = null;
 
+				/*
 				switch (tile.type)
 				{
 					case TileType.SOLID:
@@ -214,6 +158,7 @@ public class LevelEditor : MonoBehaviour
 						prefab = startPoint;
 						break;
 				}
+				*/
 
 				if(prefab != null)
 				{
@@ -265,20 +210,4 @@ public class TileSaveData
 		positionY = position.y;
 		positionZ = position.z;
 	}
-}
-
-public enum TileType
-{
-	SOLID, SEMISOLID, LADDER,
-
-	START_POINT, CHECK_POINT, WIN_POINT,
-
-	BUSH01, BUSH02, CLOUD01, CLOUD02, MOUNTAIN,
-
-	CRATE,
-
-	DOUGHNUT, CUPCAKE, CANDY_CANE, TOFFEE, LOLLIPOP, STRAWBERRY, ICE_CREAM,
-	CHOCOLATE, CANDY_FLOSS, BROWNIE,
-
-	UFO
 }

@@ -4906,6 +4906,11 @@ Prefab:
       propertyPath: m_RootOrder
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 114671443724642464, guid: 41143f0c876b7433fa0169faf234d278,
+        type: 2}
+      propertyPath: players.Array.data[0]
+      value: 
+      objectReference: {fileID: 977120030}
     - target: {fileID: 114459712950116650, guid: 41143f0c876b7433fa0169faf234d278,
         type: 2}
       propertyPath: nameField
@@ -4921,16 +4926,21 @@ Prefab:
       propertyPath: warning
       value: 
       objectReference: {fileID: 884454199}
+    - target: {fileID: 1237335820104572, guid: 41143f0c876b7433fa0169faf234d278, type: 2}
+      propertyPath: m_Name
+      value: obj_LevelEditorManager
+      objectReference: {fileID: 0}
     - target: {fileID: 114459712950116650, guid: 41143f0c876b7433fa0169faf234d278,
         type: 2}
-      propertyPath: mainCamera
+      propertyPath: mainCam
       value: 
       objectReference: {fileID: 1854636799}
-    - target: {fileID: 114671443724642464, guid: 41143f0c876b7433fa0169faf234d278,
+    - target: {fileID: 114459712950116650, guid: 41143f0c876b7433fa0169faf234d278,
         type: 2}
-      propertyPath: players.Array.data[0]
+      propertyPath: previewCamPrefab
       value: 
-      objectReference: {fileID: 977120030}
+      objectReference: {fileID: 114337475469224320, guid: c5658df9dd15f402eb9baff16eed34b9,
+        type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 41143f0c876b7433fa0169faf234d278, type: 2}
   m_IsPrefabParent: 0
