@@ -345,7 +345,7 @@ public abstract class CreatorPlayer : MonoBehaviour
 			if (newTilePre != null)
 			{
 				newTileInst = Instantiate(newTilePre, position, 
-					Quaternion.identity, LevelEditor.editor.tileRoot);
+					Quaternion.identity, LevelEditor.instance.tileRoot);
 				newTileInst.SetTilePrefab(newTilePre);
 				CreatorPlayerWrapper.Get().AddTile(newTileInst);
 			}

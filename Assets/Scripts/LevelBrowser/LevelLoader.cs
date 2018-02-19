@@ -4,23 +4,26 @@ using UnityEngine;
 
 public class LevelLoader : MonoBehaviour
 {
-	private string levelName;
+	private string _filename;
+	public string filename { 
+		get
+		{
+			Destroy(gameObject, Time.deltaTime);
+			return _filename;
+		} 
+		set
+		{
+			_filename = value;
+		} 
+	}
 
-	public static LevelLoader loader;
+	public static LevelLoader instance { get; private set; }
 
 	public void Start()
 	{
-		loader = this;
-	}
-
-	public void SetLevel(string levelName)
-	{
-		this.levelName = levelName;
-	}
-
-	public string GetLevel()
-	{
-		Destroy(gameObject, Time.deltaTime);
-		return levelName;
+		if(instance == null)
+			instance = this;
+		else
+			Destroy(gameObject);
 	}
 }

@@ -53,8 +53,8 @@ public class LevelRuntime : MonoBehaviour
 
 	private void Start()
 	{
-		if (LevelLoader.loader != null)
-			Load(LevelLoader.loader.GetLevel());
+		if (LevelLoader.instance != null)
+			Load(LevelLoader.instance.filename);
 	}
 
 	public void Load(string levelName)
