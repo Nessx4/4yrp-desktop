@@ -30,7 +30,7 @@ public class LevelPreviewBox : MonoBehaviour
 	[SerializeField]
 	private Sprite fullStar;
 
-	public void SetParameters(string name, Sprite image, int views, int rating, long timestamp)
+	public void SetParameters(string name, string filename, Sprite image, int views, int rating, long timestamp)
 	{
 		levelName.text = name;
 		levelSnapshot.sprite = image;
@@ -44,7 +44,7 @@ public class LevelPreviewBox : MonoBehaviour
 
 		this.timestamp = timestamp;
 
-		GetComponent<BrowserButton>().SetLevel(name.Replace(" ", "_").ToLower());
+		GetComponent<BrowserButton>().filename = filename;
 	}
 
 	public long GetTimestamp()

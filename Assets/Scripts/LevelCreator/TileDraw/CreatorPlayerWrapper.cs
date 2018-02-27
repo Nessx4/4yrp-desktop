@@ -50,7 +50,7 @@ public class CreatorPlayerWrapper : MonoBehaviour
 		if(players.Count != 1)
 			Debug.LogError("Desktop tile draw object must exist at start.");
 
-		players[0].SetParameters(this, 0, LevelEditor.editor.tileRoot);
+		players[0].SetParameters(this, 0, LevelEditor.instance.tileRoot);
 	}
 
 	// Find a player by ID.
@@ -68,7 +68,7 @@ public class CreatorPlayerWrapper : MonoBehaviour
 
 		// Set the wrapper object, ID and spawned tile root transform;
 		newPlayer.SetParameters(this, players.Count - 1, 
-			LevelEditor.editor.tileRoot);
+			LevelEditor.instance.tileRoot);
 	}
 
 	// Add a tile to the list of tiles.

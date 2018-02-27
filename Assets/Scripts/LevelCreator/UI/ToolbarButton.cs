@@ -74,7 +74,7 @@ public class ToolbarButton : MonoBehaviour
 
 	public void Save()
 	{
-		LevelEditor.editor.Save(false);
+		LevelEditor.instance.Save(false);
 	}
 
 	public void SetTool()
@@ -95,13 +95,15 @@ public class ToolbarButton : MonoBehaviour
 
 	public void Play()
 	{
-		LevelEditor.editor.Save(true);
+		LevelEditor.instance.Save(true);
 
+		/*
 		LevelLoader loaderObj = Instantiate(loader, null);
 		DontDestroyOnLoad(loaderObj.gameObject);
-		loaderObj.SetLevel(LevelEditor.editor.GetLevelName());
+		loaderObj.filename = LevelEditor.instance.filename;
 
 		SceneManager.LoadScene("sc_LevelRuntime");
+		*/
 	}
 
 	public void Press()

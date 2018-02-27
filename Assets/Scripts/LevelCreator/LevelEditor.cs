@@ -11,15 +11,21 @@ using UnityEngine;
 public class LevelEditor : MonoBehaviour 
 {
 	// The user-input name of the level.
-	[SerializeField] 
-	private LevelName nameField;
+	//[SerializeField] 
+	//private LevelName nameField;
+
+	[SerializeField]
+	private SaveDialog saveDialog;
 
 	// Ask the user if they want to overwrite an existing level.
-	[SerializeField]
-	private OverwriteDialog overwriteDialog;
+	//[SerializeField]
+	//private OverwriteDialog overwriteDialog;
 
 	// The root Transform all placed tiles are parented to.
 	public Transform tileRoot { get; private set; }
+
+	public string levelName { get; private set; }
+	public string filename  { get; private set; }
 
 	[SerializeField] 
 	private WarningMessage warning;
@@ -30,18 +36,19 @@ public class LevelEditor : MonoBehaviour
 	[SerializeField] 
 	private PreviewCamera previewCamPrefab;
 
-	public static LevelEditor editor { get; private set; }
+	public static LevelEditor instance { get; private set; }
 
 	private void Start()
 	{
-		if(editor == null)
+		if(instance == null)
 		{
-			editor = this;
+			instance = this;
 
 			tileRoot = new GameObject("TILE_SPAWN_PARENT").transform;
 
-			if (LevelLoader.loader != null)
-				Load(LevelLoader.loader.GetLevel());
+			filename = null;
+			if (LevelLoader.instance != null)
+				Load(LevelLoader.instance.filename);
 
 			// Ensure a snapshot object exists for when we save.
 			Instantiate(previewCamPrefab);
@@ -50,14 +57,9 @@ public class LevelEditor : MonoBehaviour
 			Destroy(gameObject);
 	}
 
-	public string GetLevelName()
-	{
-		return nameField.GetName().Replace(" ", "_").ToLower();
-	}
-
 	public void Save(bool overwrite)
 	{
-		string levelName = nameField.GetName().Replace(" ", "_").ToLower();
+		string levelName = "New level";//nameField.GetName().Replace(" ", "_").ToLower();
 
 		if(levelName == "")
 		{
@@ -67,23 +69,37 @@ public class LevelEditor : MonoBehaviour
 
 		long timestamp = DateTime.Now.Ticks;
 
-		string fileName = Application.persistentDataPath + "/levels/" + levelName + ".dat";
+		BinaryFormatter bf = new BinaryFormatter();
+		FileStream file = File.Open(Application.persistentDataPath +
+			"/levels/db.dat", FileMode.Open);
+		LevelDatabase db = (LevelDatabase)bf.Deserialize(file);
+		file.Close();
+
+		string new_filename = Application.persistentDataPath + "/levels/";
+
+		if(filename == null) 
+		{
+			int n = db.lastID++;
+			new_filename += (n.ToString() + ".dat");
+		}
+		else
+			new_filename += (filename + ".dat");
 
 		// Ensure the Level save folder exists before trying to save a level.
 		Directory.CreateDirectory(Application.persistentDataPath + "/levels/");
 
-		if(!overwrite && File.Exists(fileName))
+		if(!overwrite && File.Exists(new_filename))
 		{
-			overwriteDialog.gameObject.SetActive(true);
-			overwriteDialog.SetLevelName(nameField.GetName());
+			//overwriteDialog.gameObject.SetActive(true);
+			//overwriteDialog.SetLevelName(nameField.GetName());
 		}
 		else
 		{
 			byte[] screenshot = PreviewCamera.cam.TakeScreenshot(mainCam);
-			LevelSaveData data = new LevelSaveData(nameField.GetName(), 
+			LevelSaveData data = new LevelSaveData(levelName, 
 				screenshot, DateTime.Now);
 
-			data.name = nameField.GetName();
+			data.name = levelName;
 
 			foreach (CreatorTile tile in CreatorPlayerWrapper.Get().GetTiles())
 			{
@@ -92,86 +108,138 @@ public class LevelEditor : MonoBehaviour
 						tile.transform.position));
 			}
 
-			BinaryFormatter bf = new BinaryFormatter();
-			FileStream file = File.Create(fileName);
+			file = File.Create(new_filename);
 			bf.Serialize(file, data);
+			file.Close();
+
+			db.AddLevel(new_filename, levelName);
+			file = File.Open(Application.persistentDataPath +
+				"/levels/db.dat", FileMode.Open);
+			bf.Serialize(file, db);
 			file.Close();
 		}
 	}
 
-	public void Load(string levelName)
+	public void Load(string filename)
 	{
-		string fileName = Application.persistentDataPath + "/levels/" + levelName + ".dat";
+		this.filename = filename;
 
-		if(File.Exists(fileName))
+		BinaryFormatter bf = new BinaryFormatter();
+		string file_to_open = Application.persistentDataPath + "/levels/db.dat";
+
+		if(File.Exists(file_to_open))
 		{
-			BinaryFormatter bf = new BinaryFormatter();
-			FileStream file = File.Open(fileName, FileMode.Open);
-			LevelSaveData data = (LevelSaveData)bf.Deserialize(file);
+			FileStream file = File.Open(file_to_open, FileMode.Open);
+			LevelDatabase db = (LevelDatabase)bf.Deserialize(file);
 			file.Close();
 
-			nameField.SetName(data.name);
+			// Find this level's filename and level name.
+			levelName = db.names[filename];
 
-			foreach(TileSaveData tile in data.tiles)
+			file_to_open = Application.persistentDataPath + "/levels/" +
+				filename + ".dat";
+
+			if(File.Exists(file_to_open))
 			{
-				Vector3 position = new Vector3(tile.positionX, tile.positionY, tile.positionZ);
+				file = File.Open(file_to_open, FileMode.Open);
+				LevelSaveData data = (LevelSaveData)bf.Deserialize(file);
+				file.Close();
 
-				CreatorTile prefab = null;
+				Debug.Log("Loading level: " + levelName);
+				//levelName = data.name;
 
-				/*
-				switch (tile.type)
+				foreach(TileSaveData tile in data.tiles)
 				{
-					case TileType.SOLID:
-						prefab = solid;
-						break;
-					case TileType.SEMISOLID:
-						prefab = semisolid;
-						break;
-					case TileType.UFO:
-						prefab = ufo;
-						break;
-					case TileType.BUSH01:
-						prefab = bush01;
-						break;
-					case TileType.BUSH02:
-						prefab = bush02;
-						break;
-					case TileType.CLOUD01:
-						prefab = cloud01;
-						break;
-					case TileType.CLOUD02:
-						prefab = cloud02;
-						break;
-					case TileType.MOUNTAIN:
-						prefab = mountain;
-						break;
-					case TileType.CRATE:
-						prefab = crate;
-						break;
-					case TileType.LADDER:
-						prefab = ladder;
-						break;
-					case TileType.DOUGHNUT:
-						prefab = doughnut;
-						break;
-					case TileType.START_POINT:
-						prefab = startPoint;
-						break;
-				}
-				*/
+					Vector3 position = new Vector3(tile.positionX, 
+						tile.positionY, tile.positionZ);
 
-				if(prefab != null)
-				{
-					CreatorTile newTile = Instantiate(prefab, position, Quaternion.identity, tileRoot);
-					newTile.SetTilePrefab(prefab);
-					CreatorPlayerWrapper.Get().AddTile(newTile);
+					CreatorTile prefab = null;
+
+					/*
+					switch (tile.type)
+					{
+						case TileType.SOLID:
+							prefab = solid;
+							break;
+						case TileType.SEMISOLID:
+							prefab = semisolid;
+							break;
+						case TileType.UFO:
+							prefab = ufo;
+							break;
+						case TileType.BUSH01:
+							prefab = bush01;
+							break;
+						case TileType.BUSH02:
+							prefab = bush02;
+							break;
+						case TileType.CLOUD01:
+							prefab = cloud01;
+							break;
+						case TileType.CLOUD02:
+							prefab = cloud02;
+							break;
+						case TileType.MOUNTAIN:
+							prefab = mountain;
+							break;
+						case TileType.CRATE:
+							prefab = crate;
+							break;
+						case TileType.LADDER:
+							prefab = ladder;
+							break;
+						case TileType.DOUGHNUT:
+							prefab = doughnut;
+							break;
+						case TileType.START_POINT:
+							prefab = startPoint;
+							break;
+					}
+					*/
+
+					if(prefab != null)
+					{
+						CreatorTile newTile = Instantiate(prefab, position, 
+							Quaternion.identity, tileRoot);
+						newTile.SetTilePrefab(prefab);
+						CreatorPlayerWrapper.Get().AddTile(newTile);
+					}
 				}
+			}
+			else
+			{
+				warning.SetMessage(true, "Level does not exist!");
 			}
 		}
 		else
-		{
-			warning.SetMessage(true, "Level does not exist!");
-		}
+			Debug.Log("Database missing!");
+	}
+}
+
+// Each time a new level is created, increment the ID and give it the filename
+// "<new ID>.dat".
+[Serializable]
+public struct LevelDatabase
+{
+	// Filename => level name.
+	public Dictionary<string, string> names;
+	public int lastID;
+
+	public LevelDatabase(Dictionary<string, string> names)
+	{
+		lastID = 0;
+		this.names = names;
+	}
+
+	public void AddLevel(string filename, string levelName)
+	{
+		if(names == null)
+			names = new Dictionary<string, string>();
+
+		if(names.ContainsKey(filename))
+			names[filename] = levelName;
+		else
+			names.Add(filename, levelName);
 	}
 }
 

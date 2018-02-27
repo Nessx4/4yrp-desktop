@@ -8,8 +8,8 @@ public class BrowserButton : MonoBehaviour
 {
 	[SerializeField]
 	private LevelLoader loader;
-
-	private string levelName;
+	
+	public string filename { private get; set; }
 
 	// Load the Level Editor without needing to load a new level.
 	public void NewLevel()
@@ -22,14 +22,8 @@ public class BrowserButton : MonoBehaviour
 	{
 		LevelLoader loaderObj = Instantiate(loader, null);
 		DontDestroyOnLoad(loaderObj.gameObject);
-		loaderObj.SetLevel(levelName);
+		loaderObj.filename = filename;
 
 		SceneManager.LoadScene("sc_LevelCreator");
-	}
-
-	// Set the path name of the level we will load.
-	public void SetLevel(string levelName)
-	{
-		this.levelName = levelName;
 	}
 }
