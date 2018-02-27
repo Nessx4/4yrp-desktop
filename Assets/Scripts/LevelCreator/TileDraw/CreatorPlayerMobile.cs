@@ -86,6 +86,13 @@ public class CreatorPlayerMobile : CreatorPlayer
 		throw new System.NotImplementedException();
 	}
 
+    protected override IEnumerator Grab()
+    {
+        yield return null;
+
+        throw new System.NotImplementedException();
+    }
+
 	protected override void FloodFill()
 	{
 		throw new System.NotImplementedException();

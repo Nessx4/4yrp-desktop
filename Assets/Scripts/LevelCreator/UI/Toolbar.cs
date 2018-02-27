@@ -31,7 +31,7 @@ public class Toolbar : MonoBehaviour
 		toolButtons[ToolType.REDO].IsShown = false;
 
 		CreatorPlayerWrapper.Get().GetPlayer(0).TileChanged += TileChanged;
-		//CreatorPlayerWrapper.Get().GetPlayer(0).ToolChanged += ToolChanged;
+		CreatorPlayerWrapper.Get().GetPlayer(0).ToolChanged += ToolChanged;
 		CreatorPlayerWrapper.Get().GetPlayer(0).UndoRedo += UndoRedo;
 	}
 
@@ -58,12 +58,10 @@ public class Toolbar : MonoBehaviour
 			SetTool(toolButtons[ToolType.PENCIL], true);
 	}
 
-	/*
 	private void ToolChanged(object sender, ToolChangedEventArgs e)
 	{
 		
 	}
-	*/
 
 	private void UndoRedo(object sender, UndoRedoEventArgs e)
 	{

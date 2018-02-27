@@ -59,8 +59,6 @@ public class CreatorPlayerDesktop : CreatorPlayer
 	// remove tiles.
 	protected override IEnumerator PencilDraw()
 	{
-		WaitForEndOfFrame wait = new WaitForEndOfFrame();
-
 		HashSet<Vector2> tilePositions = new HashSet<Vector2>();
 		HashSet<TileOperation> operations = new HashSet<TileOperation>();
 
@@ -82,7 +80,7 @@ public class CreatorPlayerDesktop : CreatorPlayer
 				}
 			}
 
-			yield return wait;
+			yield return null;
 		}
 
 		// Add the drawn tiles to the undo history.
@@ -92,8 +90,6 @@ public class CreatorPlayerDesktop : CreatorPlayer
 
 	protected override IEnumerator Erase()
 	{
-		WaitForEndOfFrame wait = new WaitForEndOfFrame();
-
 		HashSet<Vector2> tilePositions = new HashSet<Vector2>();
 		HashSet<TileOperation> operations = new HashSet<TileOperation>();
 
@@ -101,25 +97,35 @@ public class CreatorPlayerDesktop : CreatorPlayer
 
 		while(!stopDrawing)
 		{
-			// Do not place tiles when mouse is on top of the UI elements.
-			if(!EventSystem.current.IsPointerOverGameObject())
-			{
-				Vector2 tp = RoundVectorToInt(MouseToWorldPos());
+			Vector2 tp = RoundVectorToInt(MouseToWorldPos());
 
-				// Do not re-erase here if already erased here this operation.
-				if(!tilePositions.Contains(tp))
-				{
-					tilePositions.Add(tp);
-					operations = TryPlaceTile(operations, null, tp);
-				}
+			// Do not re-erase here if already erased here this operation.
+			if(!tilePositions.Contains(tp))
+			{
+				tilePositions.Add(tp);
+				operations = TryPlaceTile(operations, null, tp);
 			}
 
-			yield return wait;
+			yield return null;
 		}
 
 		// Add the drawn tiles to the undo history.
 		if (operations.Count > 0)
 			AddUndoHistory(operations);
+	}
+
+	protected override IEnumerator Grab()
+	{
+		Vector2 tp = RoundVectorToInt(MouseToWorldPos());
+
+		CreatorTile existingTile = GetTileAtPosition(tp);
+
+		if(existingTile != null)
+			Debug.Log(existingTile);
+
+		yield return null;
+
+		Debug.Log("Started grab");
 	}
 
 	protected override void FloodFill()
@@ -129,8 +135,6 @@ public class CreatorPlayerDesktop : CreatorPlayer
 
 	protected override IEnumerator DrawRect(bool filled)
 	{
-		WaitForEndOfFrame wait = new WaitForEndOfFrame();
-
 		Vector2 startPos = RoundVectorToInt(MouseToWorldPos());
 		Vector2 endPos = Vector2.zero;
 
@@ -154,7 +158,7 @@ public class CreatorPlayerDesktop : CreatorPlayer
 				previews = RectHelper(startPos, endPos, filled, true);
 			//}
 
-			yield return wait;
+			yield return null;
 		}
 
 		foreach(CreatorTile preview in previews)

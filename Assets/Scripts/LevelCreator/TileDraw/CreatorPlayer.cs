@@ -155,10 +155,31 @@ public abstract class CreatorPlayer : MonoBehaviour
 		if (previewBlock != null)
 			Destroy(previewBlock.gameObject);
 
-		if (activeTool != ToolType.ERASER)
+		if (ShouldCreatePreview(tool, activeTile))
 			CreatePreview();
 
-		//OnToolChanged(new ToolChangedEventArgs(tool));
+		OnToolChanged(new ToolChangedEventArgs(tool));
+	}
+
+	protected bool ShouldCreatePreview(ToolType tool, TileData tile)
+	{
+		switch(tool)
+		{
+			case ToolType.PENCIL:
+				return true;
+			case ToolType.ERASER:
+				return false;
+			case ToolType.GRAB:
+				return false;
+			case ToolType.FILL:
+				return activeTile.IsUnitSize();
+			case ToolType.RECT_HOLLOW:
+				return activeTile.IsUnitSize();
+			case ToolType.RECT_FILL:
+				return activeTile.IsUnitSize();
+			default:
+				return false;
+		}
 	}
 
 	// Set the tile to be drawn.
@@ -206,6 +227,9 @@ public abstract class CreatorPlayer : MonoBehaviour
 			case ToolType.ERASER:
 				drawingRoutine = StartCoroutine(Erase());
 				break;
+			case ToolType.GRAB:
+				drawingRoutine = StartCoroutine(Grab());
+				break;
 			case ToolType.RECT_HOLLOW:
 				drawingRoutine = StartCoroutine(DrawRect(false));
 				break;
@@ -227,11 +251,8 @@ public abstract class CreatorPlayer : MonoBehaviour
 	protected HashSet<TileOperation> TryPlaceTile(
 		HashSet<TileOperation> operations, CreatorTile tile, Vector2 pos)
 	{
-		RaycastHit2D hitObj = Physics2D.Raycast(pos, Vector3.up, 0.25f, mask);
-		CreatorTile existingTile = null;
-
-		if(hitObj.transform != null)
-			existingTile = hitObj.transform.GetComponent<CreatorTile>();
+		//RaycastHit2D hitObj = Physics2D.Raycast(pos, Vector3.up, 0.25f, mask);
+		CreatorTile existingTile = GetTileAtPosition(pos);
 
 		// Don't place tiles if the result would be the same.
 		bool sameTile = (existingTile != null && existingTile.GetTilePrefab() == tile);
@@ -244,7 +265,20 @@ public abstract class CreatorPlayer : MonoBehaviour
 		return operations;
 	}
 
+	protected CreatorTile GetTileAtPosition(Vector2 pos)
+	{
+		RaycastHit2D hitObj = Physics2D.Raycast(pos, Vector3.up, 0.25f, mask);
+		CreatorTile existingTile = null;
+
+		if(hitObj.transform != null)
+			return hitObj.transform.GetComponent<CreatorTile>();
+
+		return null;
+	}
+
 	protected abstract IEnumerator Erase();
+
+	protected abstract IEnumerator Grab();
 
 	protected abstract void FloodFill();
 
