@@ -24,8 +24,8 @@ public abstract class CreatorPlayer : MonoBehaviour
 	protected ToolType activeTool = ToolType.PENCIL;
 
 	// The undo/redo system relies on stacks.
-	protected Stack<HashSet<TileOperation>> undoStack;
-	protected Stack<HashSet<TileOperation>> redoStack;
+	protected Stack<Stack<TileOperation>> undoStack;
+	protected Stack<Stack<TileOperation>> redoStack;
 
 	// Variables for drawing routines.
     protected Coroutine drawingRoutine;
@@ -85,8 +85,8 @@ public abstract class CreatorPlayer : MonoBehaviour
 
 	protected virtual void Start()
 	{
-		undoStack = new Stack<HashSet<TileOperation>>();
-		redoStack = new Stack<HashSet<TileOperation>>();
+		undoStack = new Stack<Stack<TileOperation>>();
+		redoStack = new Stack<Stack<TileOperation>>();
 
 		OnUndoRedo(new UndoRedoEventArgs(undoStack.Count, redoStack.Count));
 	}
@@ -100,7 +100,7 @@ public abstract class CreatorPlayer : MonoBehaviour
 	}
 
 	// Add a set of operations to the undo history and erase the redo stack.
-	protected void AddUndoHistory(HashSet<TileOperation> operations)
+	protected void AddUndoHistory(Stack<TileOperation> operations)
 	{
 		undoStack.Push(operations);
 		redoStack.Clear();
@@ -113,12 +113,16 @@ public abstract class CreatorPlayer : MonoBehaviour
 	{
 		if (undoStack.Count > 0)
 		{
-			HashSet<TileOperation> ops = undoStack.Pop();
+			Stack<TileOperation> ops = undoStack.Pop();
+			Stack<TileOperation> redoOps = new Stack<TileOperation>();
 
 			foreach (TileOperation op in ops)
+			{
 				op.Undo();
+				redoOps.Push(op);
+			}
 
-			redoStack.Push(ops);
+			redoStack.Push(redoOps);
 
 			OnUndoRedo(new UndoRedoEventArgs(undoStack.Count, redoStack.Count));
 		}
@@ -129,12 +133,16 @@ public abstract class CreatorPlayer : MonoBehaviour
 	{
 		if (redoStack.Count > 0)
 		{
-			HashSet<TileOperation> ops = redoStack.Pop();
+			Stack<TileOperation> ops = redoStack.Pop();
+			Stack<TileOperation> undoOps = new Stack<TileOperation>();
 
 			foreach (TileOperation op in ops)
+			{
 				op.Redo();
+				undoOps.Push(op);
+			}
 
-			undoStack.Push(ops);
+			undoStack.Push(undoOps);
 
 			OnUndoRedo(new UndoRedoEventArgs(undoStack.Count, redoStack.Count));
 		}
@@ -143,8 +151,8 @@ public abstract class CreatorPlayer : MonoBehaviour
 	// Remove the entire history stacks.
 	public void DeleteUndoHistory()
 	{
-		undoStack = new Stack<HashSet<TileOperation>>();
-		redoStack = new Stack<HashSet<TileOperation>>();
+		undoStack = new Stack<Stack<TileOperation>>();
+		redoStack = new Stack<Stack<TileOperation>>();
 	}
 
 	// Change the active tool.
@@ -248,8 +256,8 @@ public abstract class CreatorPlayer : MonoBehaviour
 	protected abstract IEnumerator PencilDraw();
 
 	// Places a tile at a position where possible.
-	protected HashSet<TileOperation> TryPlaceTile(
-		HashSet<TileOperation> operations, CreatorTile tile, Vector2 pos)
+	protected void TryPlaceTile(
+		ref Stack<TileOperation> operations, CreatorTile tile, Vector2 pos)
 	{
 		//RaycastHit2D hitObj = Physics2D.Raycast(pos, Vector3.up, 0.25f, mask);
 		CreatorTile existingTile = GetTileAtPosition(pos);
@@ -260,9 +268,7 @@ public abstract class CreatorPlayer : MonoBehaviour
 		bool bothAir = (existingTile == null && tile == null);
 
 		if(!sameTile && !bothAir)
-			operations.Add(new TileOperation(tile, existingTile, pos));
-
-		return operations;
+			operations.Push(new TileOperation(tile, existingTile, pos));
 	}
 
 	protected CreatorTile GetTileAtPosition(Vector2 pos)
@@ -288,7 +294,7 @@ public abstract class CreatorPlayer : MonoBehaviour
 		bool filled, bool preview)
 	{
 		HashSet<CreatorTile> tiles = new HashSet<CreatorTile>();
-		HashSet<TileOperation> operations = new HashSet<TileOperation>();
+		Stack<TileOperation> operations = new Stack<TileOperation>();
 
 		int minX = (int)Mathf.Min(startPos.x, endPos.x);
 		int minY = (int)Mathf.Min(startPos.y, endPos.y);
@@ -314,8 +320,8 @@ public abstract class CreatorPlayer : MonoBehaviour
 					}
 					else
 					{
-						operations = TryPlaceTile(operations, 
-							activeTile.creatorPrefab, new Vector2(x, y));
+						TryPlaceTile(ref operations, activeTile.creatorPrefab, 
+							new Vector2(x, y));
 					}
 				}
 			}

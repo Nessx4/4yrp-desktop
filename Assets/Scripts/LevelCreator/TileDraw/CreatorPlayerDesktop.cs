@@ -60,7 +60,7 @@ public class CreatorPlayerDesktop : CreatorPlayer
 	protected override IEnumerator PencilDraw()
 	{
 		HashSet<Vector2> tilePositions = new HashSet<Vector2>();
-		HashSet<TileOperation> operations = new HashSet<TileOperation>();
+		Stack<TileOperation> operations = new Stack<TileOperation>();
 
 		stopDrawing = false;
 
@@ -75,8 +75,7 @@ public class CreatorPlayerDesktop : CreatorPlayer
 				{
 					tilePositions.Add(tp);
 
-					operations = TryPlaceTile(operations, 
-						activeTile.creatorPrefab, tp);
+					TryPlaceTile(ref operations, activeTile.creatorPrefab, tp);
 				}
 			}
 
@@ -91,7 +90,7 @@ public class CreatorPlayerDesktop : CreatorPlayer
 	protected override IEnumerator Erase()
 	{
 		HashSet<Vector2> tilePositions = new HashSet<Vector2>();
-		HashSet<TileOperation> operations = new HashSet<TileOperation>();
+		Stack<TileOperation> operations = new Stack<TileOperation>();
 
 		stopDrawing = false;
 
@@ -103,7 +102,7 @@ public class CreatorPlayerDesktop : CreatorPlayer
 			if(!tilePositions.Contains(tp))
 			{
 				tilePositions.Add(tp);
-				operations = TryPlaceTile(operations, null, tp);
+				TryPlaceTile(ref operations, null, tp);
 			}
 
 			yield return null;
@@ -120,12 +119,33 @@ public class CreatorPlayerDesktop : CreatorPlayer
 
 		CreatorTile existingTile = GetTileAtPosition(tp);
 
+		// Drag around an existing tile.
 		if(existingTile != null)
-			Debug.Log(existingTile);
+		{
+			Stack<TileOperation> operations = new Stack<TileOperation>();
 
-		yield return null;
+			Vector2 lastPos = RoundVectorToInt(MouseToWorldPos());
+			stopDrawing = false;
 
-		Debug.Log("Started grab");
+			while(!stopDrawing)
+			{
+				Vector2 newPos = RoundVectorToInt(MouseToWorldPos());
+
+				// Change position if the drag length is far enough away.
+				if((newPos - lastPos).magnitude > 0.9f)
+				{
+					TryPlaceTile(ref operations, null, lastPos);
+					TryPlaceTile(ref operations, activeTile.creatorPrefab, newPos);
+					lastPos = newPos;
+				}
+
+				yield return null;
+			}
+
+			// Add the moves to the undo history.
+			if (operations.Count > 0)
+				AddUndoHistory(operations);
+		}
 	}
 
 	protected override void FloodFill()
@@ -173,12 +193,12 @@ public class CreatorPlayerDesktop : CreatorPlayer
 
 	public override void ClearAll()
 	{
-		HashSet<TileOperation> operations = new HashSet<TileOperation>();
+		Stack<TileOperation> operations = new Stack<TileOperation>();
 
 		List<CreatorTile> tiles = CreatorPlayerWrapper.Get().GetTiles();
 
 		foreach (CreatorTile tile in tiles)
-			operations.Add(new TileOperation(null, tile, tile.transform.position));
+			operations.Push(new TileOperation(null, tile, tile.transform.position));
 
 		AddUndoHistory(operations);
 	}

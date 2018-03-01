@@ -19,7 +19,7 @@ public class CreatorPlayerMobile : CreatorPlayer
         CreatorTile newTilePre = activeTile.creatorPrefab;
 
         List<TilePosition> tilePositions = new List<TilePosition>();
-        HashSet<TileOperation> operations = new HashSet<TileOperation>();
+        Stack<TileOperation> operations = new Stack<TileOperation>();
 
         while (!stopDrawing)
         {
@@ -65,7 +65,7 @@ public class CreatorPlayerMobile : CreatorPlayer
                     if (!sameTile && !bothAir)
                     {
                         if(newTilePre != null)
-							operations.Add(new TileOperation(newTilePre, existingTile, pos));
+							operations.Push(new TileOperation(newTilePre, existingTile, pos));
 				}
              
                 }
