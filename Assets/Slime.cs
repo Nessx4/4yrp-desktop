@@ -43,7 +43,7 @@ public class Slime : MonoBehaviour {
         {
             rigidBody2D.transform.Rotate(Vector3.forward * -90 * forward);
             Debug.Log("AAAAAAAAAAA");
-            rigidBody2D.transform.position += transform.right * forward * 1.1f;
+            rigidBody2D.transform.position += transform.right * forward * 0.8f;
             BColliders = !BColliders;
         }
 

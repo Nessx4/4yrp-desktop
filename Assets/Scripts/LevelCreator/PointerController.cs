@@ -69,6 +69,15 @@ public class PointerController : MonoBehaviour
 		mobilePointers[id].Move(move);
 	}
 
+    public void MakeInvisible(int id)
+    {
+        mobilePointers[id].Invisible();
+    }
+    public void MakeVisible(int id)
+    {
+        mobilePointers[id].Visible();
+    }
+
     public Vector2 GetPointerPos(int id)
     {
 		if(CreatorCamera.creatorCam != null)

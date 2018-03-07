@@ -16,6 +16,7 @@ using System.Globalization;
 public class Prototype : MonoBehaviour
 {
     private Pointer pointer;
+    public UFO ufo;
 
     private int mobileID;
 
@@ -134,6 +135,27 @@ public class Prototype : MonoBehaviour
     				Close();
     				//PreSetup();
     				break;
+                case "action_start":
+                    //TileDraw.placement.StartMobileDraw();
+                    break;
+                case "action_end":
+                    //TileDraw.placement.StopMobileDraw();
+                    break;
+                case "capture":
+                    PointerController.control.MakeInvisible(mobileID);
+                    break;
+                case "leave":
+                    PointerController.control.MakeVisible(mobileID);
+                    break;
+                case "left":
+                    ufo.Move(Vector2.left);
+                    break;
+                case "right":
+                    ufo.Move(Vector2.right);
+                    break;
+                case "stop":
+                    ufo.Move(new Vector2(0, 0));
+                    break;
                 case "undo":
 					CreatorPlayerWrapper.Get().Undo(1);
                     Debug.Log("undo");

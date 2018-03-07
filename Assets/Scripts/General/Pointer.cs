@@ -80,6 +80,16 @@ public class Pointer : MonoBehaviour
 		pos.y = Mathf.Clamp(pos.y, 0, Screen.height);
 		transform.position = cam.ScreenToWorldPoint(pos);
 	}
+
+    public void Invisible()
+    {
+        renderer.enabled = false;
+    }
+
+    public void Visible()
+    {
+        renderer.enabled = true;
+    }
 }
 
 public enum PointerType
