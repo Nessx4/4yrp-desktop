@@ -37,17 +37,18 @@ public class LevelBrowser : MonoBehaviour
 		// Load the file database.
 		if(File.Exists(file_to_open))
 		{
+			// Load the level database.
 			FileStream file = File.Open(file_to_open, FileMode.Open);
 			LevelDatabase db = (LevelDatabase)bf.Deserialize(file);
 			file.Close();
 
-			//List<string> filenames = new List<string>(db.Keys);
-
-			Debug.Log("Loading files!");
-
 			if(db.names == null)
+			{
 				Debug.Log("Database is empty!");
+				return;
+			}
 
+			// Create a preview box for each level found in the database.
 			foreach(string filename in db.names.Keys)
 			{
 				file = File.Open(filename, FileMode.Open);

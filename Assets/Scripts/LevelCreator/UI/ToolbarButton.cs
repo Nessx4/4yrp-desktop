@@ -48,6 +48,9 @@ public class ToolbarButton : MonoBehaviour
 		}
 	}
 
+	[SerializeField] 
+	private SaveDialog saveDialog;
+
 	private Image image;
 	private Animator anim;
 
@@ -74,7 +77,8 @@ public class ToolbarButton : MonoBehaviour
 
 	public void Save()
 	{
-		LevelEditor.instance.Save(false);
+		//LevelEditor.instance.Save(false);
+		saveDialog.Open();
 	}
 
 	public void SetTool()
@@ -95,8 +99,8 @@ public class ToolbarButton : MonoBehaviour
 
 	public void Play()
 	{
-		LevelEditor.instance.Save(true);
-
+		//LevelEditor.instance.Save(true);
+		saveDialog.Open();
 		/*
 		LevelLoader loaderObj = Instantiate(loader, null);
 		DontDestroyOnLoad(loaderObj.gameObject);

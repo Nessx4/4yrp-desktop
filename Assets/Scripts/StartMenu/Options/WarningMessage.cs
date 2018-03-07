@@ -17,8 +17,12 @@ public class WarningMessage : MonoBehaviour
 
 	private new RectTransform transform;
 
+	public static WarningMessage instance { get; private set; }
+
 	private void Start()
 	{
+		instance = this;
+		
 		transform = GetComponent<RectTransform>();
 		anchoredPosition = transform.anchoredPosition;
 
