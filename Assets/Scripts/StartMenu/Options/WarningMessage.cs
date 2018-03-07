@@ -19,7 +19,7 @@ public class WarningMessage : MonoBehaviour
 
 	public static WarningMessage instance { get; private set; }
 
-	private void Start()
+	private void Awake()
 	{
 		instance = this;
 		
@@ -52,6 +52,7 @@ public class WarningMessage : MonoBehaviour
 
 	private IEnumerator Shake()
 	{
+		throw new System.NotImplementedException();
 		WaitForEndOfFrame wait = new WaitForEndOfFrame();
 
 		transform.anchoredPosition = anchoredPosition;

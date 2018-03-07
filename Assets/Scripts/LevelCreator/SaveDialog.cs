@@ -1,4 +1,4 @@
-﻿/*	When the Save button is pressed, 
+﻿/*	When the Save button is pressed, this save dialog is invoked.
  */
 
 using System.Collections;
@@ -12,10 +12,19 @@ public class SaveDialog : MonoBehaviour
 	[SerializeField]
 	private InputField nameInput;
 
+	[SerializeField] 
+	private InputField descInput;
+
+	private void Awake()
+	{
+		gameObject.SetActive(false);
+	}
+
 	public void Open()
 	{
 		gameObject.SetActive(true);
 		nameInput.text = LevelEditor.instance.levelName;
+		descInput.text = LevelEditor.instance.description;
 	}
 
 	public void Accept()
@@ -26,7 +35,7 @@ public class SaveDialog : MonoBehaviour
 			return;
 		}
 
-		LevelEditor.instance.Save(nameInput.text);
+		LevelEditor.instance.Save(nameInput.text, descInput.text);
 	}
 
 	public void Cancel()

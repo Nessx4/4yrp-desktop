@@ -28,7 +28,7 @@ public class CreatorPlayerMobile : CreatorPlayer
             //{
                 //Vector3 mousePos = new Vector3(Input.mousePosition.x,
                     //Input.mousePosition.y, 10.0f);
-                Vector3 pos = PointerController.control.GetPointerPos(0);
+                Vector3 pos = PointerController.instance.GetPointerPos(0);
 
                 TilePosition tp = new TilePosition(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y));
 
@@ -81,9 +81,31 @@ public class CreatorPlayerMobile : CreatorPlayer
 
 	protected override IEnumerator Erase()
 	{
-		yield return null;
+        HashSet<Vector2> tilePositions = new HashSet<Vector2>();
+        Stack<TileOperation> operations = new Stack<TileOperation>();
 
-		throw new System.NotImplementedException();
+        stopDrawing = false;
+
+        while(!stopDrawing)
+        {
+            //Vector2 tp = RoundVectorToInt(MouseToWorldPos());
+
+            /// GET POINTER POSITION
+            Vector2 tp = RoundVectorToInt(PointerController.instance.GetPointerPos(0));
+
+            // Do not re-erase here if already erased here this operation.
+            if(!tilePositions.Contains(tp))
+            {
+                tilePositions.Add(tp);
+                TryPlaceTile(ref operations, null, tp);
+            }
+
+            yield return null;
+        }
+
+        // Add the drawn tiles to the undo history.
+        if (operations.Count > 0)
+            AddUndoHistory(operations);
 	}
 
     protected override IEnumerator Grab()

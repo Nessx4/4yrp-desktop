@@ -36,11 +36,6 @@ public class CreatorPlayerDesktop : CreatorPlayer
 		return mainCam.ScreenToWorldPoint(mousePos);
 	}
 
-	private Vector2 RoundVectorToInt(Vector2 vec)
-	{
-		return new Vector2(Mathf.RoundToInt(vec.x), Mathf.RoundToInt(vec.y));
-	}
-
 	// Position the preview block at mouse position.
 	protected override void UpdatePreviewPos()
 	{

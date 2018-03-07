@@ -20,6 +20,8 @@ public class LevelEditor : MonoBehaviour
 	public string levelName { get; private set; }
 	public string filename  { get; private set; }
 
+	public string description { get; private set; }
+
 	[SerializeField] 
 	private WarningMessage warning;
 
@@ -41,7 +43,8 @@ public class LevelEditor : MonoBehaviour
 
 			filename = null;
 			if (LevelLoader.instance != null)
-				Load(LevelLoader.instance.filename);
+				Load(LevelLoader.instance.filename, 
+					LevelLoader.instance.description);
 
 			// Ensure a snapshot object exists for when we save.
 			Instantiate(previewCamPrefab);
@@ -51,8 +54,10 @@ public class LevelEditor : MonoBehaviour
 	}
 
 	// Store the level on disk.
-	public void Save(string levelName)
+	public void Save(string levelName, string description)
 	{
+		this.levelName = levelName;
+		this.description = description;
 		long timestamp = DateTime.Now.Ticks;
 
 		// Find the level database, which must exist by this point.
@@ -78,6 +83,7 @@ public class LevelEditor : MonoBehaviour
 			screenshot, DateTime.Now);
 
 		data.name = levelName;
+		data.description = description;
 
 		foreach (CreatorTile tile in CreatorPlayerWrapper.Get().GetTiles())
 		{
@@ -97,9 +103,10 @@ public class LevelEditor : MonoBehaviour
 		file.Close();
 	}
 
-	public void Load(string filename)
+	public void Load(string filename, string description)
 	{
 		this.filename = filename;
+		this.description = description;
 
 		BinaryFormatter bf = new BinaryFormatter();
 		string file_to_open = Application.persistentDataPath + "/levels/db.dat";
@@ -113,8 +120,7 @@ public class LevelEditor : MonoBehaviour
 			// Find this level's filename and level name.
 			levelName = db.names[filename];
 
-			file_to_open = Application.persistentDataPath + "/levels/" +
-				filename + ".dat";
+			file_to_open = filename;
 
 			if(File.Exists(file_to_open))
 			{
