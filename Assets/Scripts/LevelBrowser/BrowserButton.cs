@@ -10,6 +10,7 @@ public class BrowserButton : MonoBehaviour
 	private LevelLoader loader;
 	
 	public string filename { private get; set; }
+	public string description { private get; set; }
 
 	// Load the Level Editor without needing to load a new level.
 	public void NewLevel()
@@ -23,6 +24,7 @@ public class BrowserButton : MonoBehaviour
 		LevelLoader loaderObj = Instantiate(loader, null);
 		DontDestroyOnLoad(loaderObj.gameObject);
 		loaderObj.filename = filename;
+		loaderObj.description = description;
 
 		SceneManager.LoadScene("sc_LevelCreator");
 	}

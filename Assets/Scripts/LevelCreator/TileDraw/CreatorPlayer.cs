@@ -342,6 +342,11 @@ public abstract class CreatorPlayer : MonoBehaviour
 			previewBlock.transform.position = pos;
 	}
 
+	protected static Vector2 RoundVectorToInt(Vector2 vec)
+	{
+		return new Vector2(Mathf.RoundToInt(vec.x), Mathf.RoundToInt(vec.y));
+	}
+
 	[System.Serializable]
 	protected struct TileOperation
 	{

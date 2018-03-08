@@ -8,18 +8,13 @@ public class TileDataLoader : MonoBehaviour
 {
 	private Dictionary<string, TileData> tileData;
 
-	private static TileDataLoader loader = null;
-
-	public static TileDataLoader Get()
-	{
-		return loader;
-	}
+	public static TileDataLoader instance { get; private set; }
 
 	private void Start()
 	{
-		if (loader == null)
+		if (instance == null)
 		{
-			loader = this;
+			instance = this;
 			DontDestroyOnLoad(gameObject);
 			LoadTileData();
 		}
@@ -70,6 +65,9 @@ public class TileDataLoader : MonoBehaviour
 
 			tileData.Add(name, newTile);
 		}
+
+		TileData emptyTile = new TileData("Null", null, null, null, Vector2.zero, "", EditLayer.FG);
+		tileData.Add("Null", emptyTile);
 	}
 
 	public bool TileExists(string name)
@@ -80,6 +78,62 @@ public class TileDataLoader : MonoBehaviour
 	public TileData GetData(string name)
 	{
 		return tileData[name];
+	}
+
+	public TileData GetData(TileType type)
+	{
+		switch(type)
+		{
+			case TileType.SOLID:
+				return tileData["Solid Block"];
+			case TileType.SEMISOLID:
+				return tileData["Semi-solid Block"];
+			case TileType.LADDER:
+				return tileData["Ladder"];
+
+			case TileType.BUSH01:
+				return tileData["Bush (1)"];
+			case TileType.BUSH02:
+				return tileData["Bush (2)"];
+			case TileType.CLOUD01:
+				return tileData["Cloud (1)"];
+			case TileType.CLOUD02:
+				return tileData["Cloud (2)"];
+			case TileType.MOUNTAIN:
+				return tileData["Mountain"];
+
+			case TileType.CRATE:
+				return tileData["Crate"];
+
+			case TileType.DOUGHNUT:
+				return tileData["Doughnut"];
+			case TileType.CUPCAKE:
+				return tileData["Cupcake"];
+			case TileType.CANDY_CANE:
+				return tileData["Candy Cane"];
+			case TileType.TOFFEE:
+				return tileData["Toffee"];
+			case TileType.LOLLIPOP:
+				return tileData["Lollipop"];
+			case TileType.STRAWBERRY:
+				return tileData["Strawberry"];
+			case TileType.ICE_CREAM:
+				return tileData["Ice Cream"];
+			case TileType.CHOCOLATE:
+				return tileData["Chocolate Bar"];
+			case TileType.CANDY_FLOSS:
+				return tileData["Candy Floss"];
+			case TileType.BROWNIE:
+				return tileData["Brownie"];
+
+			case TileType.UFO:
+				return tileData["UFO"];
+
+			case TileType.START_POINT:
+				return tileData["Start Point"];
+		}
+
+		return tileData["Null"];
 	}
 
 	// Get a full list of all TileData.

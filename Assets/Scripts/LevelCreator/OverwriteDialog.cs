@@ -25,7 +25,8 @@ public class OverwriteDialog : MonoBehaviour
 
 	public void Accept()
 	{
-		LevelEditor.instance.Save(true);
+		//LevelEditor.instance.Save(true);
+		throw new System.NotImplementedException();
 		gameObject.SetActive(false);
 	}
 

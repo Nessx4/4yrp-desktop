@@ -157,7 +157,7 @@ public class Prototype : MonoBehaviour
     		switch(cmd)
     		{
                 case "new_pointer":
-                    mobileID = PointerController.control.CreateMobilePointer();
+                    mobileID = PointerController.instance.CreateMobilePointer();
                     break;
     			case "Close":
 				case "close":
@@ -173,13 +173,13 @@ public class Prototype : MonoBehaviour
                     //TileDraw.placement.StopMobileDraw();
                 case "capture":
                     ufo.captured = true;
-                    PointerController.control.MakeInvisible(mobileID);
-                    PointerController.control.Capture(mobileID);
+                    PointerController.instance.MakeInvisible(mobileID);
+                    PointerController.instance.Capture(mobileID);
                     break;
                 case "leave":
                     ufo.captured = false;
-                    PointerController.control.MakeVisible(mobileID);
-                    PointerController.control.Leave(mobileID);
+                    PointerController.instance.MakeVisible(mobileID);
+                    PointerController.instance.Leave(mobileID);
                     break;
                 case "left":
                     ufo.Move(new Vector2(-0.5f, 0));
@@ -264,9 +264,8 @@ public class Prototype : MonoBehaviour
 
 					for (int i = 0; i < floats.Length; ++i)
 						actualFloats[i] = float.Parse(floats[i], CultureInfo.InvariantCulture);
-
                     //Debug.Log(actualFloats[0] + ", " + actualFloats[1]);
-                    PointerController.control.MovePointer(mobileID, new Vector2(actualFloats[0], actualFloats[1]));
+                    PointerController.instance.MovePointer(mobileID, new Vector2(actualFloats[0], actualFloats[1]));
 					break;
     		}
     	}

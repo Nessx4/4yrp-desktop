@@ -37,30 +37,45 @@ public class LevelBrowser : MonoBehaviour
 		// Load the file database.
 		if(File.Exists(file_to_open))
 		{
+			// Load the level database.
 			FileStream file = File.Open(file_to_open, FileMode.Open);
 			LevelDatabase db = (LevelDatabase)bf.Deserialize(file);
 			file.Close();
 
-			//List<string> filenames = new List<string>(db.Keys);
-
-			Debug.Log("Loading files!");
-
 			if(db.names == null)
+			{
 				Debug.Log("Database is empty!");
+				return;
+			}
 
+			List<BrowserData> levelDatas = new List<BrowserData>();
+
+			// Create a preview box for each level found in the database.
 			foreach(string filename in db.names.Keys)
 			{
 				file = File.Open(filename, FileMode.Open);
 				LevelSaveData data = (LevelSaveData)bf.Deserialize(file);
 				file.Close();
 
+				levelDatas.Add(new BrowserData(data, filename));
+			}
+
+			// Sort the list of data backwards, so oldest are last in list.
+			levelDatas.Sort((l1, l2) => l2.data.timestamp.CompareTo(l1.data.timestamp));
+
+			// Create an entry in the browser list for each level.
+			foreach (BrowserData data in levelDatas)
+			{
+				LevelSaveData level = data.data;
 				LevelPreviewBox newBox = Instantiate(box, container);
 
 				Texture2D preview = new Texture2D(800, 200, TextureFormat.RGB24, false);
-				preview.LoadImage(data.previewImage);
+				preview.LoadImage(level.previewImage);
+
+				Debug.Log(level.description);
 				
 				Sprite previewSprite = Sprite.Create(preview, new Rect(0.0f, 0.0f, preview.width, preview.height), new Vector2(0.5f, 0.5f), 100.0f);
-				newBox.SetParameters(data.name, filename, previewSprite, Random.Range(1, 1000), Random.Range(1, 11), data.timestamp);
+				newBox.SetParameters(level.name, level.description, data.filename, previewSprite, Random.Range(1, 1000), Random.Range(1, 11), level.timestamp);
 			}
 		}
 		else
@@ -75,39 +90,17 @@ public class LevelBrowser : MonoBehaviour
 
 			Load();
 		}
+	}
 
-		/*
-		if(Directory.Exists(Application.persistentDataPath + "/levels"))
+	private struct BrowserData
+	{
+		public LevelSaveData data;
+		public string filename;
+
+		public BrowserData(LevelSaveData data, string filename)
 		{
-			string[] filenames = Directory.GetFiles(Application.persistentDataPath + "/levels");
-			List<LevelSaveData> levels = new List<LevelSaveData>();
-
-			// Load all level data objects.
-			foreach (string filename in filenames)
-			{
-				BinaryFormatter bf = new BinaryFormatter();
-				FileStream file = File.Open(filename, FileMode.Open);
-				LevelSaveData data = (LevelSaveData)bf.Deserialize(file);
-				file.Close();
-
-				levels.Add(data);
-			}
-
-			// Sort the list of data backwards, so oldest are last in list.
-			levels.Sort((l1, l2) => l2.timestamp.CompareTo(l1.timestamp));
-
-			// Create an entry in the browser list for each level.
-			foreach (LevelSaveData level in levels)
-			{
-				LevelPreviewBox newBox = Instantiate(box, container);
-
-				Texture2D preview = new Texture2D(800, 200, TextureFormat.RGB24, false);
-				preview.LoadImage(level.previewImage);
-				
-				Sprite previewSprite = Sprite.Create(preview, new Rect(0.0f, 0.0f, preview.width, preview.height), new Vector2(0.5f, 0.5f), 100.0f);
-				newBox.SetParameters(level.name, previewSprite, Random.Range(1, 1000), Random.Range(1, 11), level.timestamp);
-			}
+			this.data = data;
+			this.filename = filename;
 		}
-		*/
 	}
 }

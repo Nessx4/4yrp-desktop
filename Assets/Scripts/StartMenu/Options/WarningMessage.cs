@@ -17,8 +17,12 @@ public class WarningMessage : MonoBehaviour
 
 	private new RectTransform transform;
 
-	private void Start()
+	public static WarningMessage instance { get; private set; }
+
+	private void Awake()
 	{
+		instance = this;
+		
 		transform = GetComponent<RectTransform>();
 		anchoredPosition = transform.anchoredPosition;
 
@@ -48,6 +52,7 @@ public class WarningMessage : MonoBehaviour
 
 	private IEnumerator Shake()
 	{
+		throw new System.NotImplementedException();
 		WaitForEndOfFrame wait = new WaitForEndOfFrame();
 
 		transform.anchoredPosition = anchoredPosition;

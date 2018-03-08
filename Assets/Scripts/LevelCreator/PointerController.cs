@@ -19,11 +19,11 @@ public class PointerController : MonoBehaviour
 
 	private Camera cam;
 
-    public static PointerController control;
+    public static PointerController instance { get; private set; }
 
 	private void Start()
 	{
-        control = this;
+        instance = this;
 
 		cam = GetComponent<Camera>();
 

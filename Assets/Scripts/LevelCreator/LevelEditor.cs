@@ -10,22 +10,17 @@ using UnityEngine;
 [RequireComponent(typeof(Camera))]
 public class LevelEditor : MonoBehaviour 
 {
-	// The user-input name of the level.
-	//[SerializeField] 
-	//private LevelName nameField;
-
 	[SerializeField]
 	private SaveDialog saveDialog;
-
-	// Ask the user if they want to overwrite an existing level.
-	//[SerializeField]
-	//private OverwriteDialog overwriteDialog;
 
 	// The root Transform all placed tiles are parented to.
 	public Transform tileRoot { get; private set; }
 
+	// Level name and file name are two DIFFERENT names.
 	public string levelName { get; private set; }
 	public string filename  { get; private set; }
+
+	public string description { get; private set; }
 
 	[SerializeField] 
 	private WarningMessage warning;
@@ -48,7 +43,8 @@ public class LevelEditor : MonoBehaviour
 
 			filename = null;
 			if (LevelLoader.instance != null)
-				Load(LevelLoader.instance.filename);
+				Load(LevelLoader.instance.filename, 
+					LevelLoader.instance.description);
 
 			// Ensure a snapshot object exists for when we save.
 			Instantiate(previewCamPrefab);
@@ -57,72 +53,60 @@ public class LevelEditor : MonoBehaviour
 			Destroy(gameObject);
 	}
 
-	public void Save(bool overwrite)
+	// Store the level on disk.
+	public void Save(string levelName, string description)
 	{
-		string levelName = "New level";//nameField.GetName().Replace(" ", "_").ToLower();
-
-		if(levelName == "")
-		{
-			warning.SetMessage(true, "Name your level!");
-			return;
-		}
-
+		this.levelName = levelName;
+		this.description = description;
 		long timestamp = DateTime.Now.Ticks;
 
+		// Find the level database, which must exist by this point.
 		BinaryFormatter bf = new BinaryFormatter();
 		FileStream file = File.Open(Application.persistentDataPath +
 			"/levels/db.dat", FileMode.Open);
 		LevelDatabase db = (LevelDatabase)bf.Deserialize(file);
 		file.Close();
 
-		string new_filename = Application.persistentDataPath + "/levels/";
-
+		// Determine what the level filepath should be.
 		if(filename == null) 
 		{
 			int n = db.lastID++;
-			new_filename += (n.ToString() + ".dat");
+			filename = Application.persistentDataPath + "/levels/" + 
+				n.ToString() + ".dat";
 		}
-		else
-			new_filename += (filename + ".dat");
 
 		// Ensure the Level save folder exists before trying to save a level.
 		Directory.CreateDirectory(Application.persistentDataPath + "/levels/");
 
-		if(!overwrite && File.Exists(new_filename))
+		byte[] screenshot = PreviewCamera.cam.TakeScreenshot(mainCam);
+		LevelSaveData data = new LevelSaveData(levelName, "",
+			screenshot, DateTime.Now);
+
+		data.name = levelName;
+		data.description = description;
+
+		foreach (CreatorTile tile in CreatorPlayerWrapper.Get().GetTiles())
 		{
-			//overwriteDialog.gameObject.SetActive(true);
-			//overwriteDialog.SetLevelName(nameField.GetName());
+			if(tile.gameObject.activeSelf)
+				data.tiles.Add(new TileSaveData(tile.GetTileType(), 
+					tile.transform.position));
 		}
-		else
-		{
-			byte[] screenshot = PreviewCamera.cam.TakeScreenshot(mainCam);
-			LevelSaveData data = new LevelSaveData(levelName, 
-				screenshot, DateTime.Now);
 
-			data.name = levelName;
+		file = File.Create(filename);
+		bf.Serialize(file, data);
+		file.Close();
 
-			foreach (CreatorTile tile in CreatorPlayerWrapper.Get().GetTiles())
-			{
-				if(tile.gameObject.activeSelf)
-					data.tiles.Add(new TileSaveData(tile.GetTileType(), 
-						tile.transform.position));
-			}
-
-			file = File.Create(new_filename);
-			bf.Serialize(file, data);
-			file.Close();
-
-			db.AddLevel(new_filename, levelName);
-			file = File.Open(Application.persistentDataPath +
-				"/levels/db.dat", FileMode.Open);
-			bf.Serialize(file, db);
-			file.Close();
-		}
+		db.AddLevel(filename, levelName);
+		file = File.Open(Application.persistentDataPath +
+			"/levels/db.dat", FileMode.Open);
+		bf.Serialize(file, db);
+		file.Close();
 	}
 
-	public void Load(string filename)
+	public void Load(string filename, string description)
 	{
 		this.filename = filename;
+		this.description = description;
 
 		BinaryFormatter bf = new BinaryFormatter();
 		string file_to_open = Application.persistentDataPath + "/levels/db.dat";
@@ -136,8 +120,7 @@ public class LevelEditor : MonoBehaviour
 			// Find this level's filename and level name.
 			levelName = db.names[filename];
 
-			file_to_open = Application.persistentDataPath + "/levels/" +
-				filename + ".dat";
+			file_to_open = filename;
 
 			if(File.Exists(file_to_open))
 			{
@@ -153,8 +136,9 @@ public class LevelEditor : MonoBehaviour
 					Vector3 position = new Vector3(tile.positionX, 
 						tile.positionY, tile.positionZ);
 
-					CreatorTile prefab = null;
+					CreatorTile prefab = TileDataLoader.instance.GetData(tile.type).creatorPrefab;
 
+					Debug.Log(prefab);
 					/*
 					switch (tile.type)
 					{
@@ -248,15 +232,19 @@ public struct LevelSaveData
 {
 	public string name;
 
+	public string description;
+
 	public byte[] previewImage;
 
 	public long timestamp;
 
 	public List<TileSaveData> tiles;
 
-	public LevelSaveData(string name, byte[] previewImage, DateTime timestamp)
+	public LevelSaveData(string name, string description, byte[] previewImage, 
+		DateTime timestamp)
 	{
 		this.name = name;
+		this.description = description;
 		this.previewImage = previewImage;
 		this.timestamp = timestamp.Ticks;
 		tiles = new List<TileSaveData>();

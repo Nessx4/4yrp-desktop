@@ -5,7 +5,8 @@ using UnityEngine;
 public class LevelLoader : MonoBehaviour
 {
 	private string _filename;
-	public string filename { 
+	public string filename 
+	{ 
 		get
 		{
 			Destroy(gameObject, Time.deltaTime);
@@ -15,6 +16,20 @@ public class LevelLoader : MonoBehaviour
 		{
 			_filename = value;
 		} 
+	}
+
+	private string _description;
+	public string description
+	{
+		get
+		{
+			Destroy(gameObject, Time.deltaTime);
+			return _description;
+		}
+		set
+		{
+			_description = value;
+		}
 	}
 
 	public static LevelLoader instance { get; private set; }

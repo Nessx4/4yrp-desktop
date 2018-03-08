@@ -31,15 +31,23 @@ public class PreviewCamera : MonoBehaviour
 	// screenshot of the level.
 	public byte[] TakeScreenshot(Camera mainCam)
 	{
+		// Create and set textures on the camera.
 		RenderTexture activeTexture = RenderTexture.active;
-		RenderTexture tempTexture = new RenderTexture(800, 200, 24);
+		RenderTexture tempTexture = new RenderTexture(800, 800, 24);
 		screenshotCam.targetTexture = tempTexture;
-		screenshotCam.orthographicSize = 2.5f * mainCam.aspect;
-		screenshotCam.aspect = 4.0f;
+		screenshotCam.orthographicSize = mainCam.aspect * 7.5f;
+		screenshotCam.aspect = 1.0f;
+
+		Vector3 pos = mainCam.transform.position + new Vector3(0.0f,
+			screenshotCam.orthographicSize - mainCam.orthographicSize, 0.0f);
+
+		pos.z = -5.0f;
 
 		// Move the preview camera where it needs to be.
 		transform.position = mainCam.transform.position + new Vector3(0.0f,
 			screenshotCam.orthographicSize - mainCam.orthographicSize, 0.0f);
+
+		transform.position = pos;
 
 		RenderTexture.active = screenshotCam.targetTexture;
 		screenshotCam.Render();
