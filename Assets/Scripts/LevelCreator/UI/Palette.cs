@@ -53,7 +53,7 @@ public class Palette : MonoBehaviour
 		Dictionary<string, Tileset> tilesets = new Dictionary<string, Tileset>();
 		tiles = new List<Tileset>();
 
-		foreach(TileData data in TileDataLoader.Get().GetAllData())
+		foreach(TileData data in TileDataLoader.instance.GetAllData())
 		{
 			if (tilesets.ContainsKey(data.category))
 				tilesets[data.category].tiles.Add(data);

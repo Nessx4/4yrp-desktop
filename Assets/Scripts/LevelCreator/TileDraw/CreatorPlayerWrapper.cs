@@ -41,12 +41,14 @@ public class CreatorPlayerWrapper : MonoBehaviour
 		return wrapper;
 	}
 
-	private void Start()
+	private void Awake()
 	{
 		wrapper = this;
-
 		tiles = new List<CreatorTile>();
+	}
 
+	private void Start()
+	{
 		if(players.Count != 1)
 			Debug.LogError("Desktop tile draw object must exist at start.");
 

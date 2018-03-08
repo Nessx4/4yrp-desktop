@@ -136,8 +136,9 @@ public class LevelEditor : MonoBehaviour
 					Vector3 position = new Vector3(tile.positionX, 
 						tile.positionY, tile.positionZ);
 
-					CreatorTile prefab = null;
+					CreatorTile prefab = TileDataLoader.instance.GetData(tile.type).creatorPrefab;
 
+					Debug.Log(prefab);
 					/*
 					switch (tile.type)
 					{
