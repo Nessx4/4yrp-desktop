@@ -22,9 +22,13 @@ public class Pointer : MonoBehaviour
 
     private float speed = 15.0f;
 
+    public bool capturing = false;
 	private new SpriteRenderer renderer;
 
-	private void Start()
+    [SerializeField]
+    private LayerMask enemyMask;
+
+    private void Start()
 	{
 		renderer = GetComponent<SpriteRenderer>();
 	}
@@ -81,6 +85,32 @@ public class Pointer : MonoBehaviour
 		transform.position = cam.ScreenToWorldPoint(pos);
 	}
 
+    bool condition1 = true;
+    bool condition2 = false;
+
+    public void Update()
+    {
+        if (!capturing)
+        {
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.up, 0.01f, enemyMask);
+            if (hit.collider != null && condition1)
+            {
+                Debug.Log("on");
+                Prototype.proto.AddToWriteQueue("ufo_on");
+                condition1 = false;
+                condition2 = true;
+            }
+
+            if (hit.collider == null && condition2)
+            {
+                condition1 = true;
+                Debug.Log("off");
+                Prototype.proto.AddToWriteQueue("capture_off");
+                condition2 = false;
+            }
+        }
+    }
+
     public void Invisible()
     {
         renderer.enabled = false;
@@ -90,6 +120,7 @@ public class Pointer : MonoBehaviour
     {
         renderer.enabled = true;
     }
+
 }
 
 public enum PointerType

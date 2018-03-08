@@ -17,7 +17,7 @@ public class Ladder : MonoBehaviour {
     {
         if (other.tag == "Player" && Input.GetKey(KeyCode.UpArrow))
         {
-            other.GetComponent<Player>().onLadder = true;
+            other.GetComponent<PlayerTEST>().onLadder = true;
         }
         /*
         if (other.tag=="Player")
@@ -48,7 +48,7 @@ public class Ladder : MonoBehaviour {
     {
         if (other.tag=="Player")
         {
-            other.GetComponent<Player>().onLadder = false;
+            other.GetComponent<PlayerTEST>().onLadder = false;
         }
     }
 }

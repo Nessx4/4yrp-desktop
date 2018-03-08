@@ -22,14 +22,17 @@ public class Prototype : MonoBehaviour
 
     // Network communication.
     private Thread listenThread;
+    private Thread writeThread;
     private TcpListener listener;
     private Socket soc;
+    private StreamWriter writer;
 
-	private int port = 9000;
+    private int port = 9000;
 
 	private ConcurrentQueue<string> commandQueue;
+    private ConcurrentQueue<string> writeQueue;
 
-    private static Prototype proto;
+    public static Prototype proto;
 
     [SerializeField]
     private List<TileData> tiles;
@@ -49,14 +52,16 @@ public class Prototype : MonoBehaviour
     private void PreSetup()
     {
     	commandQueue = new ConcurrentQueue<string>();
+        writeQueue = new ConcurrentQueue<string>();
 
-        IPAddress[] localIPs = Dns.GetHostAddresses(Dns.GetHostName());
+    IPAddress[] localIPs = Dns.GetHostAddresses(Dns.GetHostName());
 
         for (int i = 0; i < localIPs.Length; i++)
             Debug.Log(localIPs[i]);
 
 		listenThread = new Thread(new ThreadStart(Setup));
        	listenThread.Start();
+
     }
 
 	// Accept a connection and begin to listen for messages.
@@ -74,6 +79,25 @@ public class Prototype : MonoBehaviour
 		Listen();
     }
 
+    public void AddToWriteQueue(string msg)
+    {
+        writeQueue.Enqueue(msg);
+    }
+
+
+    private void Write()
+    {
+        Debug.Log("hello");
+        string writ;
+        while (true)
+        {
+            while (writeQueue.TryDequeue(out writ))
+            {
+                Debug.Log("AAA");
+                writer.WriteLine(writ);
+            }
+        }
+    }
 	// Set up stream reader and writer, then listen for messages.
 	private void Listen()
 	{
@@ -81,18 +105,21 @@ public class Prototype : MonoBehaviour
 		{
 			NetworkStream stream = new NetworkStream(soc);
 			StreamReader reader = new StreamReader(stream);
-			StreamWriter writer = new StreamWriter(stream);
-			writer.AutoFlush = true; // enable automatic flushing
+            writer = new StreamWriter(stream);
+            writer.AutoFlush = true; // enable automatic flushing
 
-			string message;
-			while ((message = reader.ReadLine()) != null)
-			{
-				if (!string.IsNullOrEmpty(message))
-				{
-					Debug.Log(message);
-					commandQueue.Enqueue(message);
-				}
-			}
+            writeThread = new Thread(new ThreadStart(Write));
+            writeThread.Start();
+
+            string message;
+            while ((message = reader.ReadLine()) != null)
+            {
+                if (!string.IsNullOrEmpty(message))
+                {
+                    //Debug.Log(message);
+                    commandQueue.Enqueue(message);
+                }
+            }
 		}
 		catch (IOException e)
 		{
@@ -110,9 +137,12 @@ public class Prototype : MonoBehaviour
 		if(soc != null)
 			soc.Close();
 
-		listenThread.Abort();
+        writeThread.Abort();
+        writeThread.Join();
+
+        listenThread.Abort();
 		listenThread.Join();
-	}
+    }
 
     public void OnDestroy()
     {
@@ -139,18 +169,28 @@ public class Prototype : MonoBehaviour
                     //TileDraw.placement.StartMobileDraw();
                     break;
                 case "action_end":
-                    //TileDraw.placement.StopMobileDraw();
                     break;
+                    //TileDraw.placement.StopMobileDraw();
                 case "capture":
+                    ufo.captured = true;
                     PointerController.control.MakeInvisible(mobileID);
+                    PointerController.control.Capture(mobileID);
                     break;
                 case "leave":
+                    ufo.captured = false;
                     PointerController.control.MakeVisible(mobileID);
+                    PointerController.control.Leave(mobileID);
                     break;
                 case "left":
+                    ufo.Move(new Vector2(-0.5f, 0));
+                    break;
+                case "left2":
                     ufo.Move(Vector2.left);
                     break;
                 case "right":
+                    ufo.Move(new Vector2(0.5f, 0));
+                    break;
+                case "right2":
                     ufo.Move(Vector2.right);
                     break;
                 case "stop":
@@ -225,7 +265,7 @@ public class Prototype : MonoBehaviour
 					for (int i = 0; i < floats.Length; ++i)
 						actualFloats[i] = float.Parse(floats[i], CultureInfo.InvariantCulture);
 
-                    Debug.Log(actualFloats[0] + ", " + actualFloats[1]);
+                    //Debug.Log(actualFloats[0] + ", " + actualFloats[1]);
                     PointerController.control.MovePointer(mobileID, new Vector2(actualFloats[0], actualFloats[1]));
 					break;
     		}

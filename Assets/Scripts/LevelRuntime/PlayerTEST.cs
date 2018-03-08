@@ -5,11 +5,23 @@ using UnityEngine;
 
 public class PlayerTEST : MonoBehaviour
 {
-	[Space(5)]
-	[Header("Jump modifiers")]
+    [SerializeField]
+    private Transform savePoint;
+    private bool facingRight;
+    public bool onLadder;
+    public bool verticalMove = false;
+    [SerializeField]
+    private float moveForce = 200.0f;
+    [SerializeField]
+    private float playerDrag = 0.985f;
 
-	// How fast the player jumps upwards.
-	[SerializeField]
+    [Space(5)]
+	[Header("Jump modifiers")]
+    private float climbVelocity;
+    private float climbDist;
+    private float climbSpeed = 5.0f;
+    // How fast the player jumps upwards.
+    [SerializeField]
 	private float jumpStrength = 5.0f;
 
 	// The player falls faster after being in the air for longer after jumping.
@@ -32,8 +44,6 @@ public class PlayerTEST : MonoBehaviour
 	private float jumpBtnDownTime = 0.0f;
 	private float jumpBtnDownLeniency = 0.1f;
 	private bool isJumpBtnHeld = false;
-
-
 
 	[Space(5)]
 	[Header("Ground checking")]
@@ -73,7 +83,7 @@ public class PlayerTEST : MonoBehaviour
 	private void Awake()
 	{
 		rigidbody = GetComponent<Rigidbody2D>();
-	}
+    }
 
 	private void Update()
 	{
@@ -115,38 +125,88 @@ public class PlayerTEST : MonoBehaviour
 	// Without modifying x, calculate the y-velocity of the player.
 	private void CalculateYVelocity()
 	{
-		float yMod = 0.0f;
+        if (!verticalMove)
+            verticalMove = (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow));
 
-		if (Mathf.Abs(rigidbody.velocity.y) > 0.1f)
+        float yMod = 0.0f;
+
+        if (onLadder && verticalMove)
+        {
+            rigidbody.gravityScale = 0.0f;
+            //anim.SetFloat("climbDist", climbDist);
+            if (Input.GetKey(KeyCode.UpArrow))
+            {
+                climbDist++;
+            }
+            else if (Input.GetKey(KeyCode.DownArrow))
+            {
+                climbDist--;
+            }
+
+            if (climbDist > 20)
+            {
+                climbDist = 5;
+            }
+            else if (climbDist < 0)
+            {
+                climbDist = 20;
+            }
+            isGrounded = true;
+            verticalMove = true;
+            //anim.SetBool("OnLadder", true);
+            climbVelocity = climbSpeed * Input.GetAxisRaw("Vertical");
+            rigidbody.velocity = new Vector2(0.0f, climbVelocity);
+        }
+        else
+        {
+            rigidbody.gravityScale = 1.0f;
+            verticalMove = false;
+            if (Mathf.Abs(rigidbody.velocity.y) > 0.1f)
+            {
+                if (rigidbody.velocity.y < 0.0f)
+                    yMod += (fallModifier - 1.0f);
+                else
+                {
+                    if (isJumping)
+                        yMod += (Time.time - jumpStartedTime) * timeFallModifier;
+
+                    if (!isJumpBtnHeld)
+                        yMod += (lowJumpModifier - 1.0f);
+                }
+
+                yMod *= Physics2D.gravity.y * Time.fixedDeltaTime;
+            }
+            rigidbody.velocity += new Vector2(0.0f, yMod);
+            //anim.SetFloat("climbDist", 0);
+            //anim.SetBool("OnLadder", false);
+        }
+
+        if (isJumpBtnDown && !isJumping && isGrounded)
 		{
-			if (rigidbody.velocity.y < 0.0f)
-				yMod += (fallModifier - 1.0f);
-			else
-			{
-				if (isJumping)
-					yMod += (Time.time - jumpStartedTime) * timeFallModifier;
+            if (onLadder)
+            {
+                onLadder = false;
+                isJumping = true;
+                rigidbody.velocity = new Vector2(rigidbody.velocity.x, 0.0f);
+                yMod = jumpStrength * 0.6f;
+                jumpStartedTime = Time.time;
+            }
+            else
+            {
+                isJumping = true;
+                rigidbody.velocity = new Vector2(rigidbody.velocity.x, 0.0f);
+                yMod = jumpStrength;
+                jumpStartedTime = Time.time;
+            }
+            rigidbody.velocity += new Vector2(0.0f, yMod);
+        }
 
-				if (!isJumpBtnHeld)
-					yMod += (lowJumpModifier - 1.0f);
-			}
-
-			yMod *= Physics2D.gravity.y * Time.fixedDeltaTime;
-		}
-
-		if (isJumpBtnDown && !isJumping && isGrounded)
-		{
-			isJumping = true;
-			rigidbody.velocity = new Vector2(rigidbody.velocity.x, 0.0f);
-			yMod = jumpStrength;
-			jumpStartedTime = Time.time;
-		}
-
-		rigidbody.velocity += new Vector2(0.0f, yMod);
 	}
 
 	// Without modifying y, calculate the x-velocity of the player.
 	private void CalculateXVelocity()
 	{
+        /*
 		Vector2 velocity = rigidbody.velocity;
 		float xMod = horInput * horSpeed;
 
@@ -158,5 +218,65 @@ public class PlayerTEST : MonoBehaviour
 			velocity.x = 0.0f;
 
 		rigidbody.velocity = velocity;
-	}
+        */
+
+        Vector2 velocity = rigidbody.velocity;
+        //velocity = new Vector2(velocity.x * playerDrag, rigidbody.velocity.y);
+        //float xMod = horInput * horSpeed;
+        //velocity.x = isGrounded ? xMod : Mathf.Lerp(velocity.x, xMod, airControlFactor);
+
+        velocity.x = velocity.x * playerDrag;
+        if (horInput * velocity.x < horSpeed & !onLadder)
+            rigidbody.AddForce(Vector2.right * horInput * moveForce);
+
+        if (isGrounded && Mathf.Abs(horInput) < 0.1f)
+            velocity.x = 0.0f;
+
+        if (Mathf.Abs(velocity.x) > horSpeed)
+            velocity.x = Mathf.Sign(velocity.x) * horSpeed;
+
+        if (horInput > 0 && !facingRight)
+            Flip();
+        else if (horInput < 0 && facingRight)
+            Flip();
+
+        rigidbody.velocity = velocity;
+    }
+
+    private void Flip()
+    {
+        facingRight = !facingRight;
+        Vector3 theScale = transform.localScale;
+        theScale.x *= -1;
+        transform.localScale = theScale;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collider)
+    {
+        switch (collider.tag)
+        {
+            case "Sweets":
+                Destroy(collider.gameObject);
+                UIController.controller.Score(50);
+                break;
+            case "Savepoint":
+                savePoint = collider.transform.parent;
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        switch (collision.collider.tag)
+        {
+            case "Enemy":
+                rigidbody.position = savePoint.position;
+                break;
+            default:
+                break;
+        }
+
+    }
 }

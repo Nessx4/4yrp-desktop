@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 114886331629859416}
   m_Layer: 11
   m_Name: obj_Pointer
-  m_TagString: Untagged
+  m_TagString: Pointer
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -54,7 +54,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   desktopPointer: {fileID: 21300000, guid: 94935e7feacb22143b43d04c4ce70476, type: 3}
   mobilePointer: {fileID: 21300000, guid: 84234cd13840d2a46b8018db6de18f67, type: 3}
-  cam: {fileID: 0}
+  enemyMask:
+    serializedVersion: 2
+    m_Bits: 8192
 --- !u!212 &212764570559954342
 SpriteRenderer:
   m_ObjectHideFlags: 1

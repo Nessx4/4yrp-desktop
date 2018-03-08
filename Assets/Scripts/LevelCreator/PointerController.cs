@@ -78,6 +78,16 @@ public class PointerController : MonoBehaviour
         mobilePointers[id].Visible();
     }
 
+    public void Capture(int id)
+    {
+        mobilePointers[id].capturing = true;
+    }
+
+    public void Leave(int id)
+    {
+        mobilePointers[id].capturing = false;
+    }
+
     public Vector2 GetPointerPos(int id)
     {
 		if(CreatorCamera.creatorCam != null)
