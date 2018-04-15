@@ -24,6 +24,11 @@ public class EditorGrid : MonoBehaviour
 		gridTiles = new GridTile[100, 100];
 	}
 
+	private void Start()
+	{
+		
+	}
+
 	// Replace the tile at (x, y) with a different type if applicable.
 	private void UpdateSpace(int x, int y)
 	{

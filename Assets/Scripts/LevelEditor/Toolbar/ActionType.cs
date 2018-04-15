@@ -3,7 +3,9 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-public class ToolbarButton : MonoBehaviour 
+public enum ActionType
 {
-
+	UNDO, REDO, CLEAR, 
+	SAVE, PLAY, 
+	MENU
 }
