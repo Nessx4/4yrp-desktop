@@ -3,11 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class Toolbar : MonoBehaviour
 {
 	[SerializeField]
-	private List<ToolbarButton> buttons;
+	private ToolbarButton[] buttons;
 
 	private ToolType activeTool = ToolType.PENCIL;
 
@@ -87,7 +88,7 @@ public class Toolbar : MonoBehaviour
 		LevelEditor.instance.toolbar = this;
 
 		// Assert that there are 11 buttons on the Toolbar.
-		System.Diagnostics.Debug.Assert(buttons.Count == 11);
+		Assert.AreEqual(buttons.Length, 11, "Incorrect no. of ToolbarButtons.");
 
 		// All ToolbarButtons will be coupled directly to the Toolbar class for
 		// ease.
