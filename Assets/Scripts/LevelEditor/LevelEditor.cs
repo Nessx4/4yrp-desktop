@@ -1,4 +1,10 @@
-﻿using System.Collections;
+﻿/*	LevelEditor is a class that encapsulates state about the Editor. It also
+ *	acts as a service locator for several other single-instance classes, such
+ *	as Palette or Toolbar. This removes the need to make those classes follow
+ *	the Singleton pattern, although this class is forced to.
+ */
+
+using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -7,10 +13,14 @@ public class LevelEditor
 {
 	public static LevelEditor instance { get; private set; }
 
+	// LevelEditor acts as a service locator for the following classes:
 	public Toolbar toolbar { get; set; }
 	public Palette palette { get; set; }
 
-	private ThemeType currentTheme;
+	// Encapsulate all static data in a separate class.
+	private EditorTileData editorTileData;
+
+	private ThemeType activeTheme;
 
 	private Dictionary<ThemeType, ThemeData> themeDataMap;
 
@@ -20,28 +30,30 @@ public class LevelEditor
 		instance = new LevelEditor();
 	}
 
-	// On Singleton instance creation, 
+	/* 	On Singleton instance creation, initialise all data about tiles that we
+	 *	may want to pull somewhere else in the application.
+	 *
+	 *	Originally, it was planned to put all static tile data directly inside
+	 *	LevelEditor. Instead, this was encapsulated inside a separate object,
+	 *	EditorTileData, which is hidden from other classes.
+	 */
 	private LevelEditor()
 	{
-		themeDataMap = new Dictionary<ThemeType, ThemeData>();
+		editorTileData = new EditorTileData();
+	}
 
-		ThemeData dat = new ThemeData();
-		dat.Add(TileType.SOLID,				Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_Solid"));
-		dat.Add(TileType.SEMISOLID,			Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_Semisolid"));
-		dat.Add(TileType.LADDER,			Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_Ladder"));
-		dat.Add(TileType.MOVING_PLATFORM,	Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_MovingPlatform"));
-		dat.Add(TileType.TREADMILL,			Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_Treadmill"));
-		dat.Add(TileType.START_POINT,		Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_StartPoint"));
-		dat.Add(TileType.CHECK_POINT,		Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_CheckPoint"));
-		dat.Add(TileType.END_POINT,			Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_EndPoint"));
-		dat.Add(TileType.BUSH,				Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_Bush"));
-		dat.Add(TileType.CLOUD,				Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_Cloud"));
-		dat.Add(TileType.MOUNTAIN,			Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_Mountain"));
-		dat.Add(TileType.CRATE,				Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_Crate"));
-		dat.Add(TileType.SWEETS,			Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_Sweets"));
-		dat.Add(TileType.UFO,				Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_Ufo"));
-		dat.Add(TileType.SLIME,				Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_Slime"));
-		dat.Add(TileType.SPAWNER,			Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_Spawner"));
-		themeDataMap.Add(ThemeType.NORMAL, dat);
+	public GridTile GetTilePrefab(TileType tileType)
+	{
+		return editorTileData.GetTilePrefab(tileType, activeTheme);
+	}
+
+	public Sprite GetPaletteIcon(TileType tileType)
+	{
+		return editorTileData.GetPaletteIcon(tileType, activeTheme);
+	}
+
+	public string GetTileName(TileType tileType)
+	{
+		return editorTileData.GetTileName(tileType, activeTheme);
 	}
 }

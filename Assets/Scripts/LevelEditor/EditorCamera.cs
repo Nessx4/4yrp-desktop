@@ -9,11 +9,8 @@ public class EditorCamera : MonoBehaviour
 	[SerializeField]
 	private Camera mainCamera;
 
-	private readonly Vector2 lowerLeft = new Vector2(0.5f, 0.0f);
-	private readonly Vector2 upperRight = new Vector2(10.5f, 10.5f);
-
 	private Vector2 movement;
-	private const float moveSpeed = 2.5f;
+	private const float moveSpeed = 5.0f;
 
 	private new Rigidbody2D rigidbody;
 

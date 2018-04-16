@@ -10,7 +10,8 @@ public abstract class ToolbarButton : MonoBehaviour
 
 	private void Start()
 	{
-		GetComponent<RectTransform>().rotation = Quaternion.Euler(new Vector3(0, 0, Random.Range(-5, 5)));
+		// Set the button to have a slight angle.
+		//GetComponent<RectTransform>().rotation = Quaternion.Euler(new Vector3(0, 0, Random.Range(-5, 5)));
 	}
 
 	public void Press()

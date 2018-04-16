@@ -26,7 +26,7 @@ public class CameraGridGuide : MonoBehaviour
 		float x = transform.position.x - 0.5f - 
 			(camera.aspect * camera.orthographicSize);
 		float y = transform.position.y - 0.5f - camera.orthographicSize;
-		Vector2 offset = new Vector2(x % 1.0f, y % 1.0f);
+		Vector2 offset = new Vector2(x % 2.0f, y % 2.0f) / 2.0f;
 		Vector2 scale = new Vector2(camera.orthographicSize * camera.aspect, 
 			camera.orthographicSize);
 

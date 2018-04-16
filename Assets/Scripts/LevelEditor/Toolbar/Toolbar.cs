@@ -96,6 +96,19 @@ public class Toolbar : MonoBehaviour
 			button.toolbar = this;
 	}
 
+	private void Start()
+	{
+		// Register an event.
+		LevelEditor.instance.palette.TileChanged += TileChanged;
+	}
+
+	private void TileChanged(object sender, TileChangedEventArgs e)
+	{
+		Debug.Log("TileChanged event received");
+
+		throw new NotImplementedException("Need to deactivate certain tools.");
+	}
+
 	public void ChangeTool(ToolType newTool)
 	{
 		Debug.Log("Do the thing");
