@@ -1,4 +1,8 @@
-﻿using System;
+﻿/*	A TileButton exists on the Palette and denotes a tile that can be placed
+ *	on the grid.
+ */
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -11,9 +15,9 @@ public class TileButton : MonoBehaviour
 	[SerializeField]
 	private Button button;
 
-	public Palette palette { protected get; set; }
+	public Palette palette { private get; set; }
 
-	private TileType tileType;
+	public TileType tileType { get; private set; }
 
 	public new RectTransform transform { get; private set; }
 
@@ -27,12 +31,15 @@ public class TileButton : MonoBehaviour
 		this.tileType = tileType;
 
 		button.image.sprite = LevelEditor.instance.GetPaletteIcon(tileType);
-
-		//throw new NotImplementedException("Need to change the tile sprite etc");
 	}
 
 	public void Press()
 	{
+		palette.SwitchActiveTile(tileType);
+	}
 
+	public void SetColor(Color col)
+	{
+		button.image.color = col;
 	}
 }

@@ -1,5 +1,5 @@
 ﻿/*	GridTile represents data about a visual tile that has been placed inside
- *	
+ *	the EditorGrid.
  */
 
 using System.Collections;

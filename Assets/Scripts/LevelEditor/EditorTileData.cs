@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class EditorTileData 
 {
 	private Dictionary<ThemeType, ThemeData> themeDataMap;
+	private Dictionary<TileType, Vector2> tileSizes;
 
 	public EditorTileData()
 	{
@@ -166,6 +168,25 @@ public class EditorTileData
 		);
 
 		themeDataMap.Add(ThemeType.NORMAL, dat);
+
+		tileSizes = new Dictionary<TileType, Vector2>();
+
+		tileSizes.Add(TileType.SOLID, 			new Vector2(1, 1));
+		tileSizes.Add(TileType.SEMISOLID, 		new Vector2(1, 1));
+		tileSizes.Add(TileType.LADDER,			new Vector2(1, 1));
+		tileSizes.Add(TileType.MOVING_PLATFORM, new Vector2(1, 1));
+		tileSizes.Add(TileType.TREADMILL,		new Vector2(1, 1));
+		tileSizes.Add(TileType.START_POINT,		new Vector2(1, 2));
+		tileSizes.Add(TileType.CHECK_POINT,		new Vector2(1, 2));
+		tileSizes.Add(TileType.END_POINT,		new Vector2(1, 2));
+		tileSizes.Add(TileType.BUSH,			new Vector2(4, 3));
+		tileSizes.Add(TileType.CLOUD,			new Vector2(4, 3));
+		tileSizes.Add(TileType.MOUNTAIN,		new Vector2(12, 9));
+		tileSizes.Add(TileType.CRATE,			new Vector2(1, 1));
+		tileSizes.Add(TileType.SWEETS,			new Vector2(1, 1));
+		tileSizes.Add(TileType.UFO,				new Vector2(1, 1));
+		tileSizes.Add(TileType.SLIME,			new Vector2(1, 1));
+		tileSizes.Add(TileType.SPAWNER,			new Vector2(2, 2));
 	}
 
 	public GridTile GetTilePrefab(TileType tileType, ThemeType themeType)
@@ -181,5 +202,12 @@ public class EditorTileData
 	public string GetTileName(TileType tileType, ThemeType themeType)
 	{
 		return themeDataMap[themeType][tileType].name;
+	}
+
+	public bool IsUnitSize(TileType tileType)
+	{
+		Assert.IsTrue(tileSizes.ContainsKey(tileType));
+
+		return (tileSizes[tileType] == new Vector2(1, 1));
 	}
 }

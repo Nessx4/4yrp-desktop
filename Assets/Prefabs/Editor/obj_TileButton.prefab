@@ -70,7 +70,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 114546537974802834}
         m_MethodName: Press
         m_Mode: 1
         m_Arguments:

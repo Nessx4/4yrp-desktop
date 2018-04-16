@@ -56,4 +56,9 @@ public class LevelEditor
 	{
 		return editorTileData.GetTileName(tileType, activeTheme);
 	}
+
+	public bool IsUnitSize(TileType tileType)
+	{
+		return editorTileData.IsUnitSize(tileType);
+	}
 }

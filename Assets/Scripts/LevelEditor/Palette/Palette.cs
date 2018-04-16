@@ -17,6 +17,8 @@ public class Palette : MonoBehaviour
 	private List<List<TileType>> tileGroups = new List<List<TileType>>();
 	private int tileGroupIndex = -1;
 
+	private TileType activeTile = TileType.SOLID;
+
 	public event TileChangedEventHandler TileChanged;
 
 	public delegate void TileChangedEventHandler(object sender, 
@@ -49,7 +51,7 @@ public class Palette : MonoBehaviour
 			TileType.NONE,
 			TileType.NONE,
 			TileType.NONE,
-			TileType.NONE
+			TileType.LADDER
 		});
 
 		tileGroups.Add(new List<TileType>()
@@ -137,32 +139,42 @@ public class Palette : MonoBehaviour
 		{
 			TileButton newButton = Instantiate(tileButtonPrefab, tileButtonRoot);
 			tileButtons.Add(newButton);
+			newButton.palette = this;
 		}
 	}
 
 	private void Start()
 	{
-		// Register an event.
-		LevelEditor.instance.toolbar.ToolChanged += ToolChanged;
-
 		SwitchTileGroup();
 	}
 
-	private void SwitchTileGroup()
+	public void SwitchTileGroup()
 	{
 		tileGroupIndex = ++tileGroupIndex % tileGroups.Count;
-		Debug.Log(tileGroupIndex);
 
 		int i = 0;
 		foreach(var tileButton in tileButtons)
 			tileButton.SetTileType(tileGroups[tileGroupIndex][i++]);
+
+		tileButtons[0].Press();
 	}
 
-	private void ToolChanged(object sender, ToolChangedEventArgs e)
+	public void SwitchActiveTile(TileType tileType)
 	{
-		Debug.Log("Event received");
+		if(activeTile != tileType)
+		{
+			activeTile = tileType;
 
-		throw new NotImplementedException("This method will become deprecated");
+			OnTileChanged(new TileChangedEventArgs(tileType));
+
+			foreach(TileButton button in tileButtons)
+			{
+				if(button.tileType == tileType)
+					button.SetColor(Color.white);
+				else
+					button.SetColor(Color.grey);
+			}
+		}
 	}
 }
 

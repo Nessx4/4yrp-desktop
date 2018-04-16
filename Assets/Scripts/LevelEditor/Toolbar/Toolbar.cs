@@ -104,9 +104,10 @@ public class Toolbar : MonoBehaviour
 
 	private void TileChanged(object sender, TileChangedEventArgs e)
 	{
-		Debug.Log("TileChanged event received");
+		Debug.Log("TileChanged event received.\n" + 
+			"You should probably do something about it, hmmmm?");
 
-		throw new NotImplementedException("Need to deactivate certain tools.");
+		//throw new NotImplementedException("Need to deactivate certain tools.");
 	}
 
 	public void ChangeTool(ToolType newTool)
