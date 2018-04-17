@@ -16,6 +16,7 @@ public class LevelEditor
 	private Toolbar  _toolbar;
 	private Palette  _palette;
 	private Themebar _themebar;
+	public Camera mainCamera { get; set; }
 
 	// LevelEditor acts as a service locator for the following classes:
 	public Toolbar toolbar   

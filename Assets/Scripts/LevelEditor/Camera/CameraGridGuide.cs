@@ -23,9 +23,9 @@ public class CameraGridGuide : MonoBehaviour
 	private void OnRenderImage(RenderTexture src, RenderTexture dst)
 	{
 		// Work out the camera position and shift due to camera size.
-		float x = transform.position.x - 0.5f - 
+		float x = transform.position.x - 
 			(camera.aspect * camera.orthographicSize);
-		float y = transform.position.y - 0.5f - camera.orthographicSize;
+		float y = transform.position.y - camera.orthographicSize;
 		Vector2 offset = new Vector2(x % 2.0f, y % 2.0f) / 2.0f;
 		Vector2 scale = new Vector2(camera.orthographicSize * camera.aspect, 
 			camera.orthographicSize);

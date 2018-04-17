@@ -17,6 +17,8 @@ public class EditorCamera : MonoBehaviour
 	private void Awake()
 	{
 		rigidbody = GetComponent<Rigidbody2D>();
+
+		LevelEditor.instance.mainCamera = mainCamera;
 	}
 
 	private void Update()
@@ -36,8 +38,8 @@ public class EditorCamera : MonoBehaviour
 		Vector2 pos = transform.position;
 		float size  = mainCamera.orthographicSize;
 
-		Vector2 ll = new Vector2(size * mainCamera.aspect - 0.5f, size - 0.5f);
-		Vector2 ur = new Vector2(99.5f - size * mainCamera.aspect, 99.5f - size);
+		Vector2 ll = new Vector2(size * mainCamera.aspect, size);
+		Vector2 ur = new Vector2(100.0f - size * mainCamera.aspect, 100.0f - size);
 
 		pos.x = Mathf.Clamp(pos.x, ll.x, ur.x);
 		pos.y = Mathf.Clamp(pos.y, ll.y, ur.y);
