@@ -17,7 +17,7 @@ public class Palette : MonoBehaviour
 	private List<List<TileType>> tileGroups = new List<List<TileType>>();
 	private int tileGroupIndex = -1;
 
-	private TileType activeTile = TileType.SOLID;
+	private TileType activeTile = TileType.NONE;
 
 	public event TileChangedEventHandler TileChanged;
 
@@ -145,12 +145,13 @@ public class Palette : MonoBehaviour
 
 	private void Start()
 	{
-		SwitchTileGroup();
+		SwitchTileGroup(1);
 	}
 
-	public void SwitchTileGroup()
+	public void SwitchTileGroup(int amount)
 	{
-		tileGroupIndex = ++tileGroupIndex % tileGroups.Count;
+		tileGroupIndex = (tileGroupIndex + amount) % tileGroups.Count;
+		if(tileGroupIndex < 0) tileGroupIndex = tileGroups.Count - 1;
 
 		int i = 0;
 		foreach(var tileButton in tileButtons)
@@ -182,7 +183,7 @@ public class TileChangedEventArgs : EventArgs
 {
 	public readonly TileType tileType;
 
-	public TileChangedEventArgs(TileType tileType)
+	public TileChangedEventArgs(TileType tileType) : base()
 	{
 		this.tileType = tileType;
 	}

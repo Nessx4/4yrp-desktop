@@ -2,11 +2,20 @@
 using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.UI;
 
+[RequireComponent(typeof(Button))]
 public abstract class ToolbarButton : MonoBehaviour 
 {
+	protected Button button;
+
 	public Toolbar toolbar { protected get; set; }
 	private bool canPress = true;
+
+	protected virtual void Awake()
+	{
+		button = GetComponent<Button>();
+	}
 
 	private void Start()
 	{
@@ -18,6 +27,13 @@ public abstract class ToolbarButton : MonoBehaviour
 	{
 		if(canPress)
 			DoAction();
+	}
+
+	public void SetInteractible(bool canPress)
+	{
+		this.canPress = canPress;
+
+		button.image.color = canPress ? Color.white : Color.grey;
 	}
 
 	protected abstract void DoAction();

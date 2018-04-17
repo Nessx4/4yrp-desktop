@@ -5,5 +5,7 @@ using UnityEngine;
 
 public enum ThemeType
 {
-	NORMAL
+	NORMAL,
+	EXAMPLE_THEME_1,
+	EXAMPLE_THEME_2
 }

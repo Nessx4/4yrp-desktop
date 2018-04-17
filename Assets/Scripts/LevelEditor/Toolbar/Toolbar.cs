@@ -90,6 +90,12 @@ public class Toolbar : MonoBehaviour
 		// Assert that there are 11 buttons on the Toolbar.
 		Assert.AreEqual(buttons.Length, 11, "Incorrect no. of ToolbarButtons.");
 
+		// Button #3 and #4 are Rect-Hollow and Rect-Filled respectively.
+		Assert.IsNotNull((ToolButton)buttons[3]);
+		Assert.IsNotNull((ToolButton)buttons[4]);
+		Assert.AreEqual(((ToolButton)buttons[3]).toolType, ToolType.RECT_HOLLOW);
+		Assert.AreEqual(((ToolButton)buttons[4]).toolType, ToolType.RECT_FILL);
+
 		// All ToolbarButtons will be coupled directly to the Toolbar class for
 		// ease.
 		foreach(var button in buttons)
@@ -107,7 +113,16 @@ public class Toolbar : MonoBehaviour
 		Debug.Log("TileChanged event received.\n" + 
 			"You should probably do something about it, hmmmm?");
 
-		//throw new NotImplementedException("Need to deactivate certain tools.");
+		if(LevelEditor.instance.IsUnitSize(e.tileType))
+		{
+			buttons[3].SetInteractible(true);
+			buttons[4].SetInteractible(true);
+		}
+		else
+		{
+			buttons[3].SetInteractible(false);
+			buttons[4].SetInteractible(false);
+		}
 	}
 
 	public void ChangeTool(ToolType newTool)
@@ -154,7 +169,7 @@ public class ToolChangedEventArgs : EventArgs
 	// Don't want the ToolType to be changed by the event listener.
 	public readonly ToolType toolType;
 
-	public ToolChangedEventArgs(ToolType toolType)
+	public ToolChangedEventArgs(ToolType toolType) : base()
 	{
 		this.toolType = toolType;
 	}

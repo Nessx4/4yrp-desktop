@@ -13,13 +13,53 @@ public class LevelEditor
 {
 	public static LevelEditor instance { get; private set; }
 
+	private Toolbar  _toolbar;
+	private Palette  _palette;
+	private Themebar _themebar;
+
 	// LevelEditor acts as a service locator for the following classes:
-	public Toolbar toolbar { get; set; }
-	public Palette palette { get; set; }
+	public Toolbar toolbar   
+	{ 
+		get
+		{
+			return _toolbar;
+		} 
+		set
+		{
+			_toolbar = value;
+			_toolbar.ToolChanged += ToolChanged;
+		} 
+	}
+	public Palette palette 
+	{ 
+		get
+		{
+			return _palette;
+		}
+		set
+		{
+			_palette = value;
+			_palette.TileChanged += TileChanged;
+		} 
+	}
+	public Themebar themebar 
+	{ 
+		get
+		{
+			return _themebar;
+		}
+		set
+		{
+			_themebar = value;
+			_themebar.ThemeChanged += ThemeChanged;
+		}
+	}
 
 	// Encapsulate all static data in a separate class.
 	private EditorTileData editorTileData;
 
+	private ToolType activeTool;
+	private TileType activeTile;
 	private ThemeType activeTheme;
 
 	private Dictionary<ThemeType, ThemeData> themeDataMap;
@@ -40,6 +80,21 @@ public class LevelEditor
 	private LevelEditor()
 	{
 		editorTileData = new EditorTileData();
+	}
+
+	private void ToolChanged(object sender, ToolChangedEventArgs e)
+	{
+		activeTool = e.toolType;
+	}
+
+	private void TileChanged(object sender, TileChangedEventArgs e)
+	{
+		activeTile = e.tileType;
+	}
+
+	private void ThemeChanged(object sender, ThemeChangedEventArgs e)
+	{
+		activeTheme = e.themeType;
 	}
 
 	public GridTile GetTilePrefab(TileType tileType)

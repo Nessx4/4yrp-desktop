@@ -6,7 +6,24 @@ using UnityEngine;
 public class ToolButton : ToolbarButton 
 {
 	[SerializeField]
-	private ToolType toolType;
+	private ToolType _toolType;
+
+	public ToolType toolType
+	{
+		get
+		{
+			return _toolType;
+		}
+		private set
+		{
+			_toolType = value;
+		}
+	}
+
+	protected sealed override void Awake()
+	{
+		base.Awake();
+	}
 
 	protected override void DoAction()
 	{
