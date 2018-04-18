@@ -5,7 +5,6 @@ using UnityEngine;
 
 public abstract class EditorPlayer : MonoBehaviour 
 {
-	protected ToolType activeTool;
 	protected TileType activeTile;
 
 	protected DrawState drawState;

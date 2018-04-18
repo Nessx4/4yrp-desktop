@@ -14,7 +14,7 @@ public class Themebar : MonoBehaviour
 
 	private Dictionary<ThemeType, Sprite> themeIcons;
 
-	private ThemeType activeTheme = ThemeType.NORMAL;
+	private ThemeType activeTheme = ThemeType.NONE;
 
 	public event ThemeChangedEventHandler ThemeChanged;
 
@@ -38,6 +38,11 @@ public class Themebar : MonoBehaviour
 			newButton.themeType = themeType;
 			newButton.button.image.sprite = themeIcons[themeType];
 		}
+	}
+
+	private void Start()
+	{
+		ChangeTheme(ThemeType.NORMAL);
 	}
 
 	public void ChangeTheme(ThemeType themeType)

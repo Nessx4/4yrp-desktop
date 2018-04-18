@@ -10,7 +10,7 @@ public class Toolbar : MonoBehaviour
 	[SerializeField]
 	private ToolbarButton[] buttons;
 
-	private ToolType activeTool = ToolType.PENCIL;
+	private ToolType activeTool = ToolType.NONE;
 
 	public event EventHandler UndoPressed;
 	public event EventHandler RedoPressed;
@@ -104,8 +104,8 @@ public class Toolbar : MonoBehaviour
 
 	private void Start()
 	{
-		// Register an event.
 		LevelEditor.instance.palette.TileChanged += TileChanged;
+		ChangeTool(ToolType.PENCIL);
 	}
 
 	private void TileChanged(object sender, TileChangedEventArgs e)
@@ -127,13 +127,15 @@ public class Toolbar : MonoBehaviour
 
 	public void ChangeTool(ToolType newTool)
 	{
-		Debug.Log("Do the thing");
 		if(newTool != activeTool)
 		{
 			activeTool = newTool;
 			OnToolChanged(new ToolChangedEventArgs(newTool));
 
-			throw new NotImplementedException("Incomplete - must set correct ToolbarButtons active/inactive.");
+			foreach(var button in buttons)
+				button.SetActiveTool(activeTool);
+
+			//throw new NotImplementedException("Incomplete - must set correct ToolbarButtons active/inactive.");
 		}
 	}
 

@@ -9,13 +9,8 @@ using UnityEngine;
 
 public class GridTile : MonoBehaviour
 {
-	private int _x;
-	private int _y;
-
+	public TileType tileType { get; set; }
 	private bool dead = false;
-
-	public int x { get { return _x; } private set { _x = value; } }
-	public int y { get { return _y; } private set { _y = value; } }
 
 	private void Update()
 	{
@@ -29,8 +24,8 @@ public class GridTile : MonoBehaviour
 		dead = true;
 		Rigidbody2D rb = gameObject.AddComponent<Rigidbody2D>();
 		rb.AddTorque(Random.Range(-100.0f, 100.0f));
-		rb.AddForce(new Vector2(Random.Range(-25.0f, 25.0f), 
-			Random.Range(-25.0f, 25.0f)));
+		rb.AddForce(new Vector2(Random.Range(-50.0f, 50.0f), 
+			Random.Range(-50.0f, 50.0f)));
 		rb.gravityScale = 5.0f;
 	}
 }

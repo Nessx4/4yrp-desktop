@@ -169,6 +169,19 @@ public class EditorTileData
 
 		themeDataMap.Add(ThemeType.NORMAL, dat);
 
+		dat = new ThemeData();
+
+		dat.Add(TileType.SOLID,
+			new TileData
+			(
+				Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_Solid"),
+				Resources.Load<Sprite>("UI/TileIcons/Normal/tx_TileIcon_Solid"),
+				"Solid"
+			)
+		);
+
+		themeDataMap.Add(ThemeType.EXAMPLE_THEME_1, dat);
+
 		tileSizes = new Dictionary<TileType, Vector2>();
 
 		tileSizes.Add(TileType.SOLID, 			new Vector2(1, 1));

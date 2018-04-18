@@ -157,7 +157,7 @@ public class Palette : MonoBehaviour
 		foreach(var tileButton in tileButtons)
 			tileButton.SetTileType(tileGroups[tileGroupIndex][i++]);
 
-		tileButtons[0].Press();
+		SwitchActiveTile(tileGroups[tileGroupIndex][0]);
 	}
 
 	public void SwitchActiveTile(TileType tileType)

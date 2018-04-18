@@ -2,48 +2,92 @@
 using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class DesktopEditorPlayer : EditorPlayer 
 {
-	private void Start()
+	private void OnEnable()
 	{
+		// Register events.
 		LevelEditor.instance.toolbar.ToolChanged += ToolChanged;
 		LevelEditor.instance.palette.TileChanged += TileChanged;
 	}
 
 	private void ToolChanged(object sender, ToolChangedEventArgs e)
 	{
-
+		Debug.Log("Tool changed: " + e.toolType);
+		switch(e.toolType)
+		{
+			case ToolType.PENCIL:
+				drawState = DrawState.PENCIL_IDLE;
+				break;
+			case ToolType.ERASER:
+				drawState = DrawState.ERASER_IDLE;
+				break;
+			case ToolType.GRAB:
+				drawState = DrawState.GRAB_IDLE;
+				break;
+			case ToolType.RECT_HOLLOW:
+				drawState = DrawState.RECT_HOLLOW_IDLE;
+				break;
+			case ToolType.RECT_FILL:
+				drawState = DrawState.RECT_FILL_IDLE;
+				break;
+		}
 	}
 
 	private void TileChanged(object sender, TileChangedEventArgs e)
 	{
-
+		activeTile = e.tileType;
 	}
 
 	private void Update()
 	{
-		Vector2 pos = MouseToWorldPoint();
+		GridPosition pos = MouseToGridPosition();
 
-		int x = (int)pos.x;
-		int y = (int)pos.y;
-
-		Debug.Log(x + ", " + y);
-
-		if(drawState == DrawState.PENCIL_IDLE)
+		if(!EventSystem.current.IsPointerOverGameObject())
 		{
-
+			if(drawState == DrawState.PENCIL_IDLE)
+			{
+				if(Input.GetMouseButtonDown(0))
+					StartCoroutine(Draw());
+			}
 		}
 	}
 
 	protected override IEnumerator Draw()
 	{
-		yield return null;
+		drawState = DrawState.PENCIL_DRAW;
+		var positions = new HashSet<GridPosition>();
+
+		EditorGrid editorGrid = LevelEditor.instance.editorGrid;
+
+		while(Input.GetMouseButton(0))
+		{
+			if(!EventSystem.current.IsPointerOverGameObject())
+			{
+				GridPosition pos = MouseToGridPosition();
+
+				if(!positions.Contains(pos))
+				{
+					positions.Add(pos);
+					editorGrid.UpdateSpace(pos, activeTile);
+				}
+			}
+
+			yield return null;
+		}
+
+		drawState = DrawState.PENCIL_IDLE;
 	}
 
 	protected override IEnumerator Erase()
 	{
+		drawState = DrawState.ERASER_DRAW;
+
 		yield return null;
+
+		drawState = DrawState.ERASER_IDLE;
 	}
 
 	protected override IEnumerator Grab()
@@ -51,10 +95,12 @@ public class DesktopEditorPlayer : EditorPlayer
 		yield return null;
 	}
 
-	private Vector2 MouseToWorldPoint()
+	private GridPosition MouseToGridPosition()
 	{
 		Vector3 mousePos = Input.mousePosition;
 		mousePos.z = 0.0f;
-		return LevelEditor.instance.mainCamera.ScreenToWorldPoint(mousePos);
+		mousePos = LevelEditor.instance.mainCamera.ScreenToWorldPoint(mousePos);
+
+		return new GridPosition((int)mousePos.x, (int)mousePos.y);
 	}
 }
