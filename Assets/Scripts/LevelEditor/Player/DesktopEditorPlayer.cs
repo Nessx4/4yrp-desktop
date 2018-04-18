@@ -58,27 +58,122 @@ public class DesktopEditorPlayer : EditorPlayer
 	protected override IEnumerator Draw()
 	{
 		drawState = DrawState.PENCIL_DRAW;
-		var positions = new HashSet<GridPosition>();
+		var drawnPositions = new HashSet<GridPosition>();
 
 		EditorGrid editorGrid = LevelEditor.instance.editorGrid;
+
+		GridPosition lastPosition = MouseToGridPosition();
 
 		while(Input.GetMouseButton(0))
 		{
 			if(!EventSystem.current.IsPointerOverGameObject())
 			{
-				GridPosition pos = MouseToGridPosition();
+				GridPosition endPosition = MouseToGridPosition();
 
-				if(!positions.Contains(pos))
+				var tryPositions = PlotLine(lastPosition, endPosition);
+
+				foreach(GridPosition tryPosition in tryPositions)
 				{
-					positions.Add(pos);
-					editorGrid.UpdateSpace(pos, activeTile);
+					if(!drawnPositions.Contains(tryPosition))
+					{
+						drawnPositions.Add(tryPosition);
+						editorGrid.UpdateSpace(tryPosition, activeTile);
+					}
 				}
+
+				lastPosition = endPosition;
 			}
 
 			yield return null;
 		}
 
 		drawState = DrawState.PENCIL_IDLE;
+	}
+
+	private List<GridPosition> PlotLine(GridPosition a, GridPosition b)
+	{
+		List<GridPosition> positions = new List<GridPosition>();
+
+		if(Mathf.Abs(b.y - a.y) < Mathf.Abs(b.x - a.x))
+		{
+			if(a.x > b.x)
+				positions = PlotLineLow(b, a, positions);
+			else
+				positions = PlotLineLow(a, b, positions);
+		}
+		else
+		{
+			if(a.y > b.y)
+				positions = PlotLineHigh(b, a, positions);
+			else
+				positions = PlotLineHigh(a, b, positions);
+		}
+
+		return positions;
+	}
+
+	private List<GridPosition> PlotLineLow(GridPosition a, GridPosition b,
+		List<GridPosition> positions)
+	{
+		int dx = b.x - a.x;
+		int dy = b.y - a.y;
+		int yi = 1;
+
+		if(dy < 0)
+		{
+			yi = -1;
+			dy = -dy;
+		}
+
+		int D = 2 * dy - dx;
+		int y = a.y;
+
+		for(int x = a.x; x <= b.x; ++x)
+		{
+			positions.Add(new GridPosition(x, y));
+
+			if(D > 0)
+			{
+				y = y + yi;
+				D = D - 2 * dx;
+			}
+
+			D = D + 2 * dy;
+		}
+
+		return positions;
+	}
+
+	private List<GridPosition> PlotLineHigh(GridPosition a, GridPosition b,
+		List<GridPosition> positions)
+	{
+		int dx = b.x - a.x;
+		int dy = b.y - a.y;
+		int xi = 1;
+
+		if(dx < 0)
+		{
+			xi = -1;
+			dx = -dx;
+		}
+
+		int D = 2 * dx - dy;
+		int x = a.x;
+
+		for(int y = a.y; y <= b.y; ++y)
+		{
+			positions.Add(new GridPosition(x, y));
+
+			if(D > 0)
+			{
+				x = x + xi;
+				D = D - 2 * dy;
+			}
+
+			D = D + 2 * dx;
+		}
+
+		return positions;
 	}
 
 	protected override IEnumerator Erase()
