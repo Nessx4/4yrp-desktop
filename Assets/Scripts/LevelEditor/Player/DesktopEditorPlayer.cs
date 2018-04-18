@@ -106,6 +106,7 @@ public class DesktopEditorPlayer : EditorPlayer
 		}
 
 		drawState = endState;
+		editorGrid.CommitChanges();
 	}
 
 	protected override IEnumerator DrawRect(DrawState startState, 
@@ -143,6 +144,7 @@ public class DesktopEditorPlayer : EditorPlayer
 		}
 
 		drawState = endState;
+		editorGrid.CommitChanges();
 	}
 
 	/*

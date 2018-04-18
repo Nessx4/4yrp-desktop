@@ -20,6 +20,11 @@ public class EditorGrid : MonoBehaviour
 {
 	private GridTile[,] gridTiles;
 
+	private Stack<List<GridOperation>> undoStack;
+	private Stack<List<GridOperation>> redoStack;
+
+	private List<GridOperation> localChanges;
+
 	private void Awake()
 	{
 		// Register self on the LevelEditor service locator.
@@ -34,16 +39,50 @@ public class EditorGrid : MonoBehaviour
 		LevelEditor.instance.toolbar.RedoPressed  += RedoPressed;
 		LevelEditor.instance.toolbar.ClearPressed += ClearPressed;
 		LevelEditor.instance.themebar.ThemeChanged += ThemeChanged;
+
+		undoStack = new Stack<List<GridOperation>>();
+		redoStack = new Stack<List<GridOperation>>();
+		localChanges = new List<GridOperation>();
 	}
 
 	private void UndoPressed(object sender, EventArgs e)
 	{
+		if(undoStack.Count > 0)
+		{
+			List<GridOperation> operations = undoStack.Pop();
+			List<GridOperation> redoOperations = new List<GridOperation>();
 
+			foreach(GridOperation operation in operations)
+			{
+				// Reverse the operation.
+				UpdateSpace(operation.position, operation.typeBefore);
+
+				// Add the operation to the redo-stack.
+				redoOperations.Add(operation);
+			}
+
+			redoStack.Push(redoOperations);
+		}
 	}
 
 	private void RedoPressed(object sender, EventArgs e)
 	{
+		if(redoStack.Count > 0)
+		{
+			List<GridOperation> operations = redoStack.Pop();
+			List<GridOperation> undoOperations = new List<GridOperation>();
 
+			foreach(GridOperation operation in operations)
+			{
+				// Re-do the operation.
+				UpdateSpace(operation.position, operation.typeAfter);
+
+				// Add the operation to the undo-stack.
+				undoOperations.Add(operation);
+			}
+
+			undoStack.Push(undoOperations);
+		}
 	}
 
 	// Remove all tiles on the interface.
@@ -54,13 +93,20 @@ public class EditorGrid : MonoBehaviour
 			for(int j = 0; j < gridTiles.GetLength(1); ++j)
 			{
 				if(gridTiles[i, j] != null)
+				{
+					localChanges.Add(new GridOperation(new GridPosition(i, j),
+						gridTiles[i, j].tileType, TileType.NONE));
 					gridTiles[i, j].Kill();
+				}
 
 				gridTiles[i, j] = null;
 			}
 		}
+
+		CommitChanges();
 	}
 
+	// Update the contents of every tile with the correctly-themed GridTile.
 	private void ThemeChanged(object sender, ThemeChangedEventArgs e)
 	{
 		for(int i = 0; i < gridTiles.GetLength(0); ++i)
@@ -90,8 +136,10 @@ public class EditorGrid : MonoBehaviour
 	{
 		if(pos.x >= 0 && pos.x < 100 && pos.y >= 0 && pos.y < 100)
 		{
+			TileType oldType = TileType.NONE;
 			if(gridTiles[pos.x, pos.y] != null)
 			{
+				oldType = gridTiles[pos.x, pos.y].tileType;
 				Destroy(gridTiles[pos.x, pos.y].gameObject);
 				gridTiles[pos.x, pos.y] = null;
 			}
@@ -104,13 +152,16 @@ public class EditorGrid : MonoBehaviour
 			newTile.tileType = tileType;
 
 			gridTiles[pos.x, pos.y] = newTile;
+
+			localChanges.Add(new GridOperation(pos, oldType, tileType));
 		}
 	}
 
-	// Update the contents of every tile with the correctly-themed GridTile.
-	private void UpdateAllTiles()
+	public void CommitChanges()
 	{
-
+		undoStack.Push(localChanges);
+		localChanges = new List<GridOperation>();
+		redoStack = new Stack<List<GridOperation>>();
 	}
 }
 
@@ -128,5 +179,20 @@ public struct GridPosition
 	public override string ToString()
 	{
 		return "(" + x + ", " + y + ")";
+	}
+}
+
+public struct GridOperation
+{
+	public readonly GridPosition position;
+	public readonly TileType typeBefore;
+	public readonly TileType typeAfter;
+
+	public GridOperation(GridPosition position, TileType typeBefore,
+		TileType typeAfter)
+	{
+		this.position   = position;
+		this.typeBefore = typeBefore;
+		this.typeAfter  = typeAfter;
 	}
 }

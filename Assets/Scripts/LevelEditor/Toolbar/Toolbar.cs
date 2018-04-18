@@ -96,6 +96,15 @@ public class Toolbar : MonoBehaviour
 		Assert.AreEqual(((ToolButton)buttons[3]).toolType, ToolType.RECT_HOLLOW);
 		Assert.AreEqual(((ToolButton)buttons[4]).toolType, ToolType.RECT_FILL);
 
+		// Button #5 and #6 are Undo and Redo respectively.
+		Assert.IsNotNull((ActionButton)buttons[5]);
+		Assert.IsNotNull((ActionButton)buttons[6]);
+		Assert.AreEqual(((ActionButton)buttons[5]).actionType, ActionType.UNDO);
+		Assert.AreEqual(((ActionButton)buttons[6]).actionType, ActionType.REDO);
+
+		//buttons[5].SetInteractible(false);
+		//buttons[6].SetInteractible(false);
+
 		// All ToolbarButtons will be coupled directly to the Toolbar class for
 		// ease.
 		foreach(var button in buttons)

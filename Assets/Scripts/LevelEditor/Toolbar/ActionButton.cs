@@ -6,7 +6,19 @@ using UnityEngine;
 public class ActionButton : ToolbarButton 
 {
 	[SerializeField]
-	private ActionType actionType;
+	private ActionType _actionType;
+
+	public ActionType actionType
+	{
+		get
+		{
+			return _actionType;
+		}
+		private set
+		{
+			_actionType = value;
+		}
+	}
 
 	protected override void DoAction()
 	{
