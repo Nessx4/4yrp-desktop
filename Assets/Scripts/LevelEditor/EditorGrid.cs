@@ -88,8 +88,6 @@ public class EditorGrid : MonoBehaviour
 	// Replace the tile at (x, y) with a different type if applicable.
 	public void UpdateSpace(GridPosition pos, TileType tileType)
 	{
-		Debug.Log(LevelEditor.instance.GetTilePrefab(tileType));
-
 		if(pos.x >= 0 && pos.x < 100 && pos.y >= 0 && pos.y < 100)
 		{
 			if(gridTiles[pos.x, pos.y] != null)
@@ -97,6 +95,9 @@ public class EditorGrid : MonoBehaviour
 				Destroy(gridTiles[pos.x, pos.y].gameObject);
 				gridTiles[pos.x, pos.y] = null;
 			}
+
+			if(tileType == TileType.NONE)
+				return;
 
 			var newTile = Instantiate<GridTile>(LevelEditor.instance.GetTilePrefab(tileType), 
 				new Vector3(pos.x, pos.y, 0.0f), Quaternion.identity, transform);

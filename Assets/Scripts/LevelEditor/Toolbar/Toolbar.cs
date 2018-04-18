@@ -120,6 +120,9 @@ public class Toolbar : MonoBehaviour
 		}
 		else
 		{
+			if(activeTool == ToolType.RECT_HOLLOW || activeTool == 
+				ToolType.RECT_FILL)
+				ChangeTool(ToolType.PENCIL);
 			buttons[3].SetInteractible(false);
 			buttons[4].SetInteractible(false);
 		}

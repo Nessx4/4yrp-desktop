@@ -15,7 +15,6 @@ public class DesktopEditorPlayer : EditorPlayer
 
 	private void ToolChanged(object sender, ToolChangedEventArgs e)
 	{
-		Debug.Log("Tool changed: " + e.toolType);
 		switch(e.toolType)
 		{
 			case ToolType.PENCIL:
@@ -47,17 +46,36 @@ public class DesktopEditorPlayer : EditorPlayer
 
 		if(!EventSystem.current.IsPointerOverGameObject())
 		{
-			if(drawState == DrawState.PENCIL_IDLE)
+			switch(drawState)
 			{
-				if(Input.GetMouseButtonDown(0))
-					StartCoroutine(Draw());
+				case DrawState.PENCIL_IDLE:
+					if(Input.GetMouseButtonDown(0))
+						StartCoroutine(Draw(DrawState.PENCIL_DRAW,
+							DrawState.PENCIL_IDLE, activeTile));
+					break;
+				case DrawState.ERASER_IDLE:
+					if(Input.GetMouseButtonDown(0))
+						StartCoroutine(Draw(DrawState.ERASER_DRAW,
+							DrawState.ERASER_IDLE, TileType.NONE));
+					break;
+				case DrawState.RECT_HOLLOW_IDLE:
+					if(Input.GetMouseButtonDown(0))
+						StartCoroutine(DrawRect(DrawState.RECT_HOLLOW_DRAW,
+							DrawState.RECT_HOLLOW_IDLE, false));
+					break;
+				case DrawState.RECT_FILL_IDLE:
+					if(Input.GetMouseButtonDown(0))
+						StartCoroutine(DrawRect(DrawState.RECT_FILL_DRAW,
+							DrawState.RECT_FILL_IDLE, true));
+					break;
 			}
 		}
 	}
 
-	protected override IEnumerator Draw()
+	protected override IEnumerator Draw(DrawState beginState, 
+		DrawState endState, TileType tileType)
 	{
-		drawState = DrawState.PENCIL_DRAW;
+		drawState = beginState;
 		var drawnPositions = new HashSet<GridPosition>();
 
 		EditorGrid editorGrid = LevelEditor.instance.editorGrid;
@@ -77,7 +95,7 @@ public class DesktopEditorPlayer : EditorPlayer
 					if(!drawnPositions.Contains(tryPosition))
 					{
 						drawnPositions.Add(tryPosition);
-						editorGrid.UpdateSpace(tryPosition, activeTile);
+						editorGrid.UpdateSpace(tryPosition, tileType);
 					}
 				}
 
@@ -87,8 +105,82 @@ public class DesktopEditorPlayer : EditorPlayer
 			yield return null;
 		}
 
-		drawState = DrawState.PENCIL_IDLE;
+		drawState = endState;
 	}
+
+	protected override IEnumerator DrawRect(DrawState startState, 
+		DrawState endState, bool filled)
+	{
+		drawState = startState;
+
+		EditorGrid editorGrid = LevelEditor.instance.editorGrid;
+
+		GridPosition startPosition = MouseToGridPosition();
+		GridPosition endPosition = MouseToGridPosition();
+
+		while(Input.GetMouseButton(0))
+		{
+			if(!EventSystem.current.IsPointerOverGameObject())
+			{
+				endPosition = MouseToGridPosition();
+
+				yield return null;
+			}
+		}
+
+		int startX = Mathf.Min(startPosition.x, endPosition.x);
+		int startY = Mathf.Min(startPosition.y, endPosition.y);
+		int endX   = Mathf.Max(startPosition.x, endPosition.x);
+		int endY   = Mathf.Max(startPosition.y, endPosition.y);
+
+		for(int x = startX; x <= endX; ++x)
+		{
+			for(int y = startY; y <= endY; ++y)
+			{
+				if(y == startY || y == endY || x == startX || x == endX || filled)
+					editorGrid.UpdateSpace(new GridPosition(x, y), activeTile);
+			}
+		}
+
+		drawState = endState;
+	}
+
+	/*
+	protected override IEnumerator Erase()
+	{
+		drawState = DrawState.ERASER_DRAW;
+		var drawnPositions = new HashSet<GridPosition>();
+
+		EditorGrid editorGrid = LevelEditor.instance.editorGrid;
+
+		GridPosition lastPosition = MouseToGridPosition();
+
+		while(Input.GetMouseButton(0))
+		{
+			if(!EventSystem.current.IsPointerOverGameObject())
+			{
+				GridPosition endPosition = MouseToGridPosition();
+
+				var tryPositions = PlotLine(lastPosition, endPosition);
+
+				foreach(GridPosition tryPosition in tryPositions)
+				{
+					if(!drawnPositions.Contains(tryPosition))
+					{
+						drawnPositions.Add(tryPosition);
+						editorGrid.UpdateSpace(tryPosition, TileType.NONE);
+					}
+				}
+
+				lastPosition = endPosition;
+			}
+
+			yield return null;
+		}
+
+		drawState = DrawState.ERASER_IDLE;
+	}
+	*/
 
 	private List<GridPosition> PlotLine(GridPosition a, GridPosition b)
 	{
@@ -174,15 +266,6 @@ public class DesktopEditorPlayer : EditorPlayer
 		}
 
 		return positions;
-	}
-
-	protected override IEnumerator Erase()
-	{
-		drawState = DrawState.ERASER_DRAW;
-
-		yield return null;
-
-		drawState = DrawState.ERASER_IDLE;
 	}
 
 	protected override IEnumerator Grab()

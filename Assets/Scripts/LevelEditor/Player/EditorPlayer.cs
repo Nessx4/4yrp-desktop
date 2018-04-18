@@ -9,7 +9,10 @@ public abstract class EditorPlayer : MonoBehaviour
 
 	protected DrawState drawState;
 
-	protected abstract IEnumerator Draw();
-	protected abstract IEnumerator Erase();
+	protected abstract IEnumerator Draw(DrawState beginState, 
+		DrawState endState, TileType tileType);
+	//protected abstract IEnumerator Erase();
 	protected abstract IEnumerator Grab();
+	protected abstract IEnumerator DrawRect(DrawState startState, 
+		DrawState endState, bool filled);
 }

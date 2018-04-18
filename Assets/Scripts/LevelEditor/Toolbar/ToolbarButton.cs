@@ -32,6 +32,7 @@ public abstract class ToolbarButton : MonoBehaviour
 	public void SetInteractible(bool canPress)
 	{
 		this.canPress = canPress;
+		button.image.color = canPress ? Color.white : Color.grey;
 	}
 
 	public virtual void SetActiveTool(ToolType toolType)
