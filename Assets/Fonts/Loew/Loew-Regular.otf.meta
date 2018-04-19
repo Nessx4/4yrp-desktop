@@ -1,0 +1,25 @@
+fileFormatVersion: 2
+guid: 2b765ad8faea7364f9730b8228b57e3a
+timeCreated: 1507560469
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Loew
+  fontNames:
+  - Loew
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 137eeb479566b2d4c83f012dff0e3bea, type: 3}
+  - {fileID: 12800000, guid: 0691a8d7382a9d84a80f09dbcd5bdbc3, type: 3}
+  - {fileID: 12800000, guid: 1a0f1c7a54d3d00419ed65cf1cbd7f8d, type: 3}
+  - {fileID: 12800000, guid: 0cdaca5f2b7da4447ae26978a4aa99da, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
