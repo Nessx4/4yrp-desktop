@@ -7,6 +7,6 @@ public class TestButton : MonoBehaviour
 {
 	public void Press()
 	{
-		LevelManagement.Save();
+		LevelManagement.instance.Save();
 	}
 }

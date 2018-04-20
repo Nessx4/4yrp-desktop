@@ -15,6 +15,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class EditorGrid : MonoBehaviour
 {
@@ -153,11 +154,8 @@ public class EditorGrid : MonoBehaviour
 						oldTileSize = LevelEditor.instance.GetTileSize(oldType);
 
 						// Update the Model by removing the old TileType.
-						for(int old_x = oldPosition.x; old_x < oldPosition.x + oldTileSize.x; ++old_x)
-						{
-							for(int old_y = oldPosition.y; old_y < oldPosition.y + oldTileSize.y; ++old_y)
-								gridTiles[old_x, old_y] = null;
-						}
+						gridTiles[oldPosition.x, oldPosition.y] = null;
+
 						// Destroy the View component of the MVC.
 						Destroy(oldTile.gameObject);
 					}
@@ -174,13 +172,48 @@ public class EditorGrid : MonoBehaviour
 			newTile.position = pos;
 
 			// Update the model with the new TileType.
-			for(int x = pos.x; x < pos.x + newTileSize.x; ++x)
-			{
-				for(int y = pos.y; y < pos.y + newTileSize.y; ++y)
-					gridTiles[x, y] = newTile;
-			}
+			gridTiles[pos.x, pos.y] = newTile;
 
 			localChanges.Add(new GridOperation(pos, oldType, tileType));
+		}
+	}
+
+	// Return the types of tile on the Model.
+	public TileType[,] GetTileTypes()
+	{
+		TileType[,] tileTypes = new TileType[100, 100];
+
+		Assert.AreEqual(100, gridTiles.GetLength(0));
+		Assert.AreEqual(100, gridTiles.GetLength(1));
+
+		Debug.Log(tileTypes);
+		Debug.Log(gridTiles);
+
+		for(int x = 0; x < gridTiles.GetLength(0); ++x)
+		{
+			for(int y = 0; y < gridTiles.GetLength(1); ++y)
+			{
+				tileTypes[x, y] = (gridTiles[x, y] == null) ?
+					TileType.NONE : gridTiles[x, y].tileType;
+			}
+		}
+
+		return tileTypes;
+	}
+
+	// Clear everything on the Model and View and load a new set of tiles.
+	public void SetTileTypes(TileType[,] tileTypes)
+	{
+		for(int x = 0; x < gridTiles.GetLength(0); ++x)
+		{
+			for(int y = 0; y < gridTiles.GetLength(1); ++y)
+			{
+				if(gridTiles[x, y] != null)
+					Destroy(gridTiles[x, y].gameObject);
+
+				if(tileTypes[x, y] != TileType.NONE)
+					PlaceTile(new GridPosition(x, y), tileTypes[x, y]);
+			}
 		}
 	}
 

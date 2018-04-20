@@ -15,13 +15,25 @@ using Mono.Data.SqliteClient;
 using System.Collections;
 using System.Collections.Generic;
 
+using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+
 using UnityEngine;
+using UnityEngine.Networking;
 
-public static class LevelManagement 
+public class LevelManagement : MonoBehaviour
 {
-	public static long id = -1;
+	public static LevelManagement instance;
 
-	public static void Save()
+	static LevelManagement()
+	{
+		instance = (new GameObject()).AddComponent<LevelManagement>();
+	}
+
+	public long id = -1;
+
+	public void Save()
 	{
 		var conn = LocalConnect(Application.persistentDataPath + "/local.db");
 
@@ -38,17 +50,40 @@ public static class LevelManagement
 			}
 		}
 
-		// If ID is -1.
-		long id = InsertLevel("Fred", "This is mah level", "path_to_screenshot",
-			"path_to_data", conn);
+		TileType[,] tileTypes = LevelEditor.instance.editorGrid.GetTileTypes();
+		//LevelData levelData = new LevelData(tileTypes);
 
-		SelectLevel(3, conn);
+		BinaryFormatter bf = new BinaryFormatter();
+
+		Directory.CreateDirectory(Application.persistentDataPath + 
+			"/levels/local/");
+
+		// If ID is -1.
+		if(id == -1)
+		{
+			string levelPath = "/levels/local/" + GetNextLevelID(conn) + ".dat";
+
+			FileStream file = File.Create(Application.persistentDataPath + 
+				levelPath);
+			bf.Serialize(file, tileTypes);
+			file.Close();
+
+			// Create the level and keep track of the ID.
+			id = InsertLevel("Fred", "This is mah level", 
+				"path_to_screenshot", levelPath, conn);
+		}
+		else
+		{
+
+		}
+
+		StartCoroutine(UploadLevel(""));
 
 		// If ID is not -1.
 		// Do an update?
 	}
 
-	public static void Load()
+	public void Load()
 	{
 
 	}
@@ -69,7 +104,7 @@ public static class LevelManagement
 	*/
 
 	// Open a connection to a database file stored locally.
-	private static IDbConnection LocalConnect(string dbPath)
+	private IDbConnection LocalConnect(string dbPath)
 	{
 		string connString = "URI=file:" + dbPath + ",version=3";
 
@@ -79,14 +114,31 @@ public static class LevelManagement
 		return conn;
 	}
 
-	// Open a connection to a remote database.
-	private static IDbConnection RemoteConnect(string dbPath)
+	// Upload a level to the remote Database Server.
+	private IEnumerator UploadLevel(string dbPath)
 	{
-		return null;
+		var formData = new List<IMultipartFormSection>();
+
+		formData.Add(new MultipartFormDataSection("field1=foo&field2=bar"));
+
+		UnityWebRequest www = UnityWebRequest.Post("http://localhost:8069/upload.php", formData);
+
+		yield return www.SendWebRequest();
+
+		if(www.isNetworkError || www.isHttpError)
+			Debug.LogError(www.error);
+		else
+			Debug.Log(www.downloadHandler.text);
+	}
+
+	// Download level data from the remote Database Server.
+	private void DownloadLevel(string dbPath)
+	{
+
 	}
 
 	// Returns true if the requested table exists.
-	private static bool TableExists(IDbConnection conn, string tableName)
+	private bool TableExists(IDbConnection conn, string tableName)
 	{
 		IDbCommand cmd = conn.CreateCommand();
 
@@ -100,7 +152,7 @@ public static class LevelManagement
 		return ((string)cmd.ExecuteScalar() == tableName);
 	}
 
-	private static void CreateTable(IDbConnection conn)
+	private void CreateTable(IDbConnection conn)
 	{
 		IDbCommand cmd = conn.CreateCommand();
 
@@ -115,7 +167,7 @@ public static class LevelManagement
 		cmd.ExecuteNonQuery();
 	}
 
-	private static long InsertLevel(string name, string desc, 
+	private long InsertLevel(string name, string desc, 
 		string snapshotPath, string dataPath, IDbConnection conn)
 	{
 		IDbCommand cmd = conn.CreateCommand();
@@ -136,7 +188,7 @@ public static class LevelManagement
 		return (long)cmd.ExecuteScalar();
 	}
 
-	private static void SelectLevel(int id, IDbConnection conn)
+	private void SelectLevel(int id, IDbConnection conn)
 	{
 		IDbCommand cmd = conn.CreateCommand();
 
@@ -158,6 +210,28 @@ public static class LevelManagement
 		}
 	}
 
+	private long GetNextLevelID(IDbConnection conn)
+	{
+		IDbCommand cmd = conn.CreateCommand();
+
+		cmd.CommandText = "SELECT MAX(id) FROM levels;";
+
+		IDataReader reader = cmd.ExecuteReader();
+
+		while(reader.Read())
+		{
+			return (reader[0] == null) ? 0 : (long)reader[0];
+
+			Debug.Log(reader);
+			Debug.Log(reader[0].GetType());
+			Debug.Log(reader.GetString(0));
+			//Int32.TryParse(reader.GetString(0), out maxID);
+			//Debug.Log(reader.GetString(0) + ", " + maxID);
+		}
+
+		return 0;
+	}
+
 	/*
 	private static void ExecuteQuery(string queryString, 
 		IDbConnection connection)
@@ -176,4 +250,15 @@ public static class LevelManagement
 		IDataReader reader = command.ExecuteReader();
 	}
 	*/
+}
+
+[System.Serializable]
+public struct LevelData
+{
+	public TileType[,] tileTypes;
+
+	public LevelData(TileType[,] tileTypes)
+	{
+		this.tileTypes = tileTypes;
+	}
 }
