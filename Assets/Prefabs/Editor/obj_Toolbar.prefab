@@ -42,7 +42,6 @@ GameObject:
   - component: {fileID: 222917724310192840}
   - component: {fileID: 114438976360846236}
   - component: {fileID: 114636752674884046}
-  - component: {fileID: 114753474425119652}
   - component: {fileID: 114392098535217664}
   m_Layer: 5
   m_Name: ButtonEraser
@@ -62,7 +61,6 @@ GameObject:
   - component: {fileID: 222467718926383946}
   - component: {fileID: 114548788646183798}
   - component: {fileID: 114897092779086064}
-  - component: {fileID: 114580088293924452}
   - component: {fileID: 114471637212981134}
   m_Layer: 5
   m_Name: ButtonRectHollow
@@ -191,7 +189,6 @@ GameObject:
   - component: {fileID: 222340912916043118}
   - component: {fileID: 114995716732139902}
   - component: {fileID: 114120581298015686}
-  - component: {fileID: 114066769255124300}
   - component: {fileID: 114211648963742090}
   m_Layer: 5
   m_Name: ButtonPencil
@@ -211,7 +208,6 @@ GameObject:
   - component: {fileID: 222840276507555200}
   - component: {fileID: 114949198020092330}
   - component: {fileID: 114095139855193078}
-  - component: {fileID: 114647671976957826}
   - component: {fileID: 114464094654490464}
   m_Layer: 5
   m_Name: ButtonGrab
@@ -247,7 +243,6 @@ GameObject:
   - component: {fileID: 222120812949074128}
   - component: {fileID: 114207721340932510}
   - component: {fileID: 114745829703292502}
-  - component: {fileID: 114794997571728402}
   - component: {fileID: 114794347214332586}
   m_Layer: 5
   m_Name: ButtonRectFill
@@ -411,20 +406,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114066769255124300
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1497266707648390}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1573420865, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
-  m_EffectDistance: {x: 3, y: -3}
-  m_UseGraphicAlpha: 1
 --- !u!114 &114067676471303580
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1280,20 +1261,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114580088293924452
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1230269637637520}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1573420865, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
-  m_EffectDistance: {x: 3, y: -3}
-  m_UseGraphicAlpha: 1
 --- !u!114 &114625907020938278
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1360,20 +1327,6 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &114647671976957826
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1500334496559694}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1573420865, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
-  m_EffectDistance: {x: 3, y: -3}
-  m_UseGraphicAlpha: 1
 --- !u!114 &114664011038801346
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1506,20 +1459,6 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &114753474425119652
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1116427595918130}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1573420865, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
-  m_EffectDistance: {x: 3, y: -3}
-  m_UseGraphicAlpha: 1
 --- !u!114 &114765122099193138
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1568,20 +1507,6 @@ MonoBehaviour:
   _toolType: 5
   selectedImage: {fileID: 114394634196206054}
   selectedColor: {r: 0.81960785, g: 0, b: 1, a: 1}
---- !u!114 &114794997571728402
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1690461299860150}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1573420865, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
-  m_EffectDistance: {x: 3, y: -3}
-  m_UseGraphicAlpha: 1
 --- !u!114 &114819326203582270
 MonoBehaviour:
   m_ObjectHideFlags: 1

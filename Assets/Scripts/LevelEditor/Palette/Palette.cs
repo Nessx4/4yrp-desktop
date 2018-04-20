@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class Palette : MonoBehaviour
 {
@@ -11,6 +12,9 @@ public class Palette : MonoBehaviour
 
 	[SerializeField]
 	private RectTransform tileButtonRoot;
+
+	[SerializeField]
+	private Color[] selectedColors;
 
 	private List<TileButton> tileButtons = new List<TileButton>();
 
@@ -134,12 +138,15 @@ public class Palette : MonoBehaviour
 			TileType.NONE
 		});
 
+		Assert.AreEqual(selectedColors.Length, 12);
+
 		// Create an array of 12 buttons on the Palette.
 		for(int i = 0; i < 12; ++i)
 		{
 			TileButton newButton = Instantiate(tileButtonPrefab, tileButtonRoot);
 			tileButtons.Add(newButton);
 			newButton.palette = this;
+			newButton.selectedColor = selectedColors[i];
 		}
 	}
 
@@ -169,12 +176,7 @@ public class Palette : MonoBehaviour
 			OnTileChanged(new TileChangedEventArgs(tileType));
 
 			foreach(TileButton button in tileButtons)
-			{
-				if(button.tileType == tileType)
-					button.SetColor(Color.white);
-				else
-					button.SetColor(Color.grey);
-			}
+				button.SetIsCurrent(button.tileType == tileType);
 		}
 	}
 }

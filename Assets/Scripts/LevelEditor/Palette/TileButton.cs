@@ -15,9 +15,14 @@ public class TileButton : MonoBehaviour
 	[SerializeField]
 	private Button button;
 
+	[SerializeField]
+	private Image selectedImage;
+
 	public Palette palette { private get; set; }
 
 	public TileType tileType { get; private set; }
+
+	public Color selectedColor { private get; set; }
 
 	public new RectTransform transform { get; private set; }
 
@@ -38,8 +43,9 @@ public class TileButton : MonoBehaviour
 		palette.SwitchActiveTile(tileType);
 	}
 
-	public void SetColor(Color col)
+	public void SetIsCurrent(bool current)
 	{
-		button.image.color = col;
+		//button.image.color = current ? Color.white : Color.grey;
+		selectedImage.color = current ? selectedColor : Color.clear;
 	}
 }
