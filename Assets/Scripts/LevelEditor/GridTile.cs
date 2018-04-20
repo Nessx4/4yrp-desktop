@@ -10,6 +10,7 @@ using UnityEngine;
 public class GridTile : MonoBehaviour
 {
 	public TileType tileType { get; set; }
+	public GridPosition position { get; set; }
 	private bool dead = false;
 
 	private void Update()

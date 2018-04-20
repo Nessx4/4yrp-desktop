@@ -114,6 +114,11 @@ public class LevelEditor
 		return editorTileData.GetTileName(tileType, activeTheme);
 	}
 
+	public Vector2 GetTileSize(TileType tileType)
+	{
+		return editorTileData.GetTileSize(tileType);
+	}
+
 	public bool IsUnitSize(TileType tileType)
 	{
 		return editorTileData.IsUnitSize(tileType);

@@ -90,12 +90,20 @@ public class DesktopEditorPlayer : EditorPlayer
 
 				var tryPositions = PlotLine(lastPosition, endPosition);
 
+				Vector2 tileSize = LevelEditor.instance.GetTileSize(tileType);
+
 				foreach(GridPosition tryPosition in tryPositions)
 				{
-					if(!drawnPositions.Contains(tryPosition))
+					if(!IsOverlap(tryPosition, drawnPositions, tileType))
+					//if(!drawnPositions.Contains(tryPosition))
 					{
-						drawnPositions.Add(tryPosition);
-						editorGrid.UpdateSpace(tryPosition, tileType);
+						// Add all positions taken up by new tile.
+						for(int x = tryPosition.x; x < tryPosition.x + tileSize.x; ++x)
+						{
+							for(int y = tryPosition.y; y < tryPosition.y + tileSize.y; ++y)
+								drawnPositions.Add(new GridPosition(x, y));
+						}
+						editorGrid.PlaceTile(tryPosition, tileType);
 					}
 				}
 
@@ -107,6 +115,23 @@ public class DesktopEditorPlayer : EditorPlayer
 
 		drawState = endState;
 		editorGrid.CommitChanges();
+	}
+
+	private bool IsOverlap(GridPosition tryPosition, 
+		HashSet<GridPosition> drawnPositions, TileType tileType)
+	{
+		Vector2 tileSize = LevelEditor.instance.GetTileSize(tileType);
+
+		for(int x = tryPosition.x; x < tryPosition.x + tileSize.x; ++x)
+		{
+			for(int y = tryPosition.y; y < tryPosition.y + tileSize.y; ++y)
+			{
+				if(drawnPositions.Contains(new GridPosition(x, y)))
+					return true;
+			}
+		}
+
+		return false;
 	}
 
 	protected override IEnumerator DrawRect(DrawState startState, 
@@ -139,7 +164,7 @@ public class DesktopEditorPlayer : EditorPlayer
 			for(int y = startY; y <= endY; ++y)
 			{
 				if(y == startY || y == endY || x == startX || x == endX || filled)
-					editorGrid.UpdateSpace(new GridPosition(x, y), activeTile);
+					editorGrid.PlaceTile(new GridPosition(x, y), activeTile);
 			}
 		}
 

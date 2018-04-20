@@ -55,7 +55,7 @@ public class EditorGrid : MonoBehaviour
 			foreach(GridOperation operation in operations)
 			{
 				// Reverse the operation.
-				UpdateSpace(operation.position, operation.typeBefore);
+				PlaceTile(operation.position, operation.typeBefore);
 
 				// Add the operation to the redo-stack.
 				redoOperations.Add(operation);
@@ -75,7 +75,7 @@ public class EditorGrid : MonoBehaviour
 			foreach(GridOperation operation in operations)
 			{
 				// Re-do the operation.
-				UpdateSpace(operation.position, operation.typeAfter);
+				PlaceTile(operation.position, operation.typeAfter);
 
 				// Add the operation to the undo-stack.
 				undoOperations.Add(operation);
@@ -131,31 +131,107 @@ public class EditorGrid : MonoBehaviour
 		}
 	}
 
-	// Replace the tile at (x, y) with a different type if applicable.
-	public void UpdateSpace(GridPosition pos, TileType tileType)
+	public void PlaceTile(GridPosition pos, TileType tileType)
 	{
 		if(pos.x >= 0 && pos.x < 100 && pos.y >= 0 && pos.y < 100)
 		{
+			Vector2 newTileSize = LevelEditor.instance.GetTileSize(tileType);
 			TileType oldType = TileType.NONE;
-			if(gridTiles[pos.x, pos.y] != null)
+
+			// Remove all old tiles that will be overwritten by the new one.
+			for(int x = pos.x; x < pos.x + newTileSize.x; ++x)
 			{
-				oldType = gridTiles[pos.x, pos.y].tileType;
-				Destroy(gridTiles[pos.x, pos.y].gameObject);
-				gridTiles[pos.x, pos.y] = null;
+				for(int y = pos.y; y < pos.y + newTileSize.y; ++y)
+				{
+					Vector2 oldTileSize;
+					if(gridTiles[x, y] != null)
+					{
+						GridTile oldTile = gridTiles[x, y];
+						oldType = oldTile.tileType;
+						GridPosition oldPosition = oldTile.position;
+
+						oldTileSize = LevelEditor.instance.GetTileSize(oldType);
+
+						// Update the Model by removing the old TileType.
+						for(int old_x = oldPosition.x; old_x < oldPosition.x + oldTileSize.x; ++old_x)
+						{
+							for(int old_y = oldPosition.y; old_y < oldPosition.y + oldTileSize.y; ++old_y)
+								gridTiles[old_x, old_y] = null;
+						}
+						// Destroy the View component of the MVC.
+						Destroy(oldTile.gameObject);
+					}
+				}
 			}
 
+			// Don't instantiate new tiles if the type is NONE.
 			if(tileType == TileType.NONE)
 				return;
 
 			var newTile = Instantiate<GridTile>(LevelEditor.instance.GetTilePrefab(tileType), 
 				new Vector3(pos.x, pos.y, 0.0f), Quaternion.identity, transform);
 			newTile.tileType = tileType;
+			newTile.position = pos;
 
-			gridTiles[pos.x, pos.y] = newTile;
+			// Update the model with the new TileType.
+			for(int x = pos.x; x < pos.x + newTileSize.x; ++x)
+			{
+				for(int y = pos.y; y < pos.y + newTileSize.y; ++y)
+					gridTiles[x, y] = newTile;
+			}
 
 			localChanges.Add(new GridOperation(pos, oldType, tileType));
 		}
 	}
+
+	/*
+	// Replace the tile at (x, y) with a different type if applicable.
+	public void UpdateSpace(GridPosition pos, TileType tileType)
+	{
+		if(pos.x >= 0 && pos.x < 100 && pos.y >= 0 && pos.y < 100)
+		{
+			TileType oldType = TileType.NONE;
+			Vector2 tileSize;
+			if(gridTiles[pos.x, pos.y] != null)
+			{
+				GridTile oldTile = gridTiles[pos.x, pos.y];
+				oldType = oldTile.tileType;
+				GridPosition oldPosition = oldTile.position;
+
+				tileSize = LevelEditor.instance.GetTileSize(oldType);
+
+				// Update the Model by removing the old TileType.
+				for(int x = oldPosition.x; x < oldPosition.x + tileSize.x; ++x)
+				{
+					for(int y = oldPosition.y; y < oldPosition.y + tileSize.y; ++y)
+						gridTiles[x, y] = null;
+				}
+				// Destroy the View component of the MVC.
+				Destroy(oldTile.gameObject);
+			}
+
+			// Don't instantiate new tiles if the type is NONE.
+			if(tileType == TileType.NONE)
+				return;
+
+			var newTile = Instantiate<GridTile>(LevelEditor.instance.GetTilePrefab(tileType), 
+				new Vector3(pos.x, pos.y, 0.0f), Quaternion.identity, transform);
+			newTile.tileType = tileType;
+			newTile.position = pos;
+
+			tileSize = LevelEditor.instance.GetTileSize(tileType);
+
+			// Update the model with the new TileType.
+			for(int x = pos.x; x < pos.x + tileSize.x; ++x)
+			{
+				for(int y = pos.y; y < pos.y + tileSize.y; ++y)
+					gridTiles[x, y] = newTile;
+			}
+
+			localChanges.Add(new GridOperation(pos, oldType, tileType));
+		}
+	}
+	*/
 
 	public void CommitChanges()
 	{
@@ -179,6 +255,26 @@ public struct GridPosition
 	public override string ToString()
 	{
 		return "(" + x + ", " + y + ")";
+	}
+
+	public override bool Equals(object obj)
+	{
+		if(obj == null || GetType() != obj.GetType())
+			return false;
+
+		GridPosition other = (GridPosition)obj;
+
+		return (x == other.x && y == other.y);
+	}
+
+	public static bool operator==(GridPosition a, GridPosition b)
+	{
+		return a.Equals(b);
+	}
+
+	public static bool operator!=(GridPosition a, GridPosition b)
+	{
+		return !a.Equals(b);
 	}
 }
 

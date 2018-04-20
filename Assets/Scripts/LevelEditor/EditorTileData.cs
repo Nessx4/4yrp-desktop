@@ -184,6 +184,7 @@ public class EditorTileData
 
 		tileSizes = new Dictionary<TileType, Vector2>();
 
+		tileSizes.Add(TileType.NONE,			new Vector2(1, 1));
 		tileSizes.Add(TileType.SOLID, 			new Vector2(1, 1));
 		tileSizes.Add(TileType.SEMISOLID, 		new Vector2(1, 1));
 		tileSizes.Add(TileType.LADDER,			new Vector2(1, 1));
@@ -215,6 +216,13 @@ public class EditorTileData
 	public string GetTileName(TileType tileType, ThemeType themeType)
 	{
 		return themeDataMap[themeType][tileType].name;
+	}
+
+	public Vector2 GetTileSize(TileType tileType)
+	{
+		Assert.IsTrue(tileSizes.ContainsKey(tileType));
+
+		return tileSizes[tileType];
 	}
 
 	public bool IsUnitSize(TileType tileType)
