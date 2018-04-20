@@ -33,25 +33,17 @@ public class LevelManagement : MonoBehaviour
 
 	public long id = -1;
 
-	public void Save()
+	public void Save(string levelName)
 	{
 		var conn = LocalConnect(Application.persistentDataPath + "/local.db");
 
 		if(!TableExists(conn, "levels"))
 		{
-			try
-			{
-				Debug.Log("Creating, or at least TRYING to");
-				CreateTable(conn);
-			}
-			catch(SqliteSyntaxException e)
-			{
-
-			}
+			try 	{ CreateTable(conn); }
+			catch 	(SqliteSyntaxException e) {}
 		}
 
 		TileType[,] tileTypes = LevelEditor.instance.editorGrid.GetTileTypes();
-		//LevelData levelData = new LevelData(tileTypes);
 
 		BinaryFormatter bf = new BinaryFormatter();
 
@@ -69,7 +61,7 @@ public class LevelManagement : MonoBehaviour
 			file.Close();
 
 			// Create the level and keep track of the ID.
-			id = InsertLevel("Fred", "This is mah level", 
+			id = InsertLevel("User", levelName, 
 				"path_to_screenshot", levelPath, conn);
 		}
 		else
@@ -77,15 +69,34 @@ public class LevelManagement : MonoBehaviour
 
 		}
 
-		StartCoroutine(UploadLevel(""));
+		//StartCoroutine(UploadLevel(""));
 
 		// If ID is not -1.
 		// Do an update?
 	}
 
-	public void Load()
+	public TileType[,] Load(int id)
 	{
+		var conn = LocalConnect(Application.persistentDataPath + "/local.db");
 
+		if(!TableExists(conn, "levels"))
+		{
+			try 	{ CreateTable(conn); }
+			catch 	(SqliteSyntaxException e) { return null; }
+		}
+
+		List<string> data = SelectLevel(id, conn);
+
+		BinaryFormatter bf = new BinaryFormatter();
+
+		string levelPath = Application.persistentDataPath + data[4];
+		FileStream file = File.Open(levelPath, FileMode.Open);
+		TileType[,] tileTypes = (TileType[,])bf.Deserialize(file);
+		file.Close();
+
+		return tileTypes;
+
+		//return null;
 	}
 
 	/*
@@ -188,7 +199,7 @@ public class LevelManagement : MonoBehaviour
 		return (long)cmd.ExecuteScalar();
 	}
 
-	private void SelectLevel(int id, IDbConnection conn)
+	private List<string> SelectLevel(long id, IDbConnection conn)
 	{
 		IDbCommand cmd = conn.CreateCommand();
 
@@ -200,14 +211,23 @@ public class LevelManagement : MonoBehaviour
 
 		IDataReader reader = cmd.ExecuteReader();
 
+		List<string> data = new List<string>();
+
 		while(reader.Read())
 		{
-			Debug.Log(reader[0]);
-			Debug.Log(reader[1]);
-			Debug.Log(reader[2]);
-			Debug.Log(reader[3]);
-			Debug.Log(reader[4]);
+			data.Add(reader[0].ToString());
+			data.Add(reader[1].ToString());
+			data.Add(reader[2].ToString());
+			data.Add(reader[3].ToString());
+			data.Add(reader[4].ToString());
+			//Debug.Log(reader[0]);
+			//Debug.Log(reader[1]);
+			//Debug.Log(reader[2]);
+			//Debug.Log(reader[3]);
+			//Debug.Log(reader[4]);
 		}
+
+		return data;
 	}
 
 	private long GetNextLevelID(IDbConnection conn)
@@ -218,16 +238,8 @@ public class LevelManagement : MonoBehaviour
 
 		IDataReader reader = cmd.ExecuteReader();
 
-		while(reader.Read())
-		{
-			return (reader[0] == null) ? 0 : (long)reader[0];
-
-			Debug.Log(reader);
-			Debug.Log(reader[0].GetType());
-			Debug.Log(reader.GetString(0));
-			//Int32.TryParse(reader.GetString(0), out maxID);
-			//Debug.Log(reader.GetString(0) + ", " + maxID);
-		}
+		if(reader.Read())
+			return (reader[0] == null) ? 1 : (long)reader[0];
 
 		return 0;
 	}

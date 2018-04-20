@@ -204,6 +204,10 @@ public class EditorGrid : MonoBehaviour
 	// Clear everything on the Model and View and load a new set of tiles.
 	public void SetTileTypes(TileType[,] tileTypes)
 	{
+		// Don't clear if there was no data.
+		if(tileTypes == null)
+			return;
+
 		for(int x = 0; x < gridTiles.GetLength(0); ++x)
 		{
 			for(int y = 0; y < gridTiles.GetLength(1); ++y)

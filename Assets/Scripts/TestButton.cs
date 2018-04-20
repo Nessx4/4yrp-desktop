@@ -5,8 +5,19 @@ using UnityEngine;
 
 public class TestButton : MonoBehaviour 
 {
-	public void Press()
+	public void Save()
 	{
-		LevelManagement.instance.Save();
+		LevelManagement.instance.Save("Test Level");
+	}
+
+	public void Load()
+	{
+		TileType[,] tiles = LevelManagement.instance.Load(2);
+		LevelEditor.instance.editorGrid.SetTileTypes(tiles);
+	}
+
+	public void PrintData()
+	{
+
 	}
 }
