@@ -117,11 +117,10 @@ public class EditorGrid : MonoBehaviour
 				if(gridTiles[i, j] != null)
 				{
 					var oldObj = gridTiles[i, j];
+					var tileType = oldObj.tileType;
 
-					var newTile = Instantiate<GridTile>(
-						LevelEditor.instance.GetTilePrefab(oldObj.tileType), 
-						new Vector3(i, j, 0.0f), Quaternion.identity, 
-						transform);
+					var newTile = LevelEditor.instance.CreateTile(tileType, 
+						new Vector2(i, j));
 
 					gridTiles[i, j] = newTile;
 					Destroy(oldObj.gameObject);
@@ -166,8 +165,9 @@ public class EditorGrid : MonoBehaviour
 			if(tileType == TileType.NONE)
 				return;
 
-			var newTile = Instantiate<GridTile>(LevelEditor.instance.GetTilePrefab(tileType), 
-				new Vector3(pos.x, pos.y, 0.0f), Quaternion.identity, transform);
+			var newTile = LevelEditor.instance.CreateTile(tileType, 
+				new Vector2(pos.x, pos.y));
+
 			newTile.tileType = tileType;
 			newTile.position = pos;
 

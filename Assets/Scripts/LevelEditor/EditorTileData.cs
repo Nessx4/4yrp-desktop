@@ -208,6 +208,13 @@ public class EditorTileData
 		return themeDataMap[themeType][tileType].gridPrefab;
 	}
 
+	public GridTile CreateTile(TileType tileType, ThemeType themeType, 
+		Vector2 position)
+	{
+		return Object.Instantiate(themeDataMap[themeType][tileType].gridPrefab, 
+			position, Quaternion.identity);
+	}
+
 	public Sprite GetPaletteIcon(TileType tileType, ThemeType themeType)
 	{
 		return themeDataMap[themeType][tileType].paletteSprite;

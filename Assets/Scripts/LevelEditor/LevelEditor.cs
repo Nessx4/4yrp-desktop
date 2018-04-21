@@ -104,6 +104,11 @@ public class LevelEditor
 		return editorTileData.GetTilePrefab(tileType, activeTheme);
 	}
 
+	public GridTile CreateTile(TileType type, Vector2 position)
+	{
+		return editorTileData.CreateTile(type, activeTheme, position);
+	}
+
 	public Sprite GetPaletteIcon(TileType tileType)
 	{
 		return editorTileData.GetPaletteIcon(tileType, activeTheme);
