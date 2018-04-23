@@ -203,10 +203,12 @@ public class EditorTileData
 		tileSizes.Add(TileType.SPAWNER,			new Vector2(2, 2));
 	}
 
+	/*
 	public GridTile GetTilePrefab(TileType tileType, ThemeType themeType)
 	{
 		return themeDataMap[themeType][tileType].gridPrefab;
 	}
+	*/
 
 	public GridTile CreateTile(TileType tileType, ThemeType themeType, 
 		Vector2 position)

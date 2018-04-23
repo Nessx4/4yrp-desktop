@@ -95,7 +95,6 @@ public class DesktopEditorPlayer : EditorPlayer
 				foreach(GridPosition tryPosition in tryPositions)
 				{
 					if(!IsOverlap(tryPosition, drawnPositions, tileType))
-					//if(!drawnPositions.Contains(tryPosition))
 					{
 						// Add all positions taken up by new tile.
 						for(int x = tryPosition.x; x < tryPosition.x + tileSize.x; ++x)
@@ -209,6 +208,12 @@ public class DesktopEditorPlayer : EditorPlayer
 	}
 	*/
 
+	protected override IEnumerator Grab()
+	{
+		yield return null;
+	}
+
+	// Use Bresenham's Line Algorithm to draw a line between two points.
 	private List<GridPosition> PlotLine(GridPosition a, GridPosition b)
 	{
 		List<GridPosition> positions = new List<GridPosition>();
@@ -231,6 +236,7 @@ public class DesktopEditorPlayer : EditorPlayer
 		return positions;
 	}
 
+	// Auxiliary method for Bresenham's.
 	private List<GridPosition> PlotLineLow(GridPosition a, GridPosition b,
 		List<GridPosition> positions)
 	{
@@ -263,6 +269,7 @@ public class DesktopEditorPlayer : EditorPlayer
 		return positions;
 	}
 
+	// Auxiliary method for Bresenham's.
 	private List<GridPosition> PlotLineHigh(GridPosition a, GridPosition b,
 		List<GridPosition> positions)
 	{
@@ -293,11 +300,6 @@ public class DesktopEditorPlayer : EditorPlayer
 		}
 
 		return positions;
-	}
-
-	protected override IEnumerator Grab()
-	{
-		yield return null;
 	}
 
 	private GridPosition MouseToGridPosition()

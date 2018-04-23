@@ -146,8 +146,6 @@ public class Toolbar : MonoBehaviour
 
 			foreach(var button in buttons)
 				button.SetActiveTool(activeTool);
-
-			//throw new NotImplementedException("Incomplete - must set correct ToolbarButtons active/inactive.");
 		}
 	}
 

@@ -99,10 +99,12 @@ public class LevelEditor
 		activeTheme = e.themeType;
 	}
 
+	/*
 	public GridTile GetTilePrefab(TileType tileType)
 	{
 		return editorTileData.GetTilePrefab(tileType, activeTheme);
 	}
+	*/
 
 	public GridTile CreateTile(TileType type, Vector2 position)
 	{
