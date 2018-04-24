@@ -186,9 +186,6 @@ public class EditorGrid : MonoBehaviour
 		Assert.AreEqual(100, gridTiles.GetLength(0));
 		Assert.AreEqual(100, gridTiles.GetLength(1));
 
-		Debug.Log(tileTypes);
-		Debug.Log(gridTiles);
-
 		for(int x = 0; x < gridTiles.GetLength(0); ++x)
 		{
 			for(int y = 0; y < gridTiles.GetLength(1); ++y)

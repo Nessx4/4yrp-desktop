@@ -22,6 +22,9 @@ using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using UnityEngine.Networking;
 
+using UnityEngine.TestTools;
+using UnityEngine.Assertions;
+
 public class LevelManagement : MonoBehaviour
 {
 	public static LevelManagement instance;
@@ -29,11 +32,12 @@ public class LevelManagement : MonoBehaviour
 	static LevelManagement()
 	{
 		instance = (new GameObject()).AddComponent<LevelManagement>();
+		DontDestroyOnLoad(instance.gameObject);
 	}
 
 	public long id = -1;
 
-	public void Save(string levelName)
+	public void Save(string levelName, string levelDesc)
 	{
 		var conn = LocalConnect(Application.persistentDataPath + "/local.db");
 
@@ -44,45 +48,53 @@ public class LevelManagement : MonoBehaviour
 		}
 
 		TileType[,] tileTypes = LevelEditor.instance.editorGrid.GetTileTypes();
+		ThemeType themeType = LevelEditor.instance.themebar.GetThemeType();
 
 		BinaryFormatter bf = new BinaryFormatter();
 
 		Directory.CreateDirectory(Application.persistentDataPath + 
 			"/levels/local/");
 
-		// If ID is -1.
-		if(id == -1)
-		{
-			string levelPath = "/levels/local/" + GetNextLevelID(conn) + ".dat";
+		string levelPath = "/levels/local/" + id + ".dat";
+		string snapPath = "/thumbnails/local/" + id + ".dat";
 
-			FileStream file = File.Create(Application.persistentDataPath + 
-				levelPath);
-			bf.Serialize(file, tileTypes);
-			file.Close();
+		if(id == -1)	// Level is new.
+		{
+			LevelData data = new LevelData(tileTypes, themeType);
+
+			long id = GetNextLevelID(conn);
+
+			levelPath = "/levels/local/" + id + ".dat";
+			snapPath = "/thumbnails/local/" + id + ".dat";
 
 			// Create the level and keep track of the ID.
-			id = InsertLevel("User", levelName, 
-				"path_to_screenshot", levelPath, conn);
+			id = InsertLevel("User", levelName,
+				snapPath, levelPath, themeType.ToString(), conn);
 		}
-		else
+		else 	// Level is being overwritten.
 		{
-
+			UpdateLevel(id, levelName, levelDesc, themeType.ToString(), conn);
 		}
 
-		//StartCoroutine(UploadLevel(""));
+		Debug.Log("Overwrite the level");
+		Debug.Log(levelPath);
 
-		// If ID is not -1.
-		// Do an update?
+		// Create the level data file.
+		FileStream file = File.Open(Application.persistentDataPath + 
+			levelPath, FileMode.Create);
+		LevelData levelData = new LevelData(tileTypes, themeType);
+		bf.Serialize(file, levelData);
+		file.Close();
 	}
 
-	public TileType[,] Load(int id)
+	public LevelData Load(long id)
 	{
 		var conn = LocalConnect(Application.persistentDataPath + "/local.db");
 
 		if(!TableExists(conn, "levels"))
 		{
 			try 	{ CreateTable(conn); }
-			catch 	(SqliteSyntaxException e) { return null; }
+			catch 	(SqliteSyntaxException e) { return new LevelData(); }
 		}
 
 		List<string> data = SelectLevel(id, conn);
@@ -91,12 +103,12 @@ public class LevelManagement : MonoBehaviour
 
 		string levelPath = Application.persistentDataPath + data[4];
 		FileStream file = File.Open(levelPath, FileMode.Open);
-		TileType[,] tileTypes = (TileType[,])bf.Deserialize(file);
+		LevelData levelData = (LevelData)bf.Deserialize(file);
 		file.Close();
 
-		return tileTypes;
+		this.id = id;
 
-		//return null;
+		return levelData;
 	}
 
 	/*
@@ -149,7 +161,7 @@ public class LevelManagement : MonoBehaviour
 	}
 
 	// Returns true if the requested table exists.
-	private bool TableExists(IDbConnection conn, string tableName)
+	public bool TableExists(IDbConnection conn, string tableName)
 	{
 		IDbCommand cmd = conn.CreateCommand();
 
@@ -172,31 +184,42 @@ public class LevelManagement : MonoBehaviour
 								"name TEXT NOT NULL," +
 								"desc TEXT NOT NULL," +
 								"snapshot TEXT NOT NULL," +
-								"datapath TEXT NOT NULL);";
+								"datapath TEXT NOT NULL," +
+								"theme INTEGER);";
 
 		cmd.CommandText = queryString;
 		cmd.ExecuteNonQuery();
 	}
 
 	private long InsertLevel(string name, string desc, 
-		string snapshotPath, string dataPath, IDbConnection conn)
+		string snapshotPath, string dataPath, string themeType, 
+		IDbConnection conn)
 	{
-		IDbCommand cmd = conn.CreateCommand();
-
 		string queryString =	"INSERT INTO " +
-								"levels(name, desc, snapshot, datapath)" +
+								"levels(name, desc, snapshot, datapath, theme)" +
 								"VALUES (" +
-								"\"" + name + "\", " +
-								"\"" + desc + "\", " +
-								"\"" + snapshotPath + "\", " +
-								"\"" + dataPath + "\");";
+								"@param1, " +
+								"@param2, " +
+								"@param3, " +
+								"@param4, " +
+								"@param5 );";
 
-		cmd.CommandText = queryString;
-		cmd.ExecuteNonQuery();
+		IDbCommand insertSql = conn.CreateCommand();
+		insertSql.CommandText = queryString;
+		insertSql.CommandType = CommandType.Text;
 
-		cmd.CommandText = "SELECT last_insert_rowid()";
+		insertSql.Parameters.Add(new SqliteParameter("@param1", SqlDbType.Text) { Value = name });
+		insertSql.Parameters.Add(new SqliteParameter("@param2", SqlDbType.Text) { Value = desc });
+		insertSql.Parameters.Add(new SqliteParameter("@param3", SqlDbType.Text) { Value = snapshotPath });
+		insertSql.Parameters.Add(new SqliteParameter("@param4", SqlDbType.Text) { Value = dataPath });
+		insertSql.Parameters.Add(new SqliteParameter("@param5", SqlDbType.Text) { Value = themeType });
 
-		return (long)cmd.ExecuteScalar();
+		insertSql.ExecuteNonQuery();
+
+		IDbCommand idSql = conn.CreateCommand();
+		idSql.CommandText = "SELECT last_insert_rowid()";
+
+		return (long)idSql.ExecuteScalar();
 	}
 
 	private List<string> SelectLevel(long id, IDbConnection conn)
@@ -220,14 +243,29 @@ public class LevelManagement : MonoBehaviour
 			data.Add(reader[2].ToString());
 			data.Add(reader[3].ToString());
 			data.Add(reader[4].ToString());
-			//Debug.Log(reader[0]);
-			//Debug.Log(reader[1]);
-			//Debug.Log(reader[2]);
-			//Debug.Log(reader[3]);
-			//Debug.Log(reader[4]);
 		}
 
 		return data;
+	}
+
+	private void UpdateLevel(long id, string name, string desc, 
+		string themeType, IDbConnection conn)
+	{
+		string queryString = 	"UPDATE levels " +
+								"SET name=@param1, " +
+								"desc=@param2, " +
+								"theme=@param3 " +
+								"WHERE id=" + id + ";";
+
+		IDbCommand updateSql = conn.CreateCommand();
+		updateSql.CommandText = queryString;
+		updateSql.CommandType = CommandType.Text;
+
+		updateSql.Parameters.Add(new SqliteParameter("@param1", SqlDbType.Text) { Value = name });
+		updateSql.Parameters.Add(new SqliteParameter("@param2", SqlDbType.Text) { Value = desc });
+		updateSql.Parameters.Add(new SqliteParameter("@param3", SqlDbType.Text) { Value = themeType });
+
+		updateSql.ExecuteReader();
 	}
 
 	private long GetNextLevelID(IDbConnection conn)
@@ -244,33 +282,110 @@ public class LevelManagement : MonoBehaviour
 		return 0;
 	}
 
-	/*
-	private static void ExecuteQuery(string queryString, 
-		IDbConnection connection)
-	{
-		IDbCommand command = connection.CreateCommand();
-		command.CommandText = queryString;
 
-		command.ExecuteNonQuery();
-	}
 
-	private static void ExecuteReadQuery(string queryString, 
-		IDbConnection connection)
+
+
+
+
+	[UnityTest]
+	public IEnumerator SampleSaveAndLoadDataFromDatabase()
 	{
-		IDbCommand command = connection.CreateCommand();
-		command.CommandText = queryString;
-		IDataReader reader = command.ExecuteReader();
+		Debug.Log("Running test");
+		var conn = LocalConnect(Application.persistentDataPath + "/test.db");
+
+		// Create a test level.
+		TileType[,] tileTypes = new TileType[100, 100];
+		tileTypes[5, 7] = TileType.SOLID;
+
+		// Create the table.
+		if(!TableExists(conn, "levels"))
+		{
+			try 	{ CreateTable(conn); }
+			catch 	(SqliteSyntaxException e) 
+			{
+				// This assertion will always fail if the code reaches here.
+				Assert.IsNull(e);
+			}
+		}
+
+		Directory.CreateDirectory(Application.persistentDataPath + 
+			"/levels/test/");
+
+		// Ensure directory creation did not fail.
+		Assert.IsTrue(Directory.Exists(Application.persistentDataPath + 
+			"/levels/test/"));
+
+		BinaryFormatter bf = new BinaryFormatter();
+
+		string levelPath = "/levels/test/" + GetNextLevelID(conn) + ".dat";
+
+		FileStream file = File.Create(Application.persistentDataPath + 
+			levelPath);
+		bf.Serialize(file, tileTypes);
+		file.Close();
+
+		// Assert that the level file exists.
+		Assert.IsTrue(File.Exists(levelPath));
+
+		// Create the level and keep track of the ID.
+		id = InsertLevel("User", "Level Name", 
+			"path_to_screenshot", levelPath, ThemeType.NORMAL.ToString(), conn);
+
+		// Attempt to load the level from the database.
+		List<string> data = SelectLevel(id, conn);
+
+		levelPath = Application.persistentDataPath + data[4];
+		file = File.Open(levelPath, FileMode.Open);
+		//tileTypes = (TileType[,])bf.Deserialize(file);
+		LevelData levelData = (LevelData)bf.Deserialize(file);
+		file.Close();
+
+		tileTypes = levelData.tileTypes;
+
+		// Assert that the correct data was loaded.
+		for(int x = 0; x < tileTypes.GetLength(0); ++x)
+		{
+			for(int y = 0; y < tileTypes.GetLength(1); ++y)
+			{
+				if(x == 5 && y == 7)
+					Assert.AreEqual(tileTypes[x, y], TileType.SOLID);
+				else
+					Assert.AreEqual(tileTypes[x, y], TileType.NONE);
+			}
+		}
+
+		// Delete all test files and assert they do not exist after deletion.
+		File.Delete(levelPath);
+		Assert.IsFalse(File.Exists(levelPath));
+
+		Directory.Delete(Application.persistentDataPath + "/levels/test/");
+		Assert.IsFalse(Directory.Exists(Application.persistentDataPath + "/levels/test/"));
+
+		File.Delete(Application.persistentDataPath + "/test.db");
+		Assert.IsFalse(File.Exists(Application.persistentDataPath + "/test.db"));
+
+		yield return null;
 	}
-	*/
 }
 
 [System.Serializable]
 public struct LevelData
 {
-	public TileType[,] tileTypes;
+	public readonly TileType[,] tileTypes;
+	public readonly ThemeType themeType;
 
-	public LevelData(TileType[,] tileTypes)
+	/*
+	public LevelData()
+	{
+		tileTypes = new TileType[100, 100];
+		themeType = ThemeType.NORMAL;
+	}
+	*/
+
+	public LevelData(TileType[,] tileTypes, ThemeType themeType)
 	{
 		this.tileTypes = tileTypes;
+		this.themeType = themeType;
 	}
 }

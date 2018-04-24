@@ -14,7 +14,20 @@ public class Themebar : MonoBehaviour
 
 	private Dictionary<ThemeType, Sprite> themeIcons;
 
-	private ThemeType activeTheme = ThemeType.NONE;
+	private ThemeType _activeTheme = ThemeType.NONE;
+
+	public ThemeType activeTheme
+	{
+		get
+		{
+			return _activeTheme;
+		}
+
+		set
+		{
+			_activeTheme = value;
+		}
+	}
 
 	public event ThemeChangedEventHandler ThemeChanged;
 
@@ -60,6 +73,11 @@ public class Themebar : MonoBehaviour
 
 		if(handler != null)
 			handler(this, e);
+	}
+
+	public ThemeType GetThemeType()
+	{
+		return activeTheme;
 	}
 }
 
