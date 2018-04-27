@@ -6,12 +6,32 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class GridTile : MonoBehaviour
 {
+	[SerializeField]
+	private List<Sprite> sprites;
+
+	[SerializeField]
+	private SpriteRenderer spriteRenderer;
+
 	public TileType tileType { get; set; }
 	public GridPosition position { get; set; }
 	private bool dead = false;
+
+	private void Start()
+	{
+		Assert.IsTrue(sprites.Count > 0);
+
+		Sprite chosenSprite = sprites[Random.Range(0, sprites.Count)];
+
+		Vector2 spriteDeltaPos = new Vector2();
+		spriteDeltaPos.x = spriteDeltaPos.y = 1024 / chosenSprite.pixelsPerUnit;
+		spriteRenderer.transform.localPosition = spriteDeltaPos / 2;
+
+		spriteRenderer.sprite = chosenSprite;
+	}
 
 	private void Update()
 	{

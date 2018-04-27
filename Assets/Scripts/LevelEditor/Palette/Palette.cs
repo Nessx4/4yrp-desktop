@@ -47,15 +47,15 @@ public class Palette : MonoBehaviour
 			TileType.SOLID,
 			TileType.SEMISOLID,
 			TileType.LADDER,
-			TileType.NONE,
-			TileType.NONE,
-			TileType.NONE,
-			TileType.NONE,
-			TileType.NONE,
-			TileType.NONE,
-			TileType.NONE,
-			TileType.NONE,
-			TileType.LADDER
+			TileType.BUSH,		// Remove
+			TileType.CLOUD,		// Remove
+			TileType.MOUNTAIN,	// Remove
+			TileType.FLOWER,	// Remove
+			TileType.CRATE,		// Remove
+			TileType.SWEETS,	// Remove
+			TileType.UFO,		// Remove
+			TileType.SPAWNER,	// Remove
+			TileType.LADDER 	// Remove
 		});
 
 		tileGroups.Add(new List<TileType>()

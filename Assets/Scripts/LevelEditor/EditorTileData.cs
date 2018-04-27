@@ -122,6 +122,15 @@ public class EditorTileData
 			)
 		);
 
+		dat.Add(TileType.FLOWER,				
+			new TileData
+			(
+				Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_Flower"),
+				Resources.Load<Sprite>("UI/TileIcons/Normal/tx_TileIcon_Flower"),
+				"Flower"
+			)
+		);
+
 		dat.Add(TileType.CRATE,				
 			new TileData
 			(
@@ -184,23 +193,24 @@ public class EditorTileData
 
 		tileSizes = new Dictionary<TileType, Vector2>();
 
-		tileSizes.Add(TileType.NONE,			new Vector2(1, 1));
-		tileSizes.Add(TileType.SOLID, 			new Vector2(1, 1));
-		tileSizes.Add(TileType.SEMISOLID, 		new Vector2(1, 1));
-		tileSizes.Add(TileType.LADDER,			new Vector2(1, 1));
-		tileSizes.Add(TileType.MOVING_PLATFORM, new Vector2(1, 1));
-		tileSizes.Add(TileType.TREADMILL,		new Vector2(1, 1));
-		tileSizes.Add(TileType.START_POINT,		new Vector2(1, 2));
-		tileSizes.Add(TileType.CHECK_POINT,		new Vector2(1, 2));
-		tileSizes.Add(TileType.END_POINT,		new Vector2(1, 2));
-		tileSizes.Add(TileType.BUSH,			new Vector2(4, 3));
-		tileSizes.Add(TileType.CLOUD,			new Vector2(4, 3));
+		tileSizes.Add(TileType.NONE,			new Vector2(1,  1));
+		tileSizes.Add(TileType.SOLID, 			new Vector2(1,  1));
+		tileSizes.Add(TileType.SEMISOLID, 		new Vector2(1,  1));
+		tileSizes.Add(TileType.LADDER,			new Vector2(1,  1));
+		tileSizes.Add(TileType.MOVING_PLATFORM, new Vector2(1,  1));
+		tileSizes.Add(TileType.TREADMILL,		new Vector2(1,  1));
+		tileSizes.Add(TileType.START_POINT,		new Vector2(1,  2));
+		tileSizes.Add(TileType.CHECK_POINT,		new Vector2(1,  2));
+		tileSizes.Add(TileType.END_POINT,		new Vector2(1,  2));
+		tileSizes.Add(TileType.BUSH,			new Vector2(4,  3));
+		tileSizes.Add(TileType.CLOUD,			new Vector2(4,  3));
 		tileSizes.Add(TileType.MOUNTAIN,		new Vector2(12, 9));
-		tileSizes.Add(TileType.CRATE,			new Vector2(1, 1));
-		tileSizes.Add(TileType.SWEETS,			new Vector2(1, 1));
-		tileSizes.Add(TileType.UFO,				new Vector2(1, 1));
-		tileSizes.Add(TileType.SLIME,			new Vector2(1, 1));
-		tileSizes.Add(TileType.SPAWNER,			new Vector2(2, 2));
+		tileSizes.Add(TileType.FLOWER,			new Vector2(1,  1));
+		tileSizes.Add(TileType.CRATE,			new Vector2(1,  1));
+		tileSizes.Add(TileType.SWEETS,			new Vector2(1,  1));
+		tileSizes.Add(TileType.UFO,				new Vector2(1,  1));
+		tileSizes.Add(TileType.SLIME,			new Vector2(1,  1));
+		tileSizes.Add(TileType.SPAWNER,			new Vector2(2,  2));
 	}
 
 	/*
