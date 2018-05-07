@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-public class ThemeData : Dictionary<TileType, TileData>
+public class EThemeData : Dictionary<TileType, ETile>
 {
 
 }

@@ -31,11 +31,12 @@ public class LevelManagement : MonoBehaviour
 
 	static LevelManagement()
 	{
+		// Register a Singleton instance on first request for an instance.
 		instance = (new GameObject()).AddComponent<LevelManagement>();
 		DontDestroyOnLoad(instance.gameObject);
 	}
 
-	public long id = -1;
+	public long id = 1;
 
 	public void Save(string levelName, string levelDesc)
 	{
@@ -87,7 +88,7 @@ public class LevelManagement : MonoBehaviour
 		file.Close();
 	}
 
-	public LevelData Load(long id)
+	public LevelData Load()
 	{
 		var conn = LocalConnect(Application.persistentDataPath + "/local.db");
 
@@ -105,8 +106,6 @@ public class LevelManagement : MonoBehaviour
 		FileStream file = File.Open(levelPath, FileMode.Open);
 		LevelData levelData = (LevelData)bf.Deserialize(file);
 		file.Close();
-
-		this.id = id;
 
 		return levelData;
 	}
@@ -366,26 +365,5 @@ public class LevelManagement : MonoBehaviour
 		Assert.IsFalse(File.Exists(Application.persistentDataPath + "/test.db"));
 
 		yield return null;
-	}
-}
-
-[System.Serializable]
-public struct LevelData
-{
-	public readonly TileType[,] tileTypes;
-	public readonly ThemeType themeType;
-
-	/*
-	public LevelData()
-	{
-		tileTypes = new TileType[100, 100];
-		themeType = ThemeType.NORMAL;
-	}
-	*/
-
-	public LevelData(TileType[,] tileTypes, ThemeType themeType)
-	{
-		this.tileTypes = tileTypes;
-		this.themeType = themeType;
 	}
 }

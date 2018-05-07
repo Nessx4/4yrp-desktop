@@ -26,9 +26,9 @@ public class GridTile : MonoBehaviour
 
 		Sprite chosenSprite = sprites[Random.Range(0, sprites.Count)];
 
-		Vector2 spriteDeltaPos = new Vector2();
-		spriteDeltaPos.x = spriteDeltaPos.y = 1024 / chosenSprite.pixelsPerUnit;
-		spriteRenderer.transform.localPosition = spriteDeltaPos / 2;
+		//Vector2 spriteDeltaPos = new Vector2();
+		//spriteDeltaPos.x = spriteDeltaPos.y = 1024 / chosenSprite.pixelsPerUnit;
+		//spriteRenderer.transform.localPosition = spriteDeltaPos / 2;
 
 		spriteRenderer.sprite = chosenSprite;
 	}

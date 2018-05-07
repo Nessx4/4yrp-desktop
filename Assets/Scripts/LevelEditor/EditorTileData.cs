@@ -6,16 +6,17 @@ using UnityEngine.Assertions;
 
 public class EditorTileData 
 {
-	private Dictionary<ThemeType, ThemeData> themeDataMap;
+	private Dictionary<ThemeType, EThemeData> themeDataMap;
 	private Dictionary<TileType, Vector2> tileSizes;
 
 	public EditorTileData()
 	{
-		themeDataMap = new Dictionary<ThemeType, ThemeData>();
+		themeDataMap = new Dictionary<ThemeType, EThemeData>();
 
-		ThemeData dat = new ThemeData();
+		EThemeData dat = new EThemeData();
+
 		dat.Add(TileType.NONE,
-			new TileData
+			new ETile
 			(
 				null,
 				null,
@@ -24,7 +25,7 @@ public class EditorTileData
 		);
 
 		dat.Add(TileType.SOLID,				
-			new TileData
+			new ETile
 			(
 				Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_Solid"),
 				Resources.Load<Sprite>("UI/TileIcons/Normal/tx_TileIcon_Solid"),
@@ -33,7 +34,7 @@ public class EditorTileData
 		);
 
 		dat.Add(TileType.SEMISOLID,				
-			new TileData
+			new ETile
 			(
 				Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_Semisolid"),
 				Resources.Load<Sprite>("UI/TileIcons/Normal/tx_TileIcon_Semisolid"),
@@ -42,7 +43,7 @@ public class EditorTileData
 		);
 
 		dat.Add(TileType.LADDER,				
-			new TileData
+			new ETile
 			(
 				Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_Ladder"),
 				Resources.Load<Sprite>("UI/TileIcons/Normal/tx_TileIcon_Ladder"),
@@ -51,16 +52,16 @@ public class EditorTileData
 		);
 
 		dat.Add(TileType.MOVING_PLATFORM,				
-			new TileData
+			new ETile
 			(
-				Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_MovingPlatform"),
+				Resources.Load<GridTile>("TilePrefabs/Editor/NETileormal/obj_MovingPlatform"),
 				Resources.Load<Sprite>("UI/TileIcons/Normal/tx_TileIcon_MovingPlatform"),
 				"Moving Platform"
 			)
 		);
 
 		dat.Add(TileType.TREADMILL,				
-			new TileData
+			new ETile
 			(
 				Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_Treadmill"),
 				Resources.Load<Sprite>("UI/TileIcons/Normal/tx_TileIcon_Treadmill"),
@@ -69,7 +70,7 @@ public class EditorTileData
 		);
 
 		dat.Add(TileType.START_POINT,				
-			new TileData
+			new ETile
 			(
 				Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_StartPoint"),
 				Resources.Load<Sprite>("UI/TileIcons/Normal/tx_TileIcon_StartPoint"),
@@ -78,7 +79,7 @@ public class EditorTileData
 		);
 
 		dat.Add(TileType.CHECK_POINT,				
-			new TileData
+			new ETile
 			(
 				Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_CheckPoint"),
 				Resources.Load<Sprite>("UI/TileIcons/Normal/tx_TileIcon_CheckPoint"),
@@ -87,7 +88,7 @@ public class EditorTileData
 		);
 
 		dat.Add(TileType.END_POINT,				
-			new TileData
+			new ETile
 			(
 				Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_EndPoint"),
 				Resources.Load<Sprite>("UI/TileIcons/Normal/tx_TileIcon_EndPoint"),
@@ -96,7 +97,7 @@ public class EditorTileData
 		);
 
 		dat.Add(TileType.BUSH,				
-			new TileData
+			new ETile
 			(
 				Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_Bush"),
 				Resources.Load<Sprite>("UI/TileIcons/Normal/tx_TileIcon_Bush"),
@@ -105,7 +106,7 @@ public class EditorTileData
 		);
 
 		dat.Add(TileType.CLOUD,				
-			new TileData
+			new ETile
 			(
 				Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_Cloud"),
 				Resources.Load<Sprite>("UI/TileIcons/Normal/tx_TileIcon_Cloud"),
@@ -114,7 +115,7 @@ public class EditorTileData
 		);
 
 		dat.Add(TileType.MOUNTAIN,				
-			new TileData
+			new ETile
 			(
 				Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_Mountain"),
 				Resources.Load<Sprite>("UI/TileIcons/Normal/tx_TileIcon_Mountain"),
@@ -123,7 +124,7 @@ public class EditorTileData
 		);
 
 		dat.Add(TileType.FLOWER,				
-			new TileData
+			new ETile
 			(
 				Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_Flower"),
 				Resources.Load<Sprite>("UI/TileIcons/Normal/tx_TileIcon_Flower"),
@@ -132,7 +133,7 @@ public class EditorTileData
 		);
 
 		dat.Add(TileType.CRATE,				
-			new TileData
+			new ETile
 			(
 				Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_Crate"),
 				Resources.Load<Sprite>("UI/TileIcons/Normal/tx_TileIcon_Crate"),
@@ -141,7 +142,7 @@ public class EditorTileData
 		);
 
 		dat.Add(TileType.SWEETS,				
-			new TileData
+			new ETile
 			(
 				Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_Sweets"),
 				Resources.Load<Sprite>("UI/TileIcons/Normal/tx_TileIcon_Sweets"),
@@ -150,7 +151,7 @@ public class EditorTileData
 		);
 
 		dat.Add(TileType.UFO,				
-			new TileData
+			new ETile
 			(
 				Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_Ufo"),
 				Resources.Load<Sprite>("UI/TileIcons/Normal/tx_TileIcon_Ufo"),
@@ -159,7 +160,7 @@ public class EditorTileData
 		);
 
 		dat.Add(TileType.SLIME,				
-			new TileData
+			new ETile
 			(
 				Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_Slime"),
 				Resources.Load<Sprite>("UI/TileIcons/Normal/tx_TileIcon_Slime"),
@@ -168,7 +169,7 @@ public class EditorTileData
 		);
 
 		dat.Add(TileType.SPAWNER,				
-			new TileData
+			new ETile
 			(
 				Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_Spawner"),
 				Resources.Load<Sprite>("UI/TileIcons/Normal/tx_TileIcon_Spawner"),
@@ -178,10 +179,19 @@ public class EditorTileData
 
 		themeDataMap.Add(ThemeType.NORMAL, dat);
 
-		dat = new ThemeData();
+		dat = new EThemeData();
+
+		dat.Add(TileType.NONE,
+			new ETile
+			(
+				null,
+				null,
+				"Null"
+			)
+		);
 
 		dat.Add(TileType.SOLID,
-			new TileData
+			new ETile
 			(
 				Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_Solid"),
 				Resources.Load<Sprite>("UI/TileIcons/Normal/tx_TileIcon_Solid"),

@@ -64,7 +64,7 @@ public class LevelEditor
 	private TileType activeTile;
 	private ThemeType activeTheme;
 
-	private Dictionary<ThemeType, ThemeData> themeDataMap;
+	private Dictionary<ThemeType, EThemeData> themeDataMap;
 
 	// The first time instance is requested, it is created.
 	static LevelEditor()

@@ -12,7 +12,7 @@ public class TestButtons : MonoBehaviour
 
 	public void TestLoad()
 	{
-		LevelData data = LevelManagement.instance.Load(2);
+		LevelData data = LevelManagement.instance.Load();
 
 		LevelEditor.instance.editorGrid.SetTileTypes(data.tileTypes);
 		LevelEditor.instance.themebar.activeTheme = data.themeType;
