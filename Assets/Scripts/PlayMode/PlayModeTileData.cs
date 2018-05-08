@@ -15,6 +15,7 @@ public class PlayModeTileData
 
 		dat.Add(TileType.NONE, 				new PMTile(null));
 		dat.Add(TileType.SOLID, 			new PMTile(Resources.Load<PlayTile>("TilePrefabs/PlayMode/Normal/obj_Solid")));
+		dat.Add(TileType.SOLID2,			new PMTile(Resources.Load<PlayTile>("TilePrefabs/PlayMode/Normal/obj_Solid2")));
 		dat.Add(TileType.SEMISOLID, 		new PMTile(Resources.Load<PlayTile>("TilePrefabs/PlayMode/Normal/obj_Semisolid")));
 		dat.Add(TileType.LADDER, 			new PMTile(Resources.Load<PlayTile>("TilePrefabs/PlayMode/Normal/obj_Ladder")));
 		dat.Add(TileType.MOVING_PLATFORM, 	new PMTile(Resources.Load<PlayTile>("TilePrefabs/PlayMode/Normal/obj_MovingPlatform")));

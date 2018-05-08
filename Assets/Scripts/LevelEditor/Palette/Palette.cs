@@ -45,6 +45,7 @@ public class Palette : MonoBehaviour
 		tileGroups.Add(new List<TileType>() 
 		{ 
 			TileType.SOLID,
+			TileType.SOLID2,
 			TileType.SEMISOLID,
 			TileType.LADDER,
 			TileType.BUSH,		// Remove
@@ -55,7 +56,6 @@ public class Palette : MonoBehaviour
 			TileType.SWEETS,	// Remove
 			TileType.UFO,		// Remove
 			TileType.SPAWNER,	// Remove
-			TileType.LADDER 	// Remove
 		});
 
 		tileGroups.Add(new List<TileType>()

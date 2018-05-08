@@ -33,6 +33,15 @@ public class EditorTileData
 			)
 		);
 
+		dat.Add(TileType.SOLID2,				
+			new ETile
+			(
+				Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_Solid2"),
+				Resources.Load<Sprite>("UI/TileIcons/Normal/tx_TileIcon_Solid2"),
+				"Solid Block 2"
+			)
+		);
+
 		dat.Add(TileType.SEMISOLID,				
 			new ETile
 			(
@@ -205,6 +214,7 @@ public class EditorTileData
 
 		tileSizes.Add(TileType.NONE,			new Vector2(1,  1));
 		tileSizes.Add(TileType.SOLID, 			new Vector2(1,  1));
+		tileSizes.Add(TileType.SOLID2,			new Vector2(1,  1));
 		tileSizes.Add(TileType.SEMISOLID, 		new Vector2(1,  1));
 		tileSizes.Add(TileType.LADDER,			new Vector2(1,  1));
 		tileSizes.Add(TileType.MOVING_PLATFORM, new Vector2(1,  1));
