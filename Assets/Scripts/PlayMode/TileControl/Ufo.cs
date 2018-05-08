@@ -4,13 +4,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class Ufo : MonoBehaviour, IControllable
+public class Ufo : Controllable
 {
 	[SerializeField]
 	private Rigidbody2D bullet;
 
 	private float count;
-	private Vector2 moveDir;
+	private Vector2 moveDir = new Vector2(0.1f, 0.0f);
+
+	private bool captured = false;
+	private bool left = false;
 
 	private new Rigidbody2D rigidbody;
 
@@ -19,22 +22,39 @@ public class Ufo : MonoBehaviour, IControllable
 		rigidbody = GetComponent<Rigidbody2D>();
 	}
 
-	public void Control()
+	public override void Control()
 	{
 		Debug.Log("Under control");
+
+		captured = true;
 	}
 
-	public void Move(Vector2 moveAmount)
+	public override void Move(Vector2 moveAmount)
 	{
 		moveDir = moveAmount;
 	}
 
 	private void FixedUpdate()
 	{
+		if(!captured)
+			MoveDefault();
+
 		rigidbody.velocity = moveDir;
 	}
 
-	public void Action()
+	private void MoveDefault()
+	{
+		if(count > 2.5f)
+		{
+			moveDir = left ? new Vector2(0.1f, 0.0f) : new Vector2(-0.1f, 0.0f);
+			left = !left;
+			count = 0.0f;
+		}
+
+		count += Time.fixedDeltaTime;
+	}
+
+	public override void Action()
 	{
 		Fire();
 	}
@@ -47,8 +67,16 @@ public class Ufo : MonoBehaviour, IControllable
 		bullet.velocity = new Vector2(0.0f, -15.0f);
 	}
 
-	public void Release()
+	public override void Release()
 	{
 		moveDir = new Vector2(0.1f, 0.0f);
+
+		captured = false;
+	}
+
+	private void Update()
+	{
+		if(Input.GetKeyDown(KeyCode.H))
+			Fire();
 	}
 }

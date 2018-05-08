@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Concurrent;
 
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 using System.Threading;
 
@@ -34,6 +35,8 @@ public class MobileConnection : MonoBehaviour
 	[SerializeField]
 	private Camera mobileCamera;
 
+	private Controllable controlledEnemy = null;
+
 	public static MobileConnection instance { get; private set; }
 
 	private void Awake()
@@ -42,6 +45,7 @@ public class MobileConnection : MonoBehaviour
 		{
 			instance = this;
 			DontDestroyOnLoad(gameObject);
+			SceneManager.sceneLoaded += OnSceneLoaded;
 			SetupThreads();
 		}
 		else Destroy(gameObject);
@@ -70,6 +74,7 @@ public class MobileConnection : MonoBehaviour
 		soc = listener.AcceptSocket();
 
 		Debug.Log("Received connection on port " + startPort + ".");
+		mobileCursor.gameObject.SetActive(true);
 
 		Listen();
 	}
@@ -107,7 +112,6 @@ public class MobileConnection : MonoBehaviour
 		}
 
 		Debug.Log("Joining listen thread?");
-
 		//listenThread.Join();
 	}
 
@@ -129,9 +133,6 @@ public class MobileConnection : MonoBehaviour
 	// Read all pending messages that have been received.
 	private void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.W))
-			sendQueue.Enqueue("runtime");
-
 		string message;
 		while(receiveQueue.TryDequeue(out message))
 		{
@@ -142,32 +143,79 @@ public class MobileConnection : MonoBehaviour
 				case "action_end":
 					break;
 				case "capture":
+					if(controlledEnemy == null)
+					{
+						// Search for enemy!
+					}
 					break;
 				case "leave_ufo":
-					break;
 				case "leave_slime":
-					break;
 				case "leave_spike":
+					if(controlledEnemy != null)
+					{
+						controlledEnemy.Release();
+						controlledEnemy = null;
+					}
 					break;
 				case "left":
+					if(controlledEnemy != null)
+					{
+						controlledEnemy.Move(new Vector2(-0.5f, 0.0f));
+					}
 					break;
 				case "left2":
+					if(controlledEnemy != null)
+					{
+						controlledEnemy.Move(new Vector2(-1.0f, 0.0f));
+					}
 					break;
 				case "right":
+					if(controlledEnemy != null)
+					{
+						controlledEnemy.Move(new Vector2(0.0f, 0.5f));
+					}
 					break;
 				case "right2":
+					if(controlledEnemy != null)
+					{
+						controlledEnemy.Move(new Vector2(0.0f, 1.0f));
+					}
 					break;
 				case "stop":
+					if(controlledEnemy != null)
+					{
+						controlledEnemy.Move(new Vector2(0.0f, 0.0f));
+					}
 					break;
 				case "fire":
+					if(controlledEnemy != null)
+					{
+						controlledEnemy.Action();
+					}
 					break;
 				case "slime_left":
+					if(controlledEnemy != null)
+					{
+						controlledEnemy.Move(new Vector2(-1.0f, 0.0f));
+					}
 					break;
 				case "slime_right":
+					if(controlledEnemy != null)
+					{
+						controlledEnemy.Move(new Vector2(0.0f, -1.0f));
+					}
 					break;
 				case "shake":
+					if(controlledEnemy != null)
+					{
+						controlledEnemy.Action();
+					}
 					break;
 				case "spike":
+					if(controlledEnemy != null)
+					{
+						controlledEnemy.Action();
+					}
 					break;
 				case "undo":
 					break;
@@ -219,6 +267,19 @@ public class MobileConnection : MonoBehaviour
 
 					break;
 			}
+		}
+	}
+
+	private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+	{
+		switch(SceneManager.GetActiveScene().name)
+		{
+			case "sc_LevelEditor":
+				sendQueue.Enqueue("editor");
+				break;
+			case "sc_PlayMode":
+			sendQueue.Enqueue("runtime");
+				break;
 		}
 	}
 

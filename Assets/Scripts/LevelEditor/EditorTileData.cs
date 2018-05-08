@@ -213,8 +213,8 @@ public class EditorTileData
 		tileSizes.Add(TileType.CHECK_POINT,		new Vector2(1,  2));
 		tileSizes.Add(TileType.END_POINT,		new Vector2(1,  2));
 		tileSizes.Add(TileType.BUSH,			new Vector2(8,  5));
-		tileSizes.Add(TileType.CLOUD,			new Vector2(10,  5));
-		tileSizes.Add(TileType.MOUNTAIN,		new Vector2(12, 9));
+		tileSizes.Add(TileType.CLOUD,			new Vector2(10, 5));
+		tileSizes.Add(TileType.MOUNTAIN,		new Vector2(7,  7));
 		tileSizes.Add(TileType.FLOWER,			new Vector2(1,  1));
 		tileSizes.Add(TileType.CRATE,			new Vector2(1,  1));
 		tileSizes.Add(TileType.SWEETS,			new Vector2(1,  1));
