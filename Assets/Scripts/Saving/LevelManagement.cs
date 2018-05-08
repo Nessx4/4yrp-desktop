@@ -36,7 +36,7 @@ public class LevelManagement : MonoBehaviour
 		DontDestroyOnLoad(instance.gameObject);
 	}
 
-	public long id = 1;
+	public long id = -1;
 
 	public void Save(string levelName, string levelDesc)
 	{
@@ -69,7 +69,7 @@ public class LevelManagement : MonoBehaviour
 			snapPath = "/thumbnails/local/" + id + ".dat";
 
 			// Create the level and keep track of the ID.
-			id = InsertLevel("User", levelName,
+			this.id = InsertLevel("User", levelName,
 				snapPath, levelPath, themeType.ToString(), conn);
 		}
 		else 	// Level is being overwritten.
@@ -107,6 +107,7 @@ public class LevelManagement : MonoBehaviour
 		LevelData levelData = (LevelData)bf.Deserialize(file);
 		file.Close();
 
+		Debug.Log("Loaded");
 		return levelData;
 	}
 
@@ -184,7 +185,21 @@ public class LevelManagement : MonoBehaviour
 								"desc TEXT NOT NULL," +
 								"snapshot TEXT NOT NULL," +
 								"datapath TEXT NOT NULL," +
-								"theme INTEGER);";
+								"theme TEXT NOT NULL);";
+
+		cmd.CommandText = queryString;
+		cmd.ExecuteNonQuery();
+	}
+
+	public void DropTable()
+	{
+		Debug.Log("Table dropped.");
+
+		var conn = LocalConnect(Application.persistentDataPath + "/local.db");
+
+		IDbCommand cmd = conn.CreateCommand();
+
+		string queryString = "DROP TABLE levels;";
 
 		cmd.CommandText = queryString;
 		cmd.ExecuteNonQuery();

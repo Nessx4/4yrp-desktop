@@ -10,6 +10,9 @@ public class Toolbar : MonoBehaviour
 	[SerializeField]
 	private ToolbarButton[] buttons;
 
+	[SerializeField]
+	private NameDialog nameDialog;
+
 	private ToolType activeTool = ToolType.NONE;
 
 	public event EventHandler UndoPressed;
@@ -56,6 +59,9 @@ public class Toolbar : MonoBehaviour
 		EventHandler handler = SavePressed;
 		if(handler != null)
 			handler(this, e);
+
+		nameDialog.gameObject.SetActive(true);
+		nameDialog.playMode = false;
 	}
 
 	// Fire this event whenever the Play button is pressed.
@@ -64,6 +70,9 @@ public class Toolbar : MonoBehaviour
 		EventHandler handler = PlayPressed;
 		if(handler != null)
 			handler(this, e);
+
+		nameDialog.gameObject.SetActive(true);
+		nameDialog.playMode = true;
 	}
 
 	// Fire this event whenever the Menu button is pressed.

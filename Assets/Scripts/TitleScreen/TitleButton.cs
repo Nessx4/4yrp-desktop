@@ -8,7 +8,7 @@ public class TitleButton : MonoBehaviour
 {
 	public void MakeLevels()
 	{
-		SceneManager.LoadScene("");
+		SceneManager.LoadScene("sc_LevelEditor");
 	}
 
 	public void PlayLevels()

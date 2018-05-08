@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class NameDialog : MonoBehaviour 
 {
@@ -16,6 +17,8 @@ public class NameDialog : MonoBehaviour
 
 	[SerializeField]
 	private InputField descriptionField;
+
+	public bool playMode { private get; set; }
 
 	private void Awake()
 	{
@@ -30,9 +33,24 @@ public class NameDialog : MonoBehaviour
 		switch(action)
 		{
 			case NameDialogAction.CANCEL:
+				gameObject.SetActive(false);
 				break;
 			case NameDialogAction.CONFIRM:
+				string name = nameInput.text;
+				string desc = descriptionField.text;
+				LevelManagement.instance.Save(name, desc);
+
+				if (playMode)
+					SceneManager.LoadScene("sc_PlayMode");
+
+				gameObject.SetActive(false);
 				break;
 		}
+	}
+
+	private void Update()
+	{
+		if (Input.GetKeyDown(KeyCode.P))
+			LevelManagement.instance.DropTable();
 	}
 }
