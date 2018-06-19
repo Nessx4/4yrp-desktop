@@ -41,7 +41,7 @@ public class NameDialog : MonoBehaviour
 				LevelManagement.instance.Save(name, desc);
 
 				if (playMode)
-					SceneManager.LoadScene("sc_PlayMode");
+					Manager.LoadScene("sc_PlayMode");
 
 				gameObject.SetActive(false);
 				break;

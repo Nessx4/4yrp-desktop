@@ -2,18 +2,17 @@
 using System.Collections.Generic;
 
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class TitleButton : MonoBehaviour 
 {
 	public void MakeLevels()
 	{
-		SceneManager.LoadScene("sc_LevelEditor");
+		Manager.LoadScene("sc_LevelEditor");
 	}
 
 	public void PlayLevels()
 	{
-		SceneManager.LoadScene("");
+		Manager.LoadScene("");
 	}
 
 	public void Options()

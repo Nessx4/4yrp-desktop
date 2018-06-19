@@ -22,8 +22,6 @@ public class MobileConnection : MonoBehaviour
 	private Socket soc;
 	private StreamWriter writer;
 
-	private const int startPort = 9000;
-
 	private ConcurrentQueue<string> receiveQueue;
 	private ConcurrentQueue<string> sendQueue;
 
@@ -37,29 +35,25 @@ public class MobileConnection : MonoBehaviour
 
 	private Controllable controlledEnemy = null;
 
-	public static MobileConnection instance { get; private set; }
+	public int id { private get; set; }
 
 	private void Awake()
 	{
-		if (instance == null)
-		{
-			instance = this;
-			DontDestroyOnLoad(gameObject);
-			SceneManager.sceneLoaded += OnSceneLoaded;
-			SetupThreads();
-		}
-		else Destroy(gameObject);
+		SceneManager.sceneLoaded += OnSceneLoaded;
+		//SetupThreads();
 	}
 
-	private void SetupThreads()
+	public void SetupThreads(int id, TcpListener listener)
 	{
+		this.id = id;
+		this.listener = listener;
 		receiveQueue = new ConcurrentQueue<string>();
 		sendQueue = new ConcurrentQueue<string>();
 
 		IPAddress[] localIPs = Dns.GetHostAddresses(Dns.GetHostName());
 
 		for (int i = 0; i < localIPs.Length; ++i)
-			Debug.Log(localIPs[i]);
+			Debug.Log(localIPs[i], gameObject);
 
 		listenThread = new Thread(new ThreadStart(Connect));
 		listenThread.Start();
@@ -67,43 +61,40 @@ public class MobileConnection : MonoBehaviour
 
 	private void Connect()
 	{
-		listener = new TcpListener(IPAddress.Parse("0.0.0.0"), startPort);
-		listener.Start();
-
-		Debug.Log("Awaiting connections on port " + startPort + ".");
+		//Debug.Log("Awaiting connections on port " + startPort + ".");
+		Debug.Log("Awaiting connections.");
 		soc = listener.AcceptSocket();
 
-		Debug.Log("Received connection on port " + startPort + ".");
-		mobileCursor.gameObject.SetActive(true);
+		Debug.Log(soc);
 
-		Listen();
+		//Debug.Log("Received connection on port " + startPort + ".");
+		Debug.Log("Received connections.");
+		receiveQueue.Enqueue("start_connection");
+
+		NetworkStream stream = new NetworkStream(soc);
+		StreamReader reader = new StreamReader(stream);
+
+		writer = new StreamWriter(stream);
+		writer.AutoFlush = true;
+		writeThread = new Thread(new ThreadStart(Write));
+		writeThread.Start();
+
+		Listen(reader);
 	}
 
 	// Listen for messages from the mobile device.
-	private void Listen()
+	private void Listen(StreamReader reader)
 	{
 		try
 		{
-			NetworkStream stream = new NetworkStream(soc);
-			StreamReader reader = new StreamReader(stream);
-
-			writer = new StreamWriter(stream);
-			writer.AutoFlush = true;
-			writeThread = new Thread(new ThreadStart(Write));
-			writeThread.Start();
-
 			// Enqueue all messages pending being received from mobile.
 			string message;
 			while((message = reader.ReadLine()) != null)
 			{
-				Debug.Log("Attempting read");
 				if(!string.IsNullOrEmpty(message))
 				{
-					//Debug.Log(message);
 					receiveQueue.Enqueue(message);
 				}
-
-				Debug.Log("Hi?");
 			}
 		}
 		catch(IOException e)
@@ -111,13 +102,15 @@ public class MobileConnection : MonoBehaviour
 			Debug.LogError("Error while listening for messages.\n" + e);
 		}
 
-		Debug.Log("Joining listen thread?");
-		//listenThread.Join();
+		receiveQueue.Enqueue("close");
+		listenThread.Join();
 	}
 
 	// Write messages to the mobile device.
 	private void Write()
 	{
+		Debug.Log("The write thread was started");
+		sendQueue.Enqueue("editor");
 		string message;
 		while(!shouldQuit)
 		{
@@ -127,6 +120,7 @@ public class MobileConnection : MonoBehaviour
 			}
 		}
 
+		Debug.Log("Stopped stuff");
 		writeThread.Join();
 	}
 
@@ -136,8 +130,13 @@ public class MobileConnection : MonoBehaviour
 		string message;
 		while(receiveQueue.TryDequeue(out message))
 		{
+			Debug.Log(id);
 			switch(message)
 			{
+				case "start_connection":
+					ConnectionManager.instance.CreateNewConnection();
+					mobileCursor.gameObject.SetActive(true);
+					break;
 				case "action_start":
 					break;
 				case "action_end":
@@ -261,7 +260,7 @@ public class MobileConnection : MonoBehaviour
 					for (int i = 0; i < floats.Length; ++i)
 						floats[i] = float.Parse(floatStrings[i], CultureInfo.InvariantCulture);
 
-					Debug.Log("Movement vector: " + floats[0] + ", " + floats[1]);
+					//Debug.Log("Movement vector: " + floats[0] + ", " + floats[1]);
 
 					mobileCursor.Translate(new Vector2(-floats[0], floats[1]) * 5.0f);
 
@@ -278,7 +277,7 @@ public class MobileConnection : MonoBehaviour
 				sendQueue.Enqueue("editor");
 				break;
 			case "sc_PlayMode":
-			sendQueue.Enqueue("runtime");
+				sendQueue.Enqueue("runtime");
 				break;
 		}
 	}
