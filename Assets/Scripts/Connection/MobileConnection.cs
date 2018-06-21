@@ -132,14 +132,12 @@ public class MobileConnection : MonoBehaviour
 
 		receiveQueue.Enqueue("close");
 		Debug.Log("Read thread closing.");
-		//listenThread.Join();
 	}
 
 	// Write messages to the mobile device.
 	private void Write(StreamWriter writer)
 	{
 		Debug.Log("The write thread was started");
-		//sendQueue.Enqueue("editor");
 		string message;
 		while(!shouldQuit)
 		{
@@ -150,7 +148,6 @@ public class MobileConnection : MonoBehaviour
 		}
 
 		Debug.Log("Write thread closing.");
-		//writeThread.Join();
 	}
 
 	// Read all pending messages that have been received.
