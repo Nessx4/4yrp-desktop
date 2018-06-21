@@ -15,6 +15,12 @@ using System.Globalization;
 
 public class MobileConnection : MonoBehaviour
 {
+	// Each mobile connection has a pointer unique to itself.
+	[SerializeField]
+	private Pointer pointer;
+
+	public Camera cam { set; private get; }
+
 	private Thread listenThread;
 	private Thread writeThread;
 
@@ -61,14 +67,12 @@ public class MobileConnection : MonoBehaviour
 
 	private void Connect()
 	{
-		//Debug.Log("Awaiting connections on port " + startPort + ".");
-		Debug.Log("Awaiting connections.");
+		Debug.Log("Awaiting connection; id=" + id + ".");
 		soc = listener.AcceptSocket();
 
 		Debug.Log(soc);
 
-		//Debug.Log("Received connection on port " + startPort + ".");
-		Debug.Log("Received connections.");
+		Debug.Log("Received connection; id=" + id + ".");
 		receiveQueue.Enqueue("start_connection");
 
 		NetworkStream stream = new NetworkStream(soc);
@@ -80,6 +84,30 @@ public class MobileConnection : MonoBehaviour
 		writeThread.Start();
 
 		Listen(reader);
+	}
+
+	// Tell this connection which camera to render its pointer to.
+	public void SetupCamera()
+	{
+		Color col;
+
+		switch(id)
+		{
+			case 0:
+				col = Color.red;
+				break;
+			case 1:
+				col = Color.blue;
+				break;
+			case 2:
+				col = Color.yellow;
+				break;
+			default:
+				col = Color.green;
+				break;
+		}
+
+		pointer.SetParams(cam, col);
 	}
 
 	// Listen for messages from the mobile device.
@@ -130,12 +158,12 @@ public class MobileConnection : MonoBehaviour
 		string message;
 		while(receiveQueue.TryDequeue(out message))
 		{
-			Debug.Log(id);
 			switch(message)
 			{
 				case "start_connection":
 					ConnectionManager.instance.CreateNewConnection();
 					mobileCursor.gameObject.SetActive(true);
+					SetupCamera();
 					break;
 				case "action_start":
 					break;

@@ -9,6 +9,10 @@ using UnityEngine.SceneManagement;
 
 public class ConnectionManager : MonoBehaviour
 {
+	// A separate camera is used to draw each pointer.
+	[SerializeField]
+	private Camera pointerCamera;
+
 	private const int startPort = 9000;
 	
 	private int createdConnections = 0;
@@ -38,6 +42,7 @@ public class ConnectionManager : MonoBehaviour
 				Quaternion.identity, transform);
 
 			conn.SetupThreads(createdConnections++, listener);
+			conn.cam = pointerCamera;
 		}
 	}
 }
