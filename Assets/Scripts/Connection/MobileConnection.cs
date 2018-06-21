@@ -19,14 +19,13 @@ public class MobileConnection : MonoBehaviour
 	[SerializeField]
 	private Pointer pointer;
 
-	public Camera cam { set; private get; }
+	public Camera mobileCamera { set; private get; }
 
 	private Thread listenThread;
 	private Thread writeThread;
 
 	private TcpListener listener;
 	private Socket soc;
-	private StreamWriter writer;
 
 	private ConcurrentQueue<string> receiveQueue;
 	private ConcurrentQueue<string> sendQueue;
@@ -37,7 +36,7 @@ public class MobileConnection : MonoBehaviour
 	private Transform mobileCursor;
 
 	[SerializeField]
-	private Camera mobileCamera;
+	private MobileEditorPlayer editorPlayer;
 
 	private Controllable controlledEnemy = null;
 
@@ -46,26 +45,21 @@ public class MobileConnection : MonoBehaviour
 	private void Awake()
 	{
 		SceneManager.sceneLoaded += OnSceneLoaded;
-		//SetupThreads();
+		editorPlayer.conn = this;
 	}
 
-	public void SetupThreads(int id, TcpListener listener)
+	public void SetupThreads(int id, TcpListener listener, bool isNew)
 	{
 		this.id = id;
 		this.listener = listener;
 		receiveQueue = new ConcurrentQueue<string>();
 		sendQueue = new ConcurrentQueue<string>();
 
-		IPAddress[] localIPs = Dns.GetHostAddresses(Dns.GetHostName());
-
-		for (int i = 0; i < localIPs.Length; ++i)
-			Debug.Log(localIPs[i], gameObject);
-
-		listenThread = new Thread(new ThreadStart(Connect));
+		listenThread = new Thread(() => Connect(isNew));
 		listenThread.Start();
 	}
 
-	private void Connect()
+	private void Connect(bool isNew)
 	{
 		Debug.Log("Awaiting connection; id=" + id + ".");
 		soc = listener.AcceptSocket();
@@ -73,17 +67,22 @@ public class MobileConnection : MonoBehaviour
 		Debug.Log(soc);
 
 		Debug.Log("Received connection; id=" + id + ".");
+
 		receiveQueue.Enqueue("start_connection");
+		if(isNew)
+			receiveQueue.Enqueue("new_connection");
 
 		NetworkStream stream = new NetworkStream(soc);
-		StreamReader reader = new StreamReader(stream);
 
-		writer = new StreamWriter(stream);
+		StreamReader reader = new StreamReader(stream);
+		StreamWriter writer = new StreamWriter(stream);
+
 		writer.AutoFlush = true;
-		writeThread = new Thread(new ThreadStart(Write));
+
+		writeThread = new Thread(() => Write(writer));
 		writeThread.Start();
 
-		Listen(reader);
+		Read(reader);
 	}
 
 	// Tell this connection which camera to render its pointer to.
@@ -107,11 +106,12 @@ public class MobileConnection : MonoBehaviour
 				break;
 		}
 
-		pointer.SetParams(cam, col);
+		Debug.Log(mobileCamera);
+		pointer.SetParams(mobileCamera, col);
 	}
 
 	// Listen for messages from the mobile device.
-	private void Listen(StreamReader reader)
+	private void Read(StreamReader reader)
 	{
 		try
 		{
@@ -131,14 +131,15 @@ public class MobileConnection : MonoBehaviour
 		}
 
 		receiveQueue.Enqueue("close");
-		listenThread.Join();
+		Debug.Log("Read thread closing.");
+		//listenThread.Join();
 	}
 
 	// Write messages to the mobile device.
-	private void Write()
+	private void Write(StreamWriter writer)
 	{
 		Debug.Log("The write thread was started");
-		sendQueue.Enqueue("editor");
+		//sendQueue.Enqueue("editor");
 		string message;
 		while(!shouldQuit)
 		{
@@ -148,8 +149,8 @@ public class MobileConnection : MonoBehaviour
 			}
 		}
 
-		Debug.Log("Stopped stuff");
-		writeThread.Join();
+		Debug.Log("Write thread closing.");
+		//writeThread.Join();
 	}
 
 	// Read all pending messages that have been received.
@@ -158,21 +159,35 @@ public class MobileConnection : MonoBehaviour
 		string message;
 		while(receiveQueue.TryDequeue(out message))
 		{
+			Debug.Log(message);
 			switch(message)
 			{
+				// Either a new or retried connection is started.
 				case "start_connection":
-					ConnectionManager.instance.CreateNewConnection();
 					mobileCursor.gameObject.SetActive(true);
+					editorPlayer.playerActive = true;
+					break;
+
+				// An explicitly brand new connection starts.
+				case "new_connection":
+					ConnectionManager.instance.CreateNewConnection();
 					SetupCamera();
 					break;
+
 				case "action_start":
+					editorPlayer.StartAction();
 					break;
 				case "action_end":
+					editorPlayer.StopAction();
 					break;
 				case "capture":
 					if(controlledEnemy == null)
 					{
 						// Search for enemy!
+
+						// Raycast at the pointer position.
+						// When a collider is encountered, check it is an enemy.
+						// If it is, capture the enemy.
 					}
 					break;
 				case "leave_ufo":
@@ -245,41 +260,59 @@ public class MobileConnection : MonoBehaviour
 					}
 					break;
 				case "undo":
+					editorPlayer.Undo();
 					break;
 				case "redo":
+					editorPlayer.Redo();
 					break;
 				case "pencil":
+					editorPlayer.ChangeTool(ToolType.PENCIL);
 					break;
 				case "pencil_end":
 					break;
 				case "eraser":
+					editorPlayer.ChangeTool(ToolType.ERASER);
 					break;
 				case "eraser_end":
 					break;
-
 				case "basic 0":
+					editorPlayer.ChangeTile(TileType.SOLID);
 					break;
 				case "basic 1":
+					editorPlayer.ChangeTile(TileType.SEMISOLID);
 					break;
 				case "basic 2":
+					editorPlayer.ChangeTile(TileType.LADDER);
 					break;
 				case "basic 3":
+					editorPlayer.ChangeTile(TileType.CRATE);
 					break;
 				case "bg 0":
+					editorPlayer.ChangeTile(TileType.BUSH);
 					break;
 				case "bg 1":
+					editorPlayer.ChangeTile(TileType.CLOUD);
 					break;
 				case "bg 2":
+					editorPlayer.ChangeTile(TileType.FLOWER);
 					break;
 				case "bg 3":
+					editorPlayer.ChangeTile(TileType.MOUNTAIN);
 					break;
 				case "tech 0":
+					editorPlayer.ChangeTile(TileType.START_POINT);
 					break;
 				case "tech 1":
+					editorPlayer.ChangeTile(TileType.SWEETS);
 					break;
 				case "tech 2":
+					editorPlayer.ChangeTile(TileType.UFO);
 					break;
 				case "tech 3":
+					editorPlayer.ChangeTile(TileType.SPIKES);
+					break;
+				case "close":
+					RetryConnection();
 					break;
 				default:
 					string[] floatStrings = message.Split(',');
@@ -288,18 +321,22 @@ public class MobileConnection : MonoBehaviour
 					for (int i = 0; i < floats.Length; ++i)
 						floats[i] = float.Parse(floatStrings[i], CultureInfo.InvariantCulture);
 
-					//Debug.Log("Movement vector: " + floats[0] + ", " + floats[1]);
-
-					mobileCursor.Translate(new Vector2(-floats[0], floats[1]) * 5.0f);
+					pointer.Move(new Vector2(-floats[0], floats[1]) * 5.0f);
 
 					break;
 			}
 		}
 	}
 
+	public Vector3 PointerToWorldPos()
+	{
+		return pointer.PointerToWorldPos();
+	}
+
 	private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
 	{
-		switch(SceneManager.GetActiveScene().name)
+		Debug.Log("Scene loaded: " + scene.name);
+		switch(scene.name)
 		{
 			case "sc_LevelEditor":
 				sendQueue.Enqueue("editor");
@@ -308,19 +345,38 @@ public class MobileConnection : MonoBehaviour
 				sendQueue.Enqueue("runtime");
 				break;
 		}
+
+		editorPlayer.enabled = scene.name == "sc_LevelEditor";
+	}
+
+	private void RetryConnection()
+	{
+		OnDestroy();
+
+		shouldQuit = false;
+
+		Debug.Log("Set up brand new connections HERE");
+		SetupThreads(id, listener, false);
 	}
 
 	private void OnDestroy()
 	{
 		shouldQuit = true;
+		editorPlayer.playerActive = false;
 
 		if (soc != null)
 			soc.Close();
 
-		writeThread.Abort();
-		writeThread.Join();
+		if(writeThread != null)
+		{
+			writeThread.Abort();
+			writeThread.Join();
+		}
 
-		listenThread.Abort();
-		listenThread.Join();
+		if(listenThread != null)
+		{
+			listenThread.Abort();
+			listenThread.Join();
+		}
 	}
 }

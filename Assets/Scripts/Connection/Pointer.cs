@@ -21,4 +21,14 @@ public class Pointer : MonoBehaviour
 		this.cam = cam;
 		GetComponent<SpriteRenderer>().color = col;
 	}
+
+	public void Move(Vector2 amount)
+	{
+		transform.Translate(amount);
+	}
+
+	public Vector3 PointerToWorldPos()
+	{
+		return Manager.CursorToWorldPoint(cam.WorldToViewportPoint(transform.position));
+	}
 }

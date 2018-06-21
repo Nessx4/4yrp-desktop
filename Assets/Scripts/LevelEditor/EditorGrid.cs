@@ -46,7 +46,7 @@ public class EditorGrid : MonoBehaviour
 		localChanges = new List<GridOperation>();
 	}
 
-	private void UndoPressed(object sender, EventArgs e)
+	public void UndoPressed(object sender, EventArgs e)
 	{
 		if(undoStack.Count > 0)
 		{
@@ -66,7 +66,7 @@ public class EditorGrid : MonoBehaviour
 		}
 	}
 
-	private void RedoPressed(object sender, EventArgs e)
+	public void RedoPressed(object sender, EventArgs e)
 	{
 		if(redoStack.Count > 0)
 		{

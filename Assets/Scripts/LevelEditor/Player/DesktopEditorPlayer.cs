@@ -129,4 +129,9 @@ public class DesktopEditorPlayer : EditorPlayer
 
 		return new GridPosition((int)mousePos.x, (int)mousePos.y);
 	}
+
+	protected override bool ShouldKeepDrawing()
+	{
+		return Input.GetMouseButton(0);
+	}
 }

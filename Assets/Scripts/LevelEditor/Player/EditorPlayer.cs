@@ -5,6 +5,8 @@ using UnityEngine;
 
 public abstract class EditorPlayer : MonoBehaviour 
 {
+	public bool playerActive = false;
+
 	protected TileType activeTile;
 
 	protected DrawState drawState;
@@ -12,6 +14,7 @@ public abstract class EditorPlayer : MonoBehaviour
 	protected IEnumerator Draw(DrawState beginState, 
 		DrawState endState, TileType tileType)
 	{
+		Debug.Log("Start drawing");
 		drawState = beginState;
 		var drawnPositions = new HashSet<GridPosition>();
 
@@ -19,7 +22,7 @@ public abstract class EditorPlayer : MonoBehaviour
 
 		GridPosition lastPosition = GetGridPosition();
 
-		while(Input.GetMouseButton(0))
+		while(ShouldKeepDrawing())
 		{
 			if(CanDrawOverSpace())
 			{
@@ -49,6 +52,7 @@ public abstract class EditorPlayer : MonoBehaviour
 			yield return null;
 		}
 
+		Debug.Log("End drawing");
 		drawState = endState;
 		editorGrid.CommitChanges();
 	}
@@ -80,7 +84,7 @@ public abstract class EditorPlayer : MonoBehaviour
 		GridPosition startPosition = GetGridPosition();
 		GridPosition endPosition = GetGridPosition();
 
-		while(Input.GetMouseButton(0))
+		while(ShouldKeepDrawing())
 		{
 			if(CanDrawOverSpace())
 			{
@@ -203,4 +207,6 @@ public abstract class EditorPlayer : MonoBehaviour
 	protected abstract bool CanDrawOverSpace();
 
 	protected abstract GridPosition GetGridPosition();
+
+	protected abstract bool ShouldKeepDrawing();
 }

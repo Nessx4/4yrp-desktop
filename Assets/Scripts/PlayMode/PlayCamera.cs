@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Camera))]
 public class PlayCamera : MonoBehaviour 
 {
 	[SerializeField] 
@@ -16,6 +17,7 @@ public class PlayCamera : MonoBehaviour
 	private void Awake()
 	{
 		rigidbody = GetComponent<Rigidbody2D>();
+		Manager.mainCamera = GetComponent<Camera>();
 	}
 
 	private void FixedUpdate()

@@ -12,5 +12,5 @@ public enum TileType
 	CRATE,
 	SWEETS,
 	UFO, SLIME,
-	SPAWNER
+	SPAWNER, SPIKES
 }

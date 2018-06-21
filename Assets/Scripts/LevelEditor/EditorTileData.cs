@@ -186,6 +186,15 @@ public class EditorTileData
 			)
 		);
 
+		dat.Add(TileType.SPIKES,				
+			new ETile
+			(
+				Resources.Load<GridTile>("TilePrefabs/Editor/Normal/obj_Spikes"),
+				Resources.Load<Sprite>("UI/TileIcons/Normal/tx_TileIcon_Spikes"),
+				"Spikes"
+			)
+		);
+
 		themeDataMap.Add(ThemeType.NORMAL, dat);
 
 		dat = new EThemeData();
@@ -231,6 +240,7 @@ public class EditorTileData
 		tileSizes.Add(TileType.UFO,				new Vector2(1,  1));
 		tileSizes.Add(TileType.SLIME,			new Vector2(1,  1));
 		tileSizes.Add(TileType.SPAWNER,			new Vector2(2,  2));
+		tileSizes.Add(TileType.SPIKES,			new Vector2(1,  1));
 	}
 
 	/*

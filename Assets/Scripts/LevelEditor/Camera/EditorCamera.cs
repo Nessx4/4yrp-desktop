@@ -19,6 +19,7 @@ public class EditorCamera : MonoBehaviour
 		rigidbody = GetComponent<Rigidbody2D>();
 
 		LevelEditor.instance.mainCamera = mainCamera;
+		Manager.mainCamera = mainCamera;
 	}
 
 	private void Update()
