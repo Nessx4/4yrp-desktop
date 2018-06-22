@@ -24,8 +24,6 @@ public class Ufo : Controllable
 
 	public override void Control()
 	{
-		Debug.Log("Under control");
-
 		captured = true;
 	}
 
@@ -78,5 +76,10 @@ public class Ufo : Controllable
 	{
 		if(Input.GetKeyDown(KeyCode.H))
 			Fire();
+	}
+
+	public override string GetType()
+	{
+		return "ufo";
 	}
 }

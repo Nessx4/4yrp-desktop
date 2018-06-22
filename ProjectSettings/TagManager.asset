@@ -8,6 +8,7 @@ TagManager:
   - Sweets
   - Savepoint
   - Pointer
+  - Goal
   layers:
   - Default
   - TransparentFX
@@ -53,6 +54,9 @@ TagManager:
     locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Player
+    uniqueID: 638619571
     locked: 0
   - name: UI
     uniqueID: 2556793335

@@ -14,6 +14,11 @@ public class IPDrawer : MonoBehaviour
 	[SerializeField]
 	private Transform drawerRoot;
 
+	private void Awake()
+	{
+		gameObject.SetActive(false);
+	}
+
 	public void AddAddress(IPAddress address)
 	{
 		Text newObject = Instantiate<Text>(ipTextPrefab, drawerRoot);
@@ -30,5 +35,10 @@ public class IPDrawer : MonoBehaviour
 	{
 		for(int i = 2; i < drawerRoot.childCount; ++i)
 			Destroy(drawerRoot.GetChild(i).gameObject);
+	}
+
+	public void ToggleDrawer()
+	{
+		gameObject.SetActive(!gameObject.activeSelf);
 	}
 }

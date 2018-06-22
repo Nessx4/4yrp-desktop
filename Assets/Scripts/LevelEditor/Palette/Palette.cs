@@ -55,7 +55,7 @@ public class Palette : MonoBehaviour
 			TileType.CRATE,		// Remove
 			TileType.SWEETS,	// Remove
 			TileType.UFO,		// Remove
-			TileType.SPAWNER,	// Remove
+			TileType.SPIKES,	// Remove
 		});
 
 		tileGroups.Add(new List<TileType>()

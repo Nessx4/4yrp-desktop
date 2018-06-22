@@ -393,6 +393,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3ef2683b2ae44cb3b2d35e40e3f5ec2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerActive: 0
 --- !u!4 &176191763
 Transform:
   m_ObjectHideFlags: 0
@@ -771,7 +772,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 2
-  m_Spacing: 25
+  m_Spacing: 2500
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
@@ -1120,7 +1121,7 @@ Prefab:
     - target: {fileID: 224749959964612056, guid: 57aca321129cd4c5cbfbbde1c34503d0,
         type: 2}
       propertyPath: m_LocalPosition.y
-      value: -95
+      value: 0.00038146973
       objectReference: {fileID: 0}
     - target: {fileID: 224749959964612056, guid: 57aca321129cd4c5cbfbbde1c34503d0,
         type: 2}
@@ -1955,7 +1956,7 @@ Prefab:
     - target: {fileID: 224103403682013256, guid: 44c5b39c66237461e8ce9807aa9dc3a5,
         type: 2}
       propertyPath: m_LocalPosition.y
-      value: -95
+      value: -2570
       objectReference: {fileID: 0}
     - target: {fileID: 224103403682013256, guid: 44c5b39c66237461e8ce9807aa9dc3a5,
         type: 2}
@@ -2037,6 +2038,10 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1301555096226544, guid: 44c5b39c66237461e8ce9807aa9dc3a5, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 44c5b39c66237461e8ce9807aa9dc3a5, type: 2}
   m_IsPrefabParent: 0
@@ -2055,7 +2060,7 @@ Prefab:
     - target: {fileID: 224608217391283632, guid: 64d0a3b0322a246bd92e28e71fe43561,
         type: 2}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 480
       objectReference: {fileID: 0}
     - target: {fileID: 224608217391283632, guid: 64d0a3b0322a246bd92e28e71fe43561,
         type: 2}

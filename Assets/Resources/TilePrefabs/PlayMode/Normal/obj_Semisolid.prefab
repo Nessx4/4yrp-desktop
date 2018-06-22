@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4198069381303378}
   - component: {fileID: 251827043895109422}
   - component: {fileID: 61743989987625684}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37,7 +37,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4803800648244546}
   - component: {fileID: 114207733467604290}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: obj_Semisolid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -53,7 +53,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4017355626162880}
   - component: {fileID: 212868090203548868}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -31,4 +31,10 @@ public class Pointer : MonoBehaviour
 	{
 		return Manager.CursorToWorldPoint(cam.WorldToViewportPoint(transform.position));
 	}
+
+	public void SetWorldPos(Vector3 worldPos)
+	{
+		worldPos.z = 0.0f;
+		transform.position = worldPos;
+	}
 }

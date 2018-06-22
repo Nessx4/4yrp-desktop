@@ -32,6 +32,7 @@ public class PlayModeTileData
 		dat.Add(TileType.UFO, 				new PMTile(Resources.Load<PlayTile>("TilePrefabs/PlayMode/Normal/obj_Ufo")));
 		dat.Add(TileType.SLIME, 			new PMTile(Resources.Load<PlayTile>("TilePrefabs/PlayMode/Normal/obj_Slime")));
 		dat.Add(TileType.SPAWNER, 			new PMTile(Resources.Load<PlayTile>("TilePrefabs/PlayMode/Normal/obj_Spawner")));
+		dat.Add(TileType.SPIKES, 			new PMTile(Resources.Load<PlayTile>("TilePrefabs/PlayMode/Normal/obj_Spikes")));
 
 		themeDataMap.Add(ThemeType.NORMAL, dat);
 	}

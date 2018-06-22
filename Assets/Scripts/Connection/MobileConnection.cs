@@ -31,6 +31,7 @@ public class MobileConnection : MonoBehaviour
 	private ConcurrentQueue<string> sendQueue;
 
 	private bool shouldQuit = false;
+	private bool canSeeEnemy = false;
 
 	[SerializeField]
 	private Transform mobileCursor;
@@ -83,6 +84,42 @@ public class MobileConnection : MonoBehaviour
 		writeThread.Start();
 
 		Read(reader);
+	}
+
+	private void CheckForEnemies()
+	{
+		if(controlledEnemy == null)
+		{
+			Vector3 pos = PointerToWorldPos();
+			pos.z = -10.0f;
+
+			RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.up, 0.1f);
+
+			if(hit != null && hit.transform != null)
+			{
+				Controllable obj = hit.transform.gameObject.GetComponent<Controllable>();
+
+				if(obj != null && !canSeeEnemy)
+				{
+					canSeeEnemy = true;
+
+					switch(obj.GetType())
+					{
+						case "ufo":
+							sendQueue.Enqueue("pobj_UFO");
+							break;
+						case "spikes":
+							sendQueue.Enqueue("pobj_SpikeTrap");
+							break;
+					}
+				}
+				else if(obj == null && canSeeEnemy)
+				{
+					canSeeEnemy = false;
+					sendQueue.Enqueue("capture_off");
+				}
+			}
+		}
 	}
 
 	// Tell this connection which camera to render its pointer to.
@@ -153,6 +190,9 @@ public class MobileConnection : MonoBehaviour
 	// Read all pending messages that have been received.
 	private void Update()
 	{
+		if(editorPlayer.playerActive)
+			CheckForEnemies();
+
 		string message;
 		while(receiveQueue.TryDequeue(out message))
 		{
@@ -185,6 +225,18 @@ public class MobileConnection : MonoBehaviour
 						// Raycast at the pointer position.
 						// When a collider is encountered, check it is an enemy.
 						// If it is, capture the enemy.
+						Vector3 pos = PointerToWorldPos();
+						pos.z = -10.0f;
+
+						RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.up, 0.1f);
+
+						Controllable obj = hit.transform.gameObject.GetComponent<Controllable>();
+
+						if(obj != null)
+						{
+							controlledEnemy = obj;
+							Debug.Log("Controlling enemy: " + controlledEnemy);
+						}
 					}
 					break;
 				case "leave_ufo":
@@ -192,6 +244,9 @@ public class MobileConnection : MonoBehaviour
 				case "leave_spike":
 					if(controlledEnemy != null)
 					{
+						Vector3 pos = controlledEnemy.transform.position;
+						pointer.SetWorldPos(pos);
+
 						controlledEnemy.Release();
 						controlledEnemy = null;
 					}
@@ -312,14 +367,32 @@ public class MobileConnection : MonoBehaviour
 					RetryConnection();
 					break;
 				default:
-					string[] floatStrings = message.Split(',');
-					float[] floats = new float[floatStrings.Length];
+					if (message.StartsWith("ufo_angle:"))
+					{
+						float angle = float.Parse(message.Split(':')[1], CultureInfo.InvariantCulture);
+                        Debug.Log(angle);
+                        if(Mathf.Abs(angle) > 5)
+                        {
+                            if (angle < 0)
+                            {
+                                controlledEnemy.Move(new Vector2((Mathf.Max(angle, -50.0f) / 25.0f), 0));
+                            }
+                            else if (angle > 0)
+                            {
+                                controlledEnemy.Move(new Vector2((Mathf.Min(angle, 50.0f) / 25.0f), 0));
+                            }
+                        }
+					}
+					else
+					{
+						string[] floatStrings = message.Split(',');
+						float[] floats = new float[floatStrings.Length];
 
-					for (int i = 0; i < floats.Length; ++i)
-						floats[i] = float.Parse(floatStrings[i], CultureInfo.InvariantCulture);
+						for (int i = 0; i < floats.Length; ++i)
+							floats[i] = float.Parse(floatStrings[i], CultureInfo.InvariantCulture);
 
-					pointer.Move(new Vector2(-floats[0], floats[1]) * 5.0f);
-
+						pointer.Move(new Vector2(-floats[0], floats[1]) * 5.0f);
+					}
 					break;
 			}
 		}

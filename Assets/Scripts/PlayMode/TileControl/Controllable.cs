@@ -9,4 +9,5 @@ public abstract class Controllable : MonoBehaviour
 	public abstract void Move(Vector2 moveAmount);
 	public abstract void Action();
 	public abstract void Release();
+	public abstract string GetType();
 }
