@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using System.IO;
+
+using System.Net;
 using System.Net.Sockets;
 
 using System.Collections;
@@ -39,8 +41,34 @@ public class ConnectionManager : MonoBehaviour
 		for (int i = 0; i < localIPs.Length; ++i)
 			drawer.AddAddress(localIPs[i]);
 
+		/*
+		string externalIP = GetPublicIpAddress();
+		Debug.Log("External IP: " + externalIP);
+		drawer.AddAddress(externalIP);
+		*/
+
 		Manager.LoadScene("sc_TitleScreen");
 		CreateNewConnection();
+	}
+
+	private string GetPublicIpAddress()
+	{
+		var request = (HttpWebRequest)WebRequest.Create("http://ifconfig.me");
+
+		request.UserAgent = "curl"; // this simulate curl linux command
+
+		string publicIPAddress;
+
+		request.Method = "GET";
+		using (WebResponse response = request.GetResponse())
+		{
+			using (var reader = new StreamReader(response.GetResponseStream()))
+			{
+				publicIPAddress = reader.ReadToEnd();
+			}
+		}
+
+		return publicIPAddress.Replace("\n", "");
 	}
 
 	public void CreateNewConnection()

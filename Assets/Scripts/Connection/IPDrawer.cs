@@ -20,6 +20,12 @@ public class IPDrawer : MonoBehaviour
 		newObject.text = address.ToString();
 	}
 
+	public void AddAddress(string address)
+	{
+		Text newObject = Instantiate<Text>(ipTextPrefab, drawerRoot);
+		newObject.text = address;
+	}
+
 	public void RemoveAddresses()
 	{
 		for(int i = 2; i < drawerRoot.childCount; ++i)
